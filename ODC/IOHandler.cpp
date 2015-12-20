@@ -24,8 +24,8 @@
  *      Author: Neil Stephens <dearknarl@gmail.com>
  */
 
-#include <openpal/logging/LogLevels.h>
 #include <opendatacon/IOHandler.h>
+#include <openpal/logging/LogLevels.h>
 
 std::unordered_map<std::string,IOHandler*> IOHandler::IOHandlers;
 
