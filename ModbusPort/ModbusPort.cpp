@@ -25,7 +25,7 @@
  */
 #include "ModbusPort.h"
 
-std::unordered_map<std::string, asiodnp3::IChannel*> ModbusPort::TCPChannels;
+//std::unordered_map<std::string, asiodnp3::IChannel*> ModbusPort::TCPChannels;
 
 ModbusPort::ModbusPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
 	DataPort(aName, aConfFilename, aConfOverrides),

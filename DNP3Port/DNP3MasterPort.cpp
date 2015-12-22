@@ -32,6 +32,7 @@
 #include <openpal/logging/LogLevels.h>
 #include <array>
 #include <asiopal/UTCTimeSource.h>
+#include <opendnp3/LogLevels.h>
 
 void DNP3MasterPort::Enable()
 {
@@ -179,8 +180,9 @@ void DNP3MasterPort::OnKeepAliveSuccess()
 	}
 }
 
-void DNP3MasterPort::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL)
+void DNP3MasterPort::BuildOrRebuild()
 {
+	if (!DNP3Mgr) DNP3Mgr = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 	auto IPPort = pConf->mAddrConf.IP +":"+ std::to_string(pConf->mAddrConf.Port);
 	auto log_id = "mast_"+IPPort;
@@ -188,7 +190,7 @@ void DNP3MasterPort::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::Log
 	//create a new channel if one isn't already up
 	if(!TCPChannels.count(IPPort))
 	{
-		TCPChannels[IPPort] = DNP3Mgr.AddTCPClient(log_id.c_str(), LOG_LEVEL.GetBitfield(),
+		TCPChannels[IPPort] = DNP3Mgr->AddTCPClient(log_id.c_str(), opendnp3::levels::ALL,
 		                                           opendnp3::ChannelRetry::Default(),
 		                                           pConf->mAddrConf.IP,
 		                                           "0.0.0.0",

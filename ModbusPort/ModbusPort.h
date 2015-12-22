@@ -39,7 +39,7 @@ public:
 
 	virtual void Enable()=0;
 	virtual void Disable()=0;
-	virtual void BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL)=0;
+	virtual void BuildOrRebuild()=0;
 
 	virtual std::future<CommandStatus> Event(const Binary& meas, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureNotSupported(); };
 	virtual std::future<CommandStatus> Event(const DoubleBitBinary& meas, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureNotSupported(); };
@@ -66,7 +66,7 @@ public:
 
 	void ProcessElements(const Json::Value& JSONRoot);
 
-	static std::unordered_map<std::string, asiodnp3::IChannel*> TCPChannels;
+	//static std::unordered_map<std::string, asiodnp3::IChannel*> TCPChannels;
 protected:
 	bool stack_enabled;
 };

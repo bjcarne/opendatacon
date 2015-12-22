@@ -35,7 +35,7 @@ JSONClientPort::JSONClientPort(std::string aName, std::string aConfFilename, con
 	JSONPort(aName, aConfFilename, aConfOverrides)
 {}
 
-void JSONClientPort::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL)
+void JSONClientPort::BuildOrRebuild()
 {}
 
 void JSONClientPort::Enable()

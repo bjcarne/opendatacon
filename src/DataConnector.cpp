@@ -237,7 +237,7 @@ inline std::future<opendnp3::CommandStatus> DataConnector::EventT(const T& event
 	return IOHandler::CommandFutureUndefined();
 }
 
-void DataConnector::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL)
+void DataConnector::BuildOrRebuild()
 {}
 void DataConnector::Enable()
 {

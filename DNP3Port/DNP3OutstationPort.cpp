@@ -31,11 +31,11 @@
 #include <asiopal/UTCTimeSource.h>
 #include <asiodnp3/MeasUpdate.h>
 #include <opendnp3/outstation/IOutstationApplication.h>
-#include <openpal/logging/LogLevels.h>
 #include "DNP3OutstationPort.h"
 #include "DNP3PortConf.h"
-
 #include "OpenDNP3Helpers.h"
+#include <opendnp3/LogLevels.h>
+
 
 DNP3OutstationPort::DNP3OutstationPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
 	DNP3Port(aName, aConfFilename, aConfOverrides),
@@ -113,8 +113,9 @@ void DNP3OutstationPort::OnKeepAliveSuccess()
 	}
 }
 
-void DNP3OutstationPort::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL)
+void DNP3OutstationPort::BuildOrRebuild()
 {
+	if (!DNP3Mgr) DNP3Mgr = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 	auto IPPort = pConf->mAddrConf.IP +":"+ std::to_string(pConf->mAddrConf.Port);
 	auto log_id = "outst_"+IPPort;
@@ -122,7 +123,7 @@ void DNP3OutstationPort::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal:
 	//create a new channel if one isn't already up
 	if(!TCPChannels.count(IPPort))
 	{
-		TCPChannels[IPPort] = DNP3Mgr.AddTCPServer(log_id.c_str(), LOG_LEVEL.GetBitfield(),
+		TCPChannels[IPPort] = DNP3Mgr->AddTCPServer(log_id.c_str(), opendnp3::levels::ALL,
 		                                           opendnp3::ChannelRetry::Default(),
 		                                           pConf->mAddrConf.IP,
 		                                           pConf->mAddrConf.Port);

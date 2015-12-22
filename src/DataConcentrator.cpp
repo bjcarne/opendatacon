@@ -38,7 +38,6 @@
 
 DataConcentrator::DataConcentrator(std::string FileName):
 	ConfigParser(FileName),
-	DNP3Mgr(std::thread::hardware_concurrency()),
 	IOS(std::thread::hardware_concurrency()),
 	ios_working(new asio::io_service::work(IOS)),
 	LOG_LEVEL(opendnp3::levels::NORMAL),
@@ -58,11 +57,8 @@ DataConcentrator::DataConcentrator(std::string FileName):
 		std::thread([&](){IOS.run();}).detach();
 
 	AdvConsoleLog->AddIngoreAlways(".*"); //silence all console messages by default
-	DNP3Mgr.AddLogSubscriber(*AdvConsoleLog.get());
 	AdvancedLoggers["Console Log"] = AdvConsoleLog;
-	DNP3Mgr.AddLogSubscriber(*AdvFileLog.get());
 	AdvancedLoggers["File Log"] = AdvFileLog;
-
 
 	//Parse the configs and create all the ports and connections
 	ProcessFile();
@@ -252,12 +248,12 @@ void DataConcentrator::BuildOrRebuild()
 	std::cout << "Ports" << std::endl;
 	for(auto& Name_n_Port : DataPorts)
 	{
-		Name_n_Port.second->BuildOrRebuild(DNP3Mgr,LOG_LEVEL);
+		Name_n_Port.second->BuildOrRebuild();
 	}
 	std::cout << "Connectors" << std::endl;
 	for(auto& Name_n_Conn : DataConnectors)
 	{
-		Name_n_Conn.second->BuildOrRebuild(DNP3Mgr,LOG_LEVEL);
+		Name_n_Conn.second->BuildOrRebuild();
 	}
 }
 void DataConcentrator::Run()
@@ -323,8 +319,6 @@ void DataConcentrator::Run()
 
 	//turn everything off
 	this->Shutdown();
-	std::cout << "Shutting down DNP3 manager... ";
-	DNP3Mgr.Shutdown();
 	//tell the io service to let it's run functions return once there's no handlers left (letting our threads end)
 	std::cout << "done" << std::endl << "Finishing any remaining work... ";
 	ios_working.reset();

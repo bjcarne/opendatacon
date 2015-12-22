@@ -30,7 +30,6 @@
 #include <opendatacon/IOHandler.h>
 #include <opendatacon/ConfigParser.h>
 #include <opendatacon/Transform.h>
-#include <asiodnp3/DNP3Manager.h>
 
 namespace ODC
 {
@@ -77,7 +76,7 @@ namespace ODC
 
 		void Enable();
 		void Disable();
-		void BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL);
+		void BuildOrRebuild();
 
 	protected:
 		void ProcessElements(const Json::Value& JSONRoot);

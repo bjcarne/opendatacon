@@ -29,6 +29,7 @@
 
 #include <opendatacon/DataPort.h>
 #include <opendnp3/gen/LinkStatus.h>
+#include <asiodnp3/DNP3Manager.h>
 
 using ODC::IOHandler;
 
@@ -39,7 +40,7 @@ public:
 
 	virtual void Enable()=0;
 	virtual void Disable()=0;
-	virtual void BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL)=0;
+	virtual void BuildOrRebuild()=0;
 
 	//Override DataPort for UI
 	const Json::Value GetStatus() const override;
@@ -68,10 +69,15 @@ public:
 	virtual std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureNotSupported(); };
 
 	void ProcessElements(const Json::Value& JSONRoot);
-
+	/*
+		DNP3Mgr(std::thread::hardware_concurrency()),
+		DNP3Mgr.AddLogSubscriber(*AdvConsoleLog.get());
+		DNP3Mgr.AddLogSubscriber(*AdvFileLog.get());
+	*/
 protected:
 	asiodnp3::IChannel* pChannel;
 	static std::unordered_map<std::string, asiodnp3::IChannel*> TCPChannels;
+	static asiodnp3::DNP3Manager* DNP3Mgr;
 	opendnp3::LinkStatus status;
 	bool link_dead;
 };

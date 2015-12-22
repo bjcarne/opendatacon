@@ -29,7 +29,6 @@
 
 #include <asio.hpp>
 #include <unordered_map>
-#include <asiodnp3/DNP3Manager.h>
 #include <opendatacon/DataPort.h>
 #include <opendatacon/DataPortCollection.h>
 #include "DataConnector.h"
@@ -52,17 +51,12 @@ class DataConcentrator: public ConfigParser, public IUIResponder
 public:
 	DataConcentrator(std::string FileName);
 	//~DataConcentrator();
-
 	DataPortCollection DataPorts;
 	DataConnectorCollection DataConnectors;
 	LogCollection AdvancedLoggers;
 	InterfaceCollection Interfaces;
-
-	asiodnp3::DNP3Manager DNP3Mgr;
 	asio::io_service IOS;
-
 	std::unique_ptr<asio::io_service::work> ios_working;
-
 	openpal::LogFilters LOG_LEVEL;
 	std::shared_ptr<AdvancedLogger> AdvConsoleLog; //just prints messages to the console plus filtering (Adv)
 	LogToFile FileLog;                             //Prints all messages to a rolling set of log files.

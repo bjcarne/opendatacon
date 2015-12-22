@@ -29,7 +29,6 @@
 #include <regex>
 #include <chrono>
 #include <asiopal/UTCTimeSource.h>
-#include <opendnp3/outstation/IOutstationApplication.h>
 #include "ModbusOutstationPort.h"
 
 #include <opendnp3/LogLevels.h>
@@ -131,7 +130,7 @@ void ModbusOutstationPort::StateListener(ChannelState state)
 		}
 	}
 }
-void ModbusOutstationPort::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL)
+void ModbusOutstationPort::BuildOrRebuild()
 {
 	ModbusPortConf* pConf = static_cast<ModbusPortConf*>(this->pConf.get());
 
