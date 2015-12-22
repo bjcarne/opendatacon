@@ -59,7 +59,7 @@ void DNP3OutstationPort::Enable()
 
 	for (auto IOHandler_pair : Subscribers)
 	{
-		IOHandler_pair.second->Event(ConnectState::PORT_UP, 0, this->Name);
+		IOHandler_pair.second->Event(ODC::ConnectState::PORT_UP, 0, this->Name);
 	}
 }
 void DNP3OutstationPort::Disable()
@@ -81,7 +81,7 @@ void DNP3OutstationPort::OnStateChange(opendnp3::LinkStatus status)
 		link_dead = false;
 		for(auto IOHandler_pair : Subscribers)
 		{
-			IOHandler_pair.second->Event(ConnectState::CONNECTED, 0, this->Name);
+			IOHandler_pair.second->Event(ODC::ConnectState::CONNECTED, 0, this->Name);
 		}
 	}
 	//TODO: track a new statistic - reset count
@@ -95,7 +95,7 @@ void DNP3OutstationPort::OnKeepAliveFailure()
 		link_dead = true;
 		for(auto IOHandler_pair : Subscribers)
 		{
-			IOHandler_pair.second->Event(ConnectState::DISCONNECTED, 0, this->Name);
+			IOHandler_pair.second->Event(ODC::ConnectState::DISCONNECTED, 0, this->Name);
 		}
 	}
 }
@@ -108,7 +108,7 @@ void DNP3OutstationPort::OnKeepAliveSuccess()
 		link_dead = false;
 		for(auto IOHandler_pair : Subscribers)
 		{
-			IOHandler_pair.second->Event(ConnectState::CONNECTED, 0, this->Name);
+			IOHandler_pair.second->Event(ODC::ConnectState::CONNECTED, 0, this->Name);
 		}
 	}
 }
@@ -216,7 +216,7 @@ const Json::Value DNP3OutstationPort::GetCurrentState() const
 	Json::Value analogValues;
 	Json::Value binaryValues;
 	if (pOutstation == nullptr)
-		return IUIResponder::GenerateResult("Bad port");
+		return ODC::IUIResponder::GenerateResult("Bad port");
 
 	auto configView = pOutstation->GetConfigView();
 
@@ -316,13 +316,13 @@ inline opendnp3::CommandStatus DNP3OutstationPort::PerformT(T& arCommand, uint16
 	return opendnp3::CommandStatus::SUCCESS;
 }
 
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const BinaryQuality qual, uint16_t index, const std::string& SenderName){return EventQ<ODC::Binary>(qual,index,SenderName);}
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName){return EventQ<ODC::DoubleBitBinary>(qual,index,SenderName);}
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const AnalogQuality qual, uint16_t index, const std::string& SenderName){return EventQ<ODC::Analog>(qual,index,SenderName);}
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const CounterQuality qual, uint16_t index, const std::string& SenderName){return EventQ<ODC::Counter>(qual,index,SenderName);}
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const FrozenCounterQuality qual, uint16_t index, const std::string& SenderName){return EventQ<ODC::FrozenCounter>(qual,index,SenderName);}
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName){return EventQ<ODC::BinaryOutputStatus>(qual,index,SenderName);}
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName){return EventQ<ODC::AnalogOutputStatus>(qual,index,SenderName);}
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::BinaryQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::Binary>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::DoubleBitBinary>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::AnalogQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::Analog>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::CounterQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::Counter>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::FrozenCounterQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::FrozenCounter>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::BinaryOutputStatus>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::AnalogOutputStatus>(qual, index, SenderName); }
 
 template<typename T, typename Q>
 inline std::future<ODC::CommandStatus> DNP3OutstationPort::EventQ(Q& qual, uint16_t index, const std::string& SenderName)
@@ -388,14 +388,14 @@ inline std::future<ODC::CommandStatus> DNP3OutstationPort::EventT(T& meas, uint1
 	return IOHandler::CommandFutureSuccess();
 }
 
-std::future<ODC::CommandStatus> DNP3OutstationPort::ConnectionEvent(ConnectState state, const std::string& SenderName)
+std::future<ODC::CommandStatus> DNP3OutstationPort::ConnectionEvent(ODC::ConnectState state, const std::string& SenderName)
 {
 	if (!enabled)
 	{
 		return IOHandler::CommandFutureUndefined();
 	}
 
-	if (state == ConnectState::DISCONNECTED)
+	if (state == ODC::ConnectState::DISCONNECTED)
 	{
 		//stub
 	}
