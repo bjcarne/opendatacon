@@ -37,6 +37,7 @@ class DNP3Port: public ODC::DataPort
 {
 public:
 	DNP3Port(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides);
+    using DataPort::IOHandler::Event;
 
 	virtual void Enable()=0;
 	virtual void Disable()=0;

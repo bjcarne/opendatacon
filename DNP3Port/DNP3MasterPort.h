@@ -92,7 +92,7 @@ public:
 	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName);
 	template<typename T> std::future<ODC::CommandStatus> EventT(T& arCommand, uint16_t index, const std::string& SenderName);
 
-	std::future<ODC::CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName);
+	std::future<ODC::CommandStatus> ConnectionEvent(ODC::ConnectState state, const std::string& SenderName);
 
 private:
 	asiodnp3::IMaster* pMaster;

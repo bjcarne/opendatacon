@@ -39,6 +39,8 @@ public:
 	NullPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
 		DataPort(aName, aConfFilename, aConfOverrides)
 	{};
+    using DataPort::IOHandler::Event;
+
 	void Enable()
 	{
 		pTimer.reset(new Timer_t(*pIOS, std::chrono::seconds(3)));

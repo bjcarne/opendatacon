@@ -31,6 +31,7 @@
 #include "OpenDNP3Helpers.h"
 #include <iostream> // TODO: remove include, should be met using logging mechanism
 
+using ODC::ConfigParser;
 
 DNP3PointConf::DNP3PointConf(std::string FileName):
 	ConfigParser(FileName),

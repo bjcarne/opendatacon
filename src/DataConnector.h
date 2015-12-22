@@ -33,7 +33,6 @@
 
 namespace ODC
 {
-
 	class DataConnector : public IOHandler, public ConfigParser
 	{
 	public:

@@ -45,6 +45,7 @@ public:
 		//We still may need to process the file (or overrides) to get Addr details:
 		ProcessFile();
 	};
+    using DataPort::IOHandler::Event;
 
 	void ProcessElements(const Json::Value& JSONRoot)
 	{

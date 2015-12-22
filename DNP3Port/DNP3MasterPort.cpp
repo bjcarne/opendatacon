@@ -150,7 +150,7 @@ void DNP3MasterPort::OnKeepAliveFailure()
 		// Notify subscribers that a disconnect event has occured
 		for (auto IOHandler_pair : Subscribers)
 		{
-			IOHandler_pair.second->Event(ConnectState::DISCONNECTED, 0, this->Name);
+			IOHandler_pair.second->Event(ODC::ConnectState::DISCONNECTED, 0, this->Name);
 		}
 
 		DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
@@ -285,7 +285,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const opendnp3::Analo
 std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
 std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
 
-std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ConnectState state, const std::string& SenderName)
+std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::ConnectState state, const std::string& SenderName)
 {
 	if(!enabled)
 	{
@@ -293,7 +293,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ConnectStat
 	}
 
 	// If an upstream port has been enabled after the stack has already been enabled, do an integrity scan
-	if (stack_enabled && state == ConnectState::PORT_UP)
+	if (stack_enabled && state == ODC::ConnectState::PORT_UP)
 	{
 		std::string msg = Name + ": upstream port enabled, performing integrity scan.";
 		auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
@@ -305,7 +305,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ConnectStat
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 
 	// If an upstream port is connected, attempt a connection (if on demand)
-	if (!stack_enabled && state == ConnectState::CONNECTED && pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
+	if (!stack_enabled && state == ODC::ConnectState::CONNECTED && pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
 	{
 		std::string msg = Name + ": upstream port connected, performing on-demand connection.";
 		auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
@@ -318,7 +318,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ConnectStat
 	}
 
 	// If an upstream port is disconnected, disconnect ourselves if it was the last active connection (if on demand)
-	if (stack_enabled && state == ConnectState::DISCONNECTED && pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
+	if (stack_enabled && state == ODC::ConnectState::DISCONNECTED && pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
 	{
 		pIOS->post([&]()
 		           {

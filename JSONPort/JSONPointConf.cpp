@@ -29,6 +29,8 @@
 #include <cstdint>
 #include "JSONPointConf.h"
 
+using namespace ODC;
+
 JSONPointConf::JSONPointConf(std::string FileName):
 	ConfigParser(FileName)
 {
