@@ -34,87 +34,90 @@
 #include <asiopal/LogFanoutHandler.h>
 #include <opendatacon/IOTypes.h>
 
-enum ConnectState {PORT_UP,CONNECTED,DISCONNECTED,PORT_DOWN};
-
-class IOHandler
+namespace ODC
 {
-public:
-	IOHandler(std::string aName);
-	virtual ~IOHandler(){};
 
-	static std::future<CommandStatus> CommandFutureSuccess()
+	class IOHandler
 	{
-		auto Promise = std::promise<CommandStatus>();
-		Promise.set_value(CommandStatus::SUCCESS);
-		return Promise.get_future();
+	public:
+		IOHandler(std::string aName);
+		virtual ~IOHandler(){};
+
+		static std::future<CommandStatus> CommandFutureSuccess()
+		{
+			auto Promise = std::promise<CommandStatus>();
+			Promise.set_value(CommandStatus::SUCCESS);
+			return Promise.get_future();
+		};
+
+		static std::future<CommandStatus> CommandFutureUndefined()
+		{
+			auto Promise = std::promise<CommandStatus>();
+			Promise.set_value(CommandStatus::UNDEFINED);
+			return Promise.get_future();
+		};
+
+		static std::future<CommandStatus> CommandFutureNotSupported()
+		{
+			auto Promise = std::promise<CommandStatus>();
+			Promise.set_value(CommandStatus::NOT_SUPPORTED);
+			return Promise.get_future();
+		};
+
+		//Create an overloaded Event function for every type of event
+
+		// measurement events
+		virtual std::future<CommandStatus> Event(const Binary& meas, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const DoubleBitBinary& meas, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const Analog& meas, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const Counter& meas, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const FrozenCounter& meas, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const BinaryOutputStatus& meas, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const AnalogOutputStatus& meas, uint16_t index, const std::string& SenderName) = 0;
+
+		// change of quality events
+		virtual std::future<CommandStatus> Event(const BinaryQuality qual, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const AnalogQuality qual, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const CounterQuality qual, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const FrozenCounterQuality qual, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName) = 0;
+
+		// control events
+		virtual std::future<CommandStatus> Event(const ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName) = 0;
+		virtual std::future<CommandStatus> Event(const AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName) = 0;
+
+		//Connection events:
+		virtual std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) = 0;
+
+		void Subscribe(IOHandler* pIOHandler, std::string aName);
+		void AddLogSubscriber(openpal::ILogHandler* logger);
+		void SetLogLevel(openpal::LogFilters LOG_LEVEL);
+		void SetIOS(asio::io_service* ios_ptr);
+
+		std::string Name;
+		std::unordered_map<std::string, IOHandler*> Subscribers;
+		std::unique_ptr<asiopal::LogFanoutHandler> pLoggers;
+		openpal::LogFilters LOG_LEVEL;
+		asio::io_service* pIOS;
+		bool enabled;
+
+		// Don't access the following from outside this dll under Windows
+		// due to static issues use GetIOHandlers to return the right reference instead
+		static std::unordered_map<std::string, IOHandler*> IOHandlers;
+
+	protected:
+		bool InDemand();
+		std::map<std::string, bool> connection_demands;
+		bool MuxConnectionEvents(ConnectState state, const std::string& SenderName);
 	};
 
-	static std::future<CommandStatus> CommandFutureUndefined()
-	{
-		auto Promise = std::promise<CommandStatus>();
-		Promise.set_value(CommandStatus::UNDEFINED);
-		return Promise.get_future();
-	};
+	std::unordered_map<std::string, IOHandler*>& GetIOHandlers();
 
-	static std::future<CommandStatus> CommandFutureNotSupported()
-	{
-		auto Promise = std::promise<CommandStatus>();
-		Promise.set_value(CommandStatus::NOT_SUPPORTED);
-		return Promise.get_future();
-	};
-
-	//Create an overloaded Event function for every type of event
-
-	// measurement events
-	virtual std::future<CommandStatus> Event(const Binary& meas, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const DoubleBitBinary& meas, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const Analog& meas, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const Counter& meas, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const FrozenCounter& meas, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const BinaryOutputStatus& meas, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const AnalogOutputStatus& meas, uint16_t index, const std::string& SenderName) = 0;
-
-	// change of quality events
-	virtual std::future<CommandStatus> Event(const BinaryQuality qual, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const AnalogQuality qual, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const CounterQuality qual, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const FrozenCounterQuality qual, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName) = 0;
-
-	// control events
-	virtual std::future<CommandStatus> Event(const ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName) = 0;
-	virtual std::future<CommandStatus> Event(const AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName) = 0;
-
-	//Connection events:
-	virtual std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) = 0;
-
-	void Subscribe(IOHandler* pIOHandler, std::string aName);
-	void AddLogSubscriber(openpal::ILogHandler* logger);
-	void SetLogLevel(openpal::LogFilters LOG_LEVEL);
-	void SetIOS(asio::io_service* ios_ptr);
-
-	std::string Name;
-	std::unordered_map<std::string,IOHandler*> Subscribers;
-	std::unique_ptr<asiopal::LogFanoutHandler> pLoggers;
-	openpal::LogFilters LOG_LEVEL;
-	asio::io_service* pIOS;
-	bool enabled;
-
-	// Don't access the following from outside this dll under Windows
-	// due to static issues use GetIOHandlers to return the right reference instead
-	static std::unordered_map<std::string, IOHandler*> IOHandlers;
-
-protected:
-	bool InDemand();
-	std::map<std::string,bool> connection_demands;
-	bool MuxConnectionEvents(ConnectState state, const std::string& SenderName);
-};
-
-std::unordered_map<std::string, IOHandler*>& GetIOHandlers();
+}
 
 #endif /* IOHANDLER_H_ */

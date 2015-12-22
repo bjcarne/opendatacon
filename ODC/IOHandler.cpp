@@ -27,59 +27,64 @@
 #include <opendatacon/IOHandler.h>
 #include <openpal/logging/LogLevels.h>
 
-std::unordered_map<std::string,IOHandler*> IOHandler::IOHandlers;
+namespace ODC
+{
 
-std::unordered_map<std::string, IOHandler*>& GetIOHandlers()
-{
-	return IOHandler::IOHandlers;
-}
+	std::unordered_map<std::string, IOHandler*> IOHandler::IOHandlers;
 
-IOHandler::IOHandler(std::string aName): Name(aName),
-	pLoggers(new asiopal::LogFanoutHandler()),
-	LOG_LEVEL(openpal::logflags::WARN),
-	enabled(false)
-{
-	IOHandlers[Name]=this;
-}
+	std::unordered_map<std::string, IOHandler*>& GetIOHandlers()
+	{
+		return IOHandler::IOHandlers;
+	}
 
-void IOHandler::Subscribe(IOHandler* pIOHandler, std::string aName)
-{
-	this->Subscribers[aName] = pIOHandler;
-}
+	IOHandler::IOHandler(std::string aName) : Name(aName),
+		pLoggers(new asiopal::LogFanoutHandler()),
+		LOG_LEVEL(openpal::logflags::WARN),
+		enabled(false)
+	{
+		IOHandlers[Name] = this;
+	}
 
-void IOHandler::AddLogSubscriber(openpal::ILogHandler* logger)
-{
-	pLoggers->Subscribe(*logger);
-}
-void IOHandler::SetLogLevel(openpal::LogFilters LOG_LEVEL)
-{
-	this->LOG_LEVEL = LOG_LEVEL;
-}
-void IOHandler::SetIOS(asio::io_service* ios_ptr)
-{
-	pIOS = ios_ptr;
-}
+	void IOHandler::Subscribe(IOHandler* pIOHandler, std::string aName)
+	{
+		this->Subscribers[aName] = pIOHandler;
+	}
 
-bool IOHandler::InDemand()
-{
-	for(auto demand : connection_demands)
-		if(demand.second)
+	void IOHandler::AddLogSubscriber(openpal::ILogHandler* logger)
+	{
+		pLoggers->Subscribe(*logger);
+	}
+	void IOHandler::SetLogLevel(openpal::LogFilters LOG_LEVEL)
+	{
+		this->LOG_LEVEL = LOG_LEVEL;
+	}
+	void IOHandler::SetIOS(asio::io_service* ios_ptr)
+	{
+		pIOS = ios_ptr;
+	}
+
+	bool IOHandler::InDemand()
+	{
+		for (auto demand : connection_demands)
+		if (demand.second)
 			return true;
-	return false;
-}
+		return false;
+	}
 
-bool IOHandler::MuxConnectionEvents(ConnectState state, const std::string& SenderName)
-{
-	if (state == ConnectState::DISCONNECTED)
+	bool IOHandler::MuxConnectionEvents(ConnectState state, const std::string& SenderName)
 	{
-		connection_demands[SenderName] = false;
-		return !InDemand();
+		if (state == ConnectState::DISCONNECTED)
+		{
+			connection_demands[SenderName] = false;
+			return !InDemand();
+		}
+		else if (state == ConnectState::CONNECTED)
+		{
+			bool new_demand = !connection_demands[SenderName];
+			connection_demands[SenderName] = true;
+			return new_demand;
+		}
+		return true;
 	}
-	else if (state == ConnectState::CONNECTED)
-	{
-		bool new_demand = !connection_demands[SenderName];
-		connection_demands[SenderName] = true;
-		return new_demand;
-	}
-	return true;
+
 }

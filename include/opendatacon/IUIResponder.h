@@ -34,29 +34,34 @@
 #include <json/json.h>
 #include <opendatacon/ParamCollection.h>
 
-typedef std::function<Json::Value(const ParamCollection& params)> UIFunction;
-
-class UICommand
+namespace ODC
 {
-public:
-	UICommand(const UIFunction& func, const std::string& desc, const bool hide): function(func), description(desc), hidden(hide) {};
-	UIFunction function;
-	std::string description;
-	bool hidden; // if true, command is not listed during a call to GetCommandList
-};
 
-class IUIResponder
-{
-public:
-	virtual ~IUIResponder(){};
-	static const Json::Value GenerateResult(const std::string& message);
+	typedef std::function<Json::Value(const ParamCollection& params)> UIFunction;
 
-	virtual Json::Value GetCommandList();
-	virtual Json::Value ExecuteCommand(const std::string& arCommandName, const ParamCollection& params) const;
-	void AddCommand(const std::string& arCommandName, UIFunction arCommand, const std::string& desc = "", const bool hide = false);
+	class UICommand
+	{
+	public:
+		UICommand(const UIFunction& func, const std::string& desc, const bool hide) : function(func), description(desc), hidden(hide) {};
+		UIFunction function;
+		std::string description;
+		bool hidden; // if true, command is not listed during a call to GetCommandList
+	};
 
-private:
-	std::unordered_map<std::string, UICommand> commands;
-};
+	class IUIResponder
+	{
+	public:
+		virtual ~IUIResponder(){};
+		static const Json::Value GenerateResult(const std::string& message);
+
+		virtual Json::Value GetCommandList();
+		virtual Json::Value ExecuteCommand(const std::string& arCommandName, const ParamCollection& params) const;
+		void AddCommand(const std::string& arCommandName, UIFunction arCommand, const std::string& desc = "", const bool hide = false);
+
+	private:
+		std::unordered_map<std::string, UICommand> commands;
+	};
+
+}
 
 #endif /* defined(__opendatacon__IUIResponder__) */

@@ -33,7 +33,9 @@
 #include "DNP3Port.h"
 #include "DNP3PortConf.h"
 
-using namespace opendnp3;
+using opendnp3::HeaderInfo;
+using opendnp3::ICollection;
+using opendnp3::Indexed;
 
 class DNP3MasterPort: public DNP3Port, public opendnp3::ISOEHandler //, public opendnp3::IPollListener
 {
@@ -68,29 +70,29 @@ protected:
 public:
 	//virtual void Process(const HeaderInfo& info, const ICollection<Indexed<Binary>>& values) = 0;
 
-	void Process(const HeaderInfo& info, const ICollection<Indexed<Binary> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<DoubleBitBinary> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<Analog> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<Counter> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<FrozenCounter> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<BinaryOutputStatus> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<AnalogOutputStatus> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<OctetString> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<TimeAndInterval> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<BinaryCommandEvent> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<AnalogCommandEvent> >& meas);
-	void Process(const HeaderInfo& info, const ICollection<Indexed<SecurityStat> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::Binary> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::DoubleBitBinary> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::Analog> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::Counter> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::FrozenCounter> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::BinaryOutputStatus> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::AnalogOutputStatus> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::OctetString> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::TimeAndInterval> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::BinaryCommandEvent> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::AnalogCommandEvent> >& meas);
+	void Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::SecurityStat> >& meas);
 	template<typename T> void LoadT(const ICollection<Indexed<T> >& meas);
 
 	//Implement some IOHandler - parent DNP3Port implements the rest to return NOT_SUPPORTED
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName);
-	template<typename T> std::future<opendnp3::CommandStatus> EventT(T& arCommand, uint16_t index, const std::string& SenderName);
+	std::future<ODC::CommandStatus> Event(const ODC::ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName);
+	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName);
+	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName);
+	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName);
+	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName);
+	template<typename T> std::future<ODC::CommandStatus> EventT(T& arCommand, uint16_t index, const std::string& SenderName);
 
-	std::future<opendnp3::CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName);
+	std::future<ODC::CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName);
 
 private:
 	asiodnp3::IMaster* pMaster;

@@ -29,7 +29,7 @@
 void cmd_ignore_message(std::stringstream& args, AdvancedLogger& AdvLog)
 {
 	std::string mregex;
-	if(!extract_delimited_string(args,mregex))
+	if(!ODC::extract_delimited_string(args,mregex))
 	{
 		std::cout<<"Syntax error: Delimited regex expected, found \"..."<<mregex<<"\""<<std::endl;
 		return;
@@ -46,7 +46,7 @@ void cmd_unignore_message(std::stringstream& args, AdvancedLogger& AdvLog)
 {
 	std::string arg = "";
 	std::string mregex;
-	if(!extract_delimited_string(args,mregex))
+	if(!ODC::extract_delimited_string(args,mregex))
 	{
 		std::cout<<"Syntax error: Delimited regex expected, found \"..."<<mregex<<"\""<<std::endl;
 		return;

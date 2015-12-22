@@ -34,48 +34,53 @@
 
 #include "IUIResponder.h"
 
-class DataPort: public IOHandler, public ConfigParser
+namespace ODC
 {
-public:
-	DataPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-		IOHandler(aName),
-		ConfigParser(aConfFilename, aConfOverrides),
-		pConf(nullptr)
-	{};
-	virtual ~DataPort(){};
 
-	virtual void Enable()=0;
-	virtual void Disable()=0;
-	virtual void BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL)=0;
-	virtual void ProcessElements(const Json::Value& JSONRoot)=0;
-
-	std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) final
+	class DataPort : public IOHandler, public ConfigParser
 	{
-		if(MuxConnectionEvents(state, SenderName))
-			return ConnectionEvent(state, SenderName);
-		else
-			return IOHandler::CommandFutureUndefined();
+	public:
+		DataPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides) :
+			IOHandler(aName),
+			ConfigParser(aConfFilename, aConfOverrides),
+			pConf(nullptr)
+		{};
+		virtual ~DataPort(){};
+
+		virtual void Enable() = 0;
+		virtual void Disable() = 0;
+		virtual void BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL) = 0;
+		virtual void ProcessElements(const Json::Value& JSONRoot) = 0;
+
+		std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) final
+		{
+			if (MuxConnectionEvents(state, SenderName))
+				return ConnectionEvent(state, SenderName);
+			else
+				return IOHandler::CommandFutureUndefined();
+		};
+
+		virtual std::future<CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName) = 0;
+
+		virtual const Json::Value GetStatistics() const
+		{
+			return Json::Value();
+		};
+
+		virtual const Json::Value GetCurrentState() const
+		{
+			return Json::Value();
+		};
+
+		virtual const Json::Value GetStatus() const
+		{
+			return Json::Value();
+		};
+
+	protected:
+		std::unique_ptr<DataPortConf> pConf;
 	};
 
-	virtual std::future<CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName) = 0;
-
-	virtual const Json::Value GetStatistics() const
-	{
-		return Json::Value();
-	};
-
-	virtual const Json::Value GetCurrentState() const
-	{
-		return Json::Value();
-	};
-
-	virtual const Json::Value GetStatus() const
-	{
-		return Json::Value();
-	};
-
-protected:
-	std::unique_ptr<DataPortConf> pConf;
-};
+}
 
 #endif /* DATAPORT_H_ */

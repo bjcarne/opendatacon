@@ -31,39 +31,43 @@
 #include "IUIResponder.h"
 #include <memory>
 
-template <class T>
-class ResponderMap: public std::unordered_map<std::string, std::shared_ptr<T> >, public IUIResponder
+namespace ODC
 {
-public:
-	ResponderMap()
+	template <class T>
+	class ResponderMap : public std::unordered_map<std::string, std::shared_ptr<T> >, public IUIResponder
 	{
-		this->AddCommand("List", [this](const ParamCollection &params) {
-		                       Json::Value result;
-
-		                       result["Commands"] = GetCommandList();
-
-		                       Json::Value vec;
-		                       for(auto responder: *this)
-		                       {
-		                             vec.append(Json::Value(responder.first));
-					     }
-
-		                       result["Items"]  = vec;
-
-		                       return result;
-				     }, "", true);
-	}
-	virtual ~ResponderMap(){};
-
-	T* GetTarget(const ParamCollection & params)
-	{
-		if (params.count("Target") && this->count(params.at("Target")))
+	public:
+		ResponderMap()
 		{
-			return this->at(params.at("Target")).get();
-		}
-		return nullptr;
-	}
+			this->AddCommand("List", [this](const ParamCollection &params) {
+				Json::Value result;
 
-};
+				result["Commands"] = GetCommandList();
+
+				Json::Value vec;
+				for (auto responder : *this)
+				{
+					vec.append(Json::Value(responder.first));
+				}
+
+				result["Items"] = vec;
+
+				return result;
+			}, "", true);
+		}
+		virtual ~ResponderMap(){};
+
+		T* GetTarget(const ParamCollection & params)
+		{
+			if (params.count("Target") && this->count(params.at("Target")))
+			{
+				return this->at(params.at("Target")).get();
+			}
+			return nullptr;
+		}
+
+	};
+
+}
 
 #endif

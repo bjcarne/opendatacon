@@ -30,33 +30,9 @@
 
 #include <opendatacon/IUIResponder.h>
 #include "logging_cmds.h"
-/*
-std::string mregex;
-if(!extract_delimited_string(args,mregex))
-{
-    std::cout<<"Syntax error: Delimited regex expected, found \"..."<<mregex<<"\""<<std::endl;
-    return;
-        }
-        if(mregex == "")
-        {
-                std::cout<<"Please supply a regex filter"<<std::endl;
-                return;
-        }
-        std::cout<<"adding regex "<<mregex<<std::endl;
-        AdvLog.AddIngoreAlways(mregex);
-    }
-    void cmd_unignore_message(std::stringstream& args, AdvancedLogger& AdvLog)
-    {
-        std::string arg = "";
-        std::string mregex;
-        if(!extract_delimited_string(args,mregex))
-        {
-            std::cout<<"Syntax error: Delimited regex expected, found \"..."<<mregex<<"\""<<std::endl;
-            return;
-        }
-        std::cout<<"removing regex "<<mregex<<std::endl;
-        AdvLog.RemoveIgnore(mregex);
- */
+
+using namespace ODC;
+
 class LogCollection: public ResponderMap<AdvancedLogger>
 {
 public:
@@ -69,7 +45,7 @@ public:
 		                             filter << params.at("filter");
 
 		                             std::string mregex;
-		                             if(!extract_delimited_string(filter,mregex))
+		                             if(!ODC::extract_delimited_string(filter,mregex))
 		                             {
 		                                   return IUIResponder::GenerateResult("Syntax error: Delimited regex expected, found \"..." + mregex + "\"");
 						     }

@@ -31,15 +31,17 @@
 #include "ResponderMap.h"
 #include "IUI.h"
 
-
-class InterfaceCollection: public ResponderMap<IUI>
+namespace ODC
 {
-public:
-	InterfaceCollection()
-	{}
-	virtual ~InterfaceCollection(){};
-};
 
+	class InterfaceCollection : public ResponderMap<IUI>
+	{
+	public:
+		InterfaceCollection()
+		{}
+		virtual ~InterfaceCollection(){};
+	};
 
+}
 
 #endif /* defined(__opendatacon__InterfaceCollection__) */

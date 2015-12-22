@@ -30,59 +30,64 @@
 #include <opendatacon/IOHandler.h>
 #include <opendatacon/ConfigParser.h>
 #include <opendatacon/Transform.h>
+#include <asiodnp3/DNP3Manager.h>
 
-
-class DataConnector: public IOHandler, public ConfigParser
+namespace ODC
 {
-public:
-	DataConnector(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides);
-	~DataConnector(){};
 
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::Binary& meas, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::DoubleBitBinary& meas, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::Analog& meas, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::Counter& meas, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::FrozenCounter& meas, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::BinaryOutputStatus& meas, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputStatus& meas, uint16_t index, const std::string& SenderName);
-
-	std::future<opendnp3::CommandStatus> Event(const ::BinaryQuality qual, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const ::DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const ::AnalogQuality qual, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const ::CounterQuality qual, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const ::FrozenCounterQuality qual, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const ::BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const ::AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName);
-
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName);
-	std::future<opendnp3::CommandStatus> Event(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName);
-
-	std::future<opendnp3::CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName);
-
-	virtual const Json::Value GetStatistics() const
+	class DataConnector : public IOHandler, public ConfigParser
 	{
-		return Json::Value();
+	public:
+		DataConnector(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides);
+		~DataConnector(){};
+
+		std::future<CommandStatus> Event(const Binary& meas, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const DoubleBitBinary& meas, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const Analog& meas, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const Counter& meas, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const FrozenCounter& meas, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const BinaryOutputStatus& meas, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const AnalogOutputStatus& meas, uint16_t index, const std::string& SenderName);
+
+		std::future<CommandStatus> Event(const BinaryQuality qual, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const AnalogQuality qual, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const CounterQuality qual, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const FrozenCounterQuality qual, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName);
+
+		std::future<CommandStatus> Event(const ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName);
+		std::future<CommandStatus> Event(const AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName);
+
+		std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName);
+
+		virtual const Json::Value GetStatistics() const
+		{
+			return Json::Value();
+		};
+
+		virtual const Json::Value GetCurrentState() const
+		{
+			return Json::Value();
+		};
+
+		void Enable();
+		void Disable();
+		void BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL);
+
+	protected:
+		void ProcessElements(const Json::Value& JSONRoot);
+		template<typename T> std::future<CommandStatus> EventT(const T& meas, uint16_t index, const std::string& SenderName);
+
+		std::unordered_map<std::string, std::pair<IOHandler*, IOHandler*> > Connections;
+		std::multimap<std::string, std::string> SenderConnectionsLookup;
+		std::unordered_map<std::string, std::vector<std::unique_ptr<Transform> > > ConnectionTransforms;
 	};
 
-	virtual const Json::Value GetCurrentState() const
-	{
-		return Json::Value();
-	};
-
-	void Enable();
-	void Disable();
-	void BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::LogFilters& LOG_LEVEL);
-
-protected:
-	void ProcessElements(const Json::Value& JSONRoot);
-	template<typename T> std::future<opendnp3::CommandStatus> EventT(const T& meas, uint16_t index, const std::string& SenderName);
-
-	std::unordered_map<std::string,std::pair<IOHandler*,IOHandler*> > Connections;
-	std::multimap<std::string,std::string> SenderConnectionsLookup;
-	std::unordered_map<std::string,std::vector<std::unique_ptr<Transform> > > ConnectionTransforms;
-};
+}
 
 #endif /* DATACONNECTOR_H_ */

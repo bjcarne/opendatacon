@@ -36,6 +36,8 @@
 #include <opendatacon/DataPointConf.h>
 #include <opendatacon/ConfigParser.h>
 
+using namespace ODC;
+
 class DNP3PointConf: public ConfigParser
 {
 public:

@@ -34,6 +34,8 @@
 #include <opendatacon/ConfigParser.h>
 #include <json/json.h>
 
+using namespace ODC;
+
 class JSONPointConf: public ConfigParser
 {
 public:

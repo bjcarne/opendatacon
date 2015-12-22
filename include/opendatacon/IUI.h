@@ -31,14 +31,18 @@
 #include "IUIResponder.h"
 #include <memory>
 
-class IUI
+namespace ODC
 {
-public:
-	virtual ~IUI(){};
-	virtual void AddResponder(const std::string name, const IUIResponder& pResponder) = 0;
-	virtual int start() = 0;
-	virtual void stop() = 0;
-};
 
+	class IUI
+	{
+	public:
+		virtual ~IUI(){};
+		virtual void AddResponder(const std::string name, const IUIResponder& pResponder) = 0;
+		virtual int start() = 0;
+		virtual void stop() = 0;
+	};
+
+}
 
 #endif

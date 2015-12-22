@@ -219,7 +219,7 @@ void DNP3MasterPort::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::Log
 
 	// Master station configuration
 	StackConfig.master.responseTimeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->MasterResponseTimeoutms);
-	StackConfig.master.timeSyncMode = pConf->pPointConf->MasterRespondTimeSync ? TimeSyncMode::SerialTimeSync : TimeSyncMode::None;
+	StackConfig.master.timeSyncMode = pConf->pPointConf->MasterRespondTimeSync ? opendnp3::TimeSyncMode::SerialTimeSync : opendnp3::TimeSyncMode::None;
 	StackConfig.master.disableUnsolOnStartup = !pConf->pPointConf->DoUnsolOnStartup;
 	StackConfig.master.unsolClassMask = pConf->pPointConf->GetUnsolClassMask();
 	StackConfig.master.startupIntegrityClassMask = pConf->pPointConf->GetStartupIntegrityClassMask(); //TODO: report/investigate bug - doesn't recognise response to integrity scan if not ALL_CLASSES
@@ -251,18 +251,18 @@ void DNP3MasterPort::BuildOrRebuild(asiodnp3::DNP3Manager& DNP3Mgr, openpal::Log
 
 // Called by OpenDNP3 Thread Pool
 //implement ISOEHandler
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<Binary> >& meas){ LoadT(meas); }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<DoubleBitBinary> >& meas){ LoadT(meas); }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<Analog> >& meas){ LoadT(meas); }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<Counter> >& meas){ LoadT(meas); }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<FrozenCounter> >& meas){ LoadT(meas); }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<BinaryOutputStatus> >& meas){ LoadT(meas); }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<AnalogOutputStatus> >& meas){ LoadT(meas); }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<OctetString> >& meas){ /*LoadT(meas);*/ }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<TimeAndInterval> >& meas){ /*LoadT(meas);*/ }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<BinaryCommandEvent> >& meas){ /*LoadT(meas);*/ }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<AnalogCommandEvent> >& meas){ /*LoadT(meas);*/ }
-void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<SecurityStat> >& meas){ /*LoadT(meas);*/ }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::Binary> >& meas){ LoadT(meas); }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::DoubleBitBinary> >& meas){ LoadT(meas); }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::Analog> >& meas){ LoadT(meas); }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::Counter> >& meas){ LoadT(meas); }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::FrozenCounter> >& meas){ LoadT(meas); }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::BinaryOutputStatus> >& meas){ LoadT(meas); }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::AnalogOutputStatus> >& meas){ LoadT(meas); }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::OctetString> >& meas){ /*LoadT(meas);*/ }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::TimeAndInterval> >& meas){ /*LoadT(meas);*/ }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::BinaryCommandEvent> >& meas){ /*LoadT(meas);*/ }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::AnalogCommandEvent> >& meas){ /*LoadT(meas);*/ }
+void DNP3MasterPort::Process(const HeaderInfo& info, const ICollection<Indexed<opendnp3::SecurityStat> >& meas){ /*LoadT(meas);*/ }
 
 template<typename T>
 inline void DNP3MasterPort::LoadT(const ICollection<Indexed<T> >& meas)

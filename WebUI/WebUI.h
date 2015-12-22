@@ -33,6 +33,8 @@
 
 const char ROOTPAGE[] = "/index.html";
 
+using namespace ODC;
+
 class WebUI: public IUI
 {
 public:

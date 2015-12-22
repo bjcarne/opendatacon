@@ -30,6 +30,8 @@
 #include <cstdint>
 #include <opendatacon/Transform.h>
 
+using namespace ODC;
+
 class IndexOffsetTransform: public Transform
 {
 public:
