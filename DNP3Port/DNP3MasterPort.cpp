@@ -182,7 +182,12 @@ void DNP3MasterPort::OnKeepAliveSuccess()
 
 void DNP3MasterPort::BuildOrRebuild()
 {
-	if (!DNP3Mgr) DNP3Mgr = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
+	if (!DNP3Mgr)
+	{
+		//TODO:Get rid of this cludge!
+		DNP3Mgr = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
+		DNP3Mgr->AddLogSubscriber(*this->pLoggers);
+	}
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 	auto IPPort = pConf->mAddrConf.IP +":"+ std::to_string(pConf->mAddrConf.Port);
 	auto log_id = "mast_"+IPPort;

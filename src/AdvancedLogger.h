@@ -20,7 +20,6 @@
 #pragma once
 
 #include <openpal/logging/ILogHandler.h>
-#include <opendnp3/LogLevels.h>
 #include <asiopal/UTCTimeSource.h>
 #include <openpal/executor/UTCTimestamp.h>
 #include <openpal/executor/TimeDuration.h>
