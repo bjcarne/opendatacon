@@ -31,8 +31,6 @@
 #include <opendnp3/gen/LinkStatus.h>
 #include <asiodnp3/DNP3Manager.h>
 
-using ODC::IOHandler;
-
 class DNP3Port: public ODC::DataPort
 {
 public:

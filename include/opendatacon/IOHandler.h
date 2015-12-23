@@ -36,7 +36,6 @@
 
 namespace ODC
 {
-
 	class IOHandler
 	{
 	public:
