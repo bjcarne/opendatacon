@@ -19,7 +19,7 @@
  # 
 project(ODC)
 cmake_minimum_required(VERSION 2.8)
-file(GLOB ${PROJECT_NAME}_SRC *.cpp *.h *.def ../include/opendatacon/*.h)
+file(GLOB ${PROJECT_NAME}_SRC *.cpp *.h *.def)
 
 include_directories(
 	"../JSON"
@@ -34,3 +34,4 @@ add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRC})
 target_link_libraries(${PROJECT_NAME} JSON asiopal)
 
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION "lib" ARCHIVE DESTINATION "lib")
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER libs)

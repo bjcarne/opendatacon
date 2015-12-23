@@ -17,10 +17,20 @@
  #	See the License for the specific language governing permissions and
  #	limitations under the License.
  # 
-project(JSON)
-cmake_minimum_required(VERSION 2.8)
-file(GLOB ${PROJECT_NAME}_SRC *.cpp *.h *.def json/*.h)
+project(opendatacon)
+file(GLOB SRC_LIST *.cpp *.h)
+include_directories(
+	"../include"
+	"../JSON"
+	"${DNP3_HOME}/include"
+	"${ASIO_HOME}/include"
+	"${TCLAP_HOME}/include"
+)
+link_directories("${DNP3_HOME}/lib")
 
-add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRC})
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION "lib" ARCHIVE DESTINATION "lib")
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER libs)
+add_executable(${PROJECT_NAME} ${SRC_LIST})
+target_link_libraries(${PROJECT_NAME} ODC JSON asiopal openpal asiodnp3 opendnp3 ${PTHREAD} ${DL})
+
+install(DIRECTORY "include/opendatacon" DESTINATION "include")
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "bin")
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER bins)
