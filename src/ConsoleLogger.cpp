@@ -46,6 +46,45 @@ void ConsoleLogger::SetPrintLocation(bool printLocation_)
 	printLocation = printLocation_;
 }
 
+const char* LogFlagToString(int32_t flag)
+{
+	switch (flag)
+	{
+
+	case(opendnp3::flags::EVENT) :
+		return "EVENT  ";
+	case(opendnp3::flags::ERR) :
+		return "ERROR  ";
+	case(opendnp3::flags::WARN) :
+		return "WARN   ";
+	case(opendnp3::flags::INFO) :
+		return "INFO   ";
+	case(opendnp3::flags::DBG) :
+		return "DEBUG  ";
+	case(opendnp3::flags::LINK_RX) :
+	case(opendnp3::flags::LINK_RX_HEX) :
+							 return "<-LL-- ";
+	case(opendnp3::flags::LINK_TX) :
+	case(opendnp3::flags::LINK_TX_HEX) :
+							 return "--LL-> ";
+	case(opendnp3::flags::TRANSPORT_RX) :
+		return "<-TL-- ";
+	case(opendnp3::flags::TRANSPORT_TX) :
+		return "--TL-> ";
+	case(opendnp3::flags::APP_HEADER_RX) :
+	case(opendnp3::flags::APP_OBJECT_RX) :
+	case(opendnp3::flags::APP_HEX_RX) :
+							return "<-AL-- ";
+	case(opendnp3::flags::APP_HEADER_TX) :
+	case(opendnp3::flags::APP_OBJECT_TX) :
+	case(opendnp3::flags::APP_HEX_TX) :
+							return "--AL-> ";
+	default:
+		return "UNKNOWN";
+	}
+}
+
+
 void ConsoleLogger::Log(const openpal::LogEntry& entry)
 {
 	auto time = std::chrono::high_resolution_clock::now();
@@ -53,7 +92,7 @@ void ConsoleLogger::Log(const openpal::LogEntry& entry)
 
 	ostringstream oss;
 
-	oss << "ms(" << num << ") " << opendnp3::LogFlagToString(entry.GetFilters().GetBitfield());
+	oss << "ms(" << num << ") " << LogFlagToString(entry.GetFilters().GetBitfield());
 	oss << " " << entry.GetAlias();
 	if (printLocation)
 	{
