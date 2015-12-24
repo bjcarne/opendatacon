@@ -32,7 +32,6 @@
 #include <opendnp3/LogLevels.h>
 
 using namespace std;
-using namespace opendnp3;
 using namespace std::chrono;
 
 ConsoleLogger ConsoleLogger::instance;
@@ -54,7 +53,7 @@ void ConsoleLogger::Log(const openpal::LogEntry& entry)
 
 	ostringstream oss;
 
-	oss << "ms(" << num << ") " << LogFlagToString(entry.GetFilters().GetBitfield());
+	oss << "ms(" << num << ") " << opendnp3::LogFlagToString(entry.GetFilters().GetBitfield());
 	oss << " " << entry.GetAlias();
 	if (printLocation)
 	{

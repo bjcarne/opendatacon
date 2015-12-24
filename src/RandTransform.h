@@ -37,19 +37,19 @@ public:
 		Transform(params)
 	{};
 
-	bool Event(opendnp3::Binary& meas, uint16_t& index){return true;};
-	bool Event(opendnp3::DoubleBitBinary& meas, uint16_t& index){return true;};
-	bool Event(opendnp3::Counter& meas, uint16_t& index){return true;};
-	bool Event(opendnp3::FrozenCounter& meas, uint16_t& index){return true;};
-	bool Event(opendnp3::BinaryOutputStatus& meas, uint16_t& index){return true;};
-	bool Event(opendnp3::AnalogOutputStatus& meas, uint16_t& index){return true;};
-	bool Event(opendnp3::ControlRelayOutputBlock& arCommand, uint16_t index){return true;};
-	bool Event(opendnp3::AnalogOutputInt16& arCommand, uint16_t index){return true;};
-	bool Event(opendnp3::AnalogOutputInt32& arCommand, uint16_t index){return true;};
-	bool Event(opendnp3::AnalogOutputFloat32& arCommand, uint16_t index){return true;};
-	bool Event(opendnp3::AnalogOutputDouble64& arCommand, uint16_t index){return true;};
+	bool Event(ODC::Binary& meas, uint16_t& index){return true;};
+	bool Event(ODC::DoubleBitBinary& meas, uint16_t& index){return true;};
+	bool Event(ODC::Counter& meas, uint16_t& index){return true;};
+	bool Event(ODC::FrozenCounter& meas, uint16_t& index){return true;};
+	bool Event(ODC::BinaryOutputStatus& meas, uint16_t& index){return true;};
+	bool Event(ODC::AnalogOutputStatus& meas, uint16_t& index){return true;};
+	bool Event(ODC::ControlRelayOutputBlock& arCommand, uint16_t index){return true;};
+	bool Event(ODC::AnalogOutputInt16& arCommand, uint16_t index){return true;};
+	bool Event(ODC::AnalogOutputInt32& arCommand, uint16_t index){return true;};
+	bool Event(ODC::AnalogOutputFloat32& arCommand, uint16_t index){return true;};
+	bool Event(ODC::AnalogOutputDouble64& arCommand, uint16_t index){return true;};
 
-	bool Event(opendnp3::Analog& meas, uint16_t& index)
+	bool Event(ODC::Analog& meas, uint16_t& index)
 	{
 		static rand_t seed = (rand_t)((intptr_t) this);
 		meas.value = 100*ZERO_TO_ONE(seed);
