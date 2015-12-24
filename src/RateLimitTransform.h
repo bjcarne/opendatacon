@@ -28,9 +28,8 @@
 #define RATELIMITTRANSFORM_H_
 
 #include <atomic>
-#include <opendatacon/Transform.h>
-#include <asiopal/UTCTimeSource.h>
 #include <unordered_map>
+#include <opendatacon/Transform.h>
 
 class RateLimitTransform: public Transform
 {
@@ -74,7 +73,9 @@ public:
 			else
 				rateStats->updatePeriodMultiplier = 10;
 
-			rateStats->nextUpdatems = asiopal::UTCTimeSource::Instance().Now().msSinceEpoch + rateStats->updatePeriodms;
+            
+            auto msSinceEpoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			rateStats->nextUpdatems = msSinceEpoch + rateStats->updatePeriodms;
 		}
 	};
 
@@ -97,7 +98,7 @@ private:
 	bool CheckPass(T& meas)
 	{
 		// check if rollover of update count period
-		auto eventTime = asiopal::UTCTimeSource::Instance().Now().msSinceEpoch;
+        auto eventTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
 		// see if we need to subtract updates from the update counter
 		// as this section isn't atomic this might overshoot and subtract too many updates from the counter

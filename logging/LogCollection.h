@@ -28,8 +28,8 @@
 #ifndef opendatacon_LogCollection_h
 #define opendatacon_LogCollection_h
 
-#include <opendatacon/IUIResponder.h>
 #include "logging_cmds.h"
+#include <opendatacon/IUIResponder.h>
 
 using namespace ODC;
 

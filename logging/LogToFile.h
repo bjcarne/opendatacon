@@ -19,10 +19,10 @@
  */
 #pragma once
 
-#include <openpal/logging/ILogHandler.h>
 #include <chrono>
 #include <mutex>
 #include <fstream>
+#include <openpal/logging/ILogHandler.h>
 
 class LogToFile: public openpal::ILogHandler
 {

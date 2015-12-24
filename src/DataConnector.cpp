@@ -26,13 +26,13 @@
 
 #include <future>
 #include <iostream>
-#include <opendnp3/LogLevels.h>
 #include "DataConnector.h"
 #include "IndexOffsetTransform.h"
 #include "ThresholdTransform.h"
 #include "RandTransform.h"
 #include "RateLimitTransform.h"
 #include <opendatacon/Platform.h>
+#include "../logging/LogLevels.h"
 
 DataConnector::DataConnector(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
 	IOHandler(aName),

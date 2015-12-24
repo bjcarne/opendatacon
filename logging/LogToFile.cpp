@@ -38,6 +38,7 @@ tm localtime(const std::time_t* time)
 	#endif
 	return tm_snapshot;
 }
+
 std::string time_string()
 {
 	using namespace std::chrono;
@@ -122,23 +123,28 @@ void LogToFile::SetLogFileSizekB(size_t kB)
 {
 	mFileSizekB = kB;
 }
+
 void LogToFile::SetNumLogFiles(size_t num)
 {
 	mNumFiles = num;
 }
+
 void LogToFile::SetLogName(std::string name)
 {
 	mLogName = name;
 	mFileIndex = 0;
 }
+
 size_t LogToFile::GetLogFileSizekB()
 {
 	return mFileSizekB;
 }
+
 size_t LogToFile::GetNumLogFiles()
 {
 	return mNumFiles;
 }
+
 std::string LogToFile::GetLogName()
 {
 	return mLogName;

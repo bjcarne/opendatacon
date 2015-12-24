@@ -27,23 +27,21 @@
 #ifndef DATACONCENTRATOR_H_
 #define DATACONCENTRATOR_H_
 
-#include <asio.hpp>
-#include <unordered_map>
-#include <opendatacon/DataPort.h>
-#include <opendatacon/DataPortCollection.h>
 #include "DataConnector.h"
 #include "DataConnectorCollection.h"
-#include <opendatacon/InterfaceCollection.h>
-
-#include <opendatacon/Platform.h>
-#include <opendatacon/DataPort.h>
-#include <opendatacon/ConfigParser.h>
-
-#include "DataConnector.h"
 #include "AdvancedLogger.h"
 #include "LogToFile.h"
 #include "LogCollection.h"
 
+#include <asio.hpp>
+#include <unordered_map>
+
+#include <opendatacon/ConfigParser.h>
+#include <opendatacon/DataPort.h>
+#include <opendatacon/DataPortCollection.h>
+#include <opendatacon/InterfaceCollection.h>
+#include <opendatacon/Platform.h>
+#include <opendatacon/DataPort.h>
 #include <opendatacon/IUI.h>
 
 class DataConcentrator: public ConfigParser, public IUIResponder

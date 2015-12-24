@@ -27,7 +27,7 @@
 #include <thread>
 #include <asio.hpp>
 
-#include <opendnp3/LogLevels.h>
+#include <../logging/LogLevels.h>
 
 #include <opendatacon/Version.h>
 
@@ -41,7 +41,7 @@ DataConcentrator::DataConcentrator(std::string FileName):
 	ConfigParser(FileName),
 	IOS(std::thread::hardware_concurrency()),
 	ios_working(new asio::io_service::work(IOS)),
-	LOG_LEVEL(opendnp3::levels::NORMAL),
+	LOG_LEVEL(levels::NORMAL),
 	AdvConsoleLog(new AdvancedLogger(ConsoleLogger::Instance(),LOG_LEVEL)),
 	FileLog("datacon_log"),
 	AdvFileLog(new AdvancedLogger(FileLog,LOG_LEVEL))
@@ -160,13 +160,13 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 	{
 		std::string value = JSONRoot["LOG_LEVEL"].asString();
 		if(value == "ALL")
-			LOG_LEVEL = opendnp3::levels::ALL;
+			LOG_LEVEL = levels::ALL;
 		else if(value == "ALL_COMMS")
-			LOG_LEVEL = opendnp3::levels::ALL_COMMS;
+			LOG_LEVEL = levels::ALL_COMMS;
 		else if(value == "NORMAL")
-			LOG_LEVEL = opendnp3::levels::NORMAL;
+			LOG_LEVEL = levels::NORMAL;
 		else if(value == "NOTHING")
-			LOG_LEVEL = opendnp3::levels::NOTHING;
+			LOG_LEVEL = levels::NOTHING;
 		else
 			std::cout << "Warning: invalid LOG_LEVEL setting: '" << value << "' : ignoring and using 'NORMAL' log level." << std::endl;
 		AdvFileLog->SetLogLevel(LOG_LEVEL);

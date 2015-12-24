@@ -108,4 +108,3 @@ void ConsoleLogger::Log(const openpal::LogEntry& entry)
 	std::unique_lock<std::mutex> lock(mutex);
 	std::cout << oss.str() << std::endl;
 }
-
