@@ -26,10 +26,11 @@ include_directories(
 	"${ASIO_HOME}/include"
 	"${TCLAP_HOME}/include"
 )
+
 link_directories("${DNP3_HOME}/lib")
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})
-target_link_libraries(${PROJECT_NAME} ODC JSON asiopal openpal asiodnp3 opendnp3 ${PTHREAD} ${DL})
+target_link_libraries(${PROJECT_NAME} ODC JSON openpal opendnp3 ${PTHREAD} ${DL})
 
 install(DIRECTORY "include/opendatacon" DESTINATION "include")
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "bin")

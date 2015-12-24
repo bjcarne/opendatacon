@@ -35,7 +35,7 @@ set_property(TARGET httpd_target PROPERTY IMPORTED_LOCATION "${HTTPD_LIB}")
 link_directories("${DNP3_HOME}/lib")
 
 add_library(${PROJECT_NAME} MODULE ${${PROJECT_NAME}_SRC})
-target_link_libraries(${PROJECT_NAME} ODC httpd_target asiopal)
+target_link_libraries(${PROJECT_NAME} ODC httpd_target )
 
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION "plugin")
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER plugins)

@@ -30,7 +30,7 @@ include_directories(
 	"${ASIO_HOME}/include"
 )
 
-link_directories("${DNP3_HOME}/lib${MY_BUILD_CONFIG}")
+link_directories("${DNP3_HOME}/lib")
 
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRC})
 target_link_libraries(${PROJECT_NAME} ODC JSON ${PTHREAD})
