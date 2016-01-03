@@ -32,8 +32,6 @@ find_library(HTTPD_LIB NAMES microhttpd libmicrohttpd
 add_library(httpd_target UNKNOWN IMPORTED)
 set_property(TARGET httpd_target PROPERTY IMPORTED_LOCATION "${HTTPD_LIB}")
 
-link_directories("${DNP3_HOME}/lib")
-
 add_library(${PROJECT_NAME} MODULE ${${PROJECT_NAME}_SRC})
 target_link_libraries(${PROJECT_NAME} ODC httpd_target )
 
