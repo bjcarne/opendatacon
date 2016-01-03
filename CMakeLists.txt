@@ -22,10 +22,37 @@ if(WIN32)
 else()
 	cmake_minimum_required(VERSION 2.8)
 endif()
-project(opendatacon CXX)
+cmake_policy(SET CMP0048 NEW)
+
+find_package(Git)
+if(GIT_FOUND)
+ 	message("-- git found: ${GIT_EXECUTABLE}, determining source version")
+	execute_process(
+		COMMAND git describe --long --match "[0-9]*\\.[0-9]*\\.[0-9]" --dirty
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		OUTPUT_VARIABLE GIT_DESCRIBE
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
+ 	#message(" Git describe: ${GIT_DESCRIBE}")
+	string(REGEX MATCH "^([0-9\\.]+)-([0-9]+)-([^-]+)-?([^-]*)$" GIT_REPO_MATCH ${GIT_DESCRIBE})
+ 	#message(" Version: ${CMAKE_MATCH_1} ${CMAKE_MATCH_2} ${CMAKE_MATCH_3} ${CMAKE_MATCH_4}")
+	set(GIT_REPO_VERSION ${CMAKE_MATCH_1}.${CMAKE_MATCH_2})
+	set(GIT_REPO_COMMIT ${CMAKE_MATCH_3})
+	set(GIT_REPO_DIRTY ${CMAKE_MATCH_4})
+ 	message("-- opendatacon version: ${GIT_REPO_VERSION} ${GIT_REPO_DIRTY}")
+
+	project(ODC VERSION ${GIT_REPO_VERSION} LANGUAGES CXX)
+	configure_file (
+		"${CMAKE_SOURCE_DIR}/include/opendatacon/Version.h.in"
+		"${CMAKE_SOURCE_DIR}/include/opendatacon/Version.h"
+  	)
+else()
+	project(ODC LANGUAGES CXX)
+endif()
+
 
 # various optional libraries and projects
-option(FULL "Build all optional projects (DNP3Port, JSONPort, Tests, WebUI)" ON)
+option(FULL "Build all optional projects (DNP3Port, JSONPort, Tests, ConsoleUI, WebUI)" ON)
 option(TESTS "Build tests" OFF)
 option(WEBUI "Build the http(s) web user interface" OFF)
 option(DNP3PORT "Build DNP3 Port" OFF)
@@ -39,6 +66,7 @@ option(COVERAGE "Builds the libraries with coverage info for gcov" OFF)
 if(FULL)
 	set(TESTS ON)
 	set(WEBUI ON)
+	set(CONSOLEUI ON)
 	set(DNP3PORT ON)
 	set(JSONPORT ON)
 	set(MODBUSPORT ON)
@@ -111,6 +139,7 @@ endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 add_subdirectory(JSON)
 add_subdirectory(ODC)
 add_subdirectory(src)
+add_subdirectory(logging)
 if(DNP3PORT)
 	add_subdirectory(DNP3Port)
 endif()
@@ -119,6 +148,9 @@ if(JSONPORT)
 endif()
 if(WEBUI)
 	add_subdirectory(WebUI)
+endif()
+if(CONSOLEUI)
+	add_subdirectory(ConsoleUI)
 endif()
 if(TESTS)
 	add_subdirectory(tests)

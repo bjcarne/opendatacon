@@ -33,15 +33,33 @@
 
 namespace ODC
 {
-
-	class InterfaceCollection : public ResponderMap<IUI>
-	{
-	public:
-		InterfaceCollection()
-		{}
-		virtual ~InterfaceCollection(){};
-	};
-
+    
+    class InterfaceCollection : public ResponderMap<IUI>
+    {
+        
+    public:
+        InterfaceCollection()
+        {
+            this->AddCommand("Enable", [this](const ParamCollection &params)->const Json::Value {
+                if (auto target = GetTarget(params))
+                {
+                    target->Enable();
+                    return IUIResponder::GenerateResult("Success");
+                }
+                return IUIResponder::GenerateResult("Bad parameter");
+            });
+            this->AddCommand("Disable", [this](const ParamCollection &params)->const Json::Value {
+                if (auto target = GetTarget(params))
+                {
+                    target->Disable();
+                    return IUIResponder::GenerateResult("Success");
+                }
+                return IUIResponder::GenerateResult("Bad parameter");
+            });
+        }
+        virtual ~InterfaceCollection(){};
+    };
+    
 }
 
 #endif /* defined(__opendatacon__InterfaceCollection__) */

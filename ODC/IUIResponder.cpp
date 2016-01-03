@@ -37,7 +37,7 @@ namespace ODC
 		return result;
 	}
 
-	Json::Value IUIResponder::GetCommandList()
+	const Json::Value IUIResponder::GetCommandList() const
 	{
 		Json::Value result;
 		for (auto command : commands)
