@@ -66,10 +66,10 @@ private:
     std::string help_intro;
 
 	/* UI response handlers */
-    std::unordered_map<std::string, const ODC::IUIResponder&> Responders;
+    std::unordered_map<std::string, const ODC::IUIResponder*> Responders;
     
     /* Internal functions */
-    void ExecuteCommand(const ODC::IUIResponder& pResponder, const std::string& command, std::stringstream& args);
+    void ExecuteCommand(const ODC::IUIResponder* pResponder, const std::string& command, std::stringstream& args);
 };
 
 #endif /* defined(__opendatacon__WebUI__) */

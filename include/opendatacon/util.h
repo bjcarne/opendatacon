@@ -23,19 +23,17 @@
 #include <fstream>
 #include <string>
 #include <map>
-#include <stdint.h>
+#include <cstdint>
 
 //fast rough random numbers
 #define CONG(jcong) (jcong = 69069*jcong+1234567)
 #define ZERO_TO_ONE(a) (CONG(a)*2.328306e-10)
+typedef uint32_t rand_t;
 
 namespace ODC
-{
-    typedef uint32_t rand_t;
-    
+{    
     bool getline_noncomment(std::istream& is, std::string& line);
     bool extract_delimited_string(std::istream& ist, std::string& extracted);
-	bool GetBool(const std::string& value);
     bool extract_delimited_string(const std::string& delims, std::istream& ist, std::string& extracted);
-    
+	bool GetBool(const std::string& value);
 }
