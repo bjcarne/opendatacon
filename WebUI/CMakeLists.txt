@@ -27,6 +27,8 @@ include_directories(
 	${MICROHTTPD_HOME}/include
 )
 
+link_directories("${DNP3_HOME}/lib")
+
 find_library(HTTPD_LIB NAMES microhttpd libmicrohttpd
 	PATHS ${MICROHTTPD_HOME}/lib)
 add_library(httpd_target UNKNOWN IMPORTED)

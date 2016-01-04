@@ -31,7 +31,7 @@ include_directories(
 link_directories("${DNP3_HOME}/lib")
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})
-target_link_libraries(${PROJECT_NAME} ODC logging JSON ${PTHREAD} ${DL})
+target_link_libraries(${PROJECT_NAME} ODC logging asiodnp3 JSON ${PTHREAD} ${DL})
 
 install(DIRECTORY "include/opendatacon" DESTINATION "include")
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "bin")

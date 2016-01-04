@@ -31,7 +31,7 @@
 
 #include <opendatacon/Version.h>
 
-#include "ConsoleLogger.h"
+#include <asiodnp3/ConsoleLogger.h>
 #include "DataConcentrator.h"
 #include "logging_cmds.h"
 #include "NullPort.h"
@@ -41,7 +41,7 @@ DataConcentrator::DataConcentrator(std::string FileName):
 	IOS(std::thread::hardware_concurrency()),
 	ios_working(new asio::io_service::work(IOS)),
 	LOG_LEVEL(levels::NORMAL),
-	AdvConsoleLog(new AdvancedLogger(ConsoleLogger::Instance(),LOG_LEVEL)),
+	AdvConsoleLog(new AdvancedLogger(asiodnp3::ConsoleLogger::Instance(),LOG_LEVEL)),
 	FileLog("datacon_log"),
 	AdvFileLog(new AdvancedLogger(FileLog,LOG_LEVEL))
 {

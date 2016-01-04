@@ -29,6 +29,8 @@ include_directories(
 	${MODBUS_HOME}/include
 )
 
+link_directories("${DNP3_HOME}/lib")
+
 find_library(MODBUS_LIB NAMES modbus libmodbus
 	PATHS ${MODBUS_HOME}/lib)
 add_library(modbus_target UNKNOWN IMPORTED)
