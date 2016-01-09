@@ -17,19 +17,27 @@
  #	See the License for the specific language governing permissions and
  #	limitations under the License.
  # 
-project(ODC)
-cmake_minimum_required(VERSION 2.8)
-file(GLOB ${PROJECT_NAME}_SRC *.cpp *.h *.def ../include/opendatacon/*.h)
+project(opendatacon)
+file(GLOB SRC_LIST *.cpp *.h)
+
+if(WIN32)
+	file(GLOB DAEMON_SRC_LIST WinDaemon/*.cpp WinDaemon/*.h)
+else()
+	file(GLOB DAEMON_SRC_LIST POSIXDaemon/*.cpp POSIXDaemon/*.h)
+endif()
 
 include_directories(
-	"../JSON"
 	"../include"
+	"../JSON"
+	"../logging"
 	"${DNP3_HOME}/include"
 	"${ASIO_HOME}/include"
+	"${TCLAP_HOME}/include"
 )
 
-add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRC})
-target_link_libraries(${PROJECT_NAME} JSON ${asiopal_libs})
+add_executable(${PROJECT_NAME} ${SRC_LIST} ${DAEMON_SRC_LIST})
+target_link_libraries(${PROJECT_NAME} ODC JSON logging ${asiopal_libs} ${openpal_libs} ${asiodnp3_libs} ${opendnp3_libs} ${PTHREAD} ${DL})
 
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${INSTALLDIR_LIBS} ARCHIVE DESTINATION ${INSTALLDIR_LIBS} RUNTIME DESTINATION ${INSTALLDIR_BINS})
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER libs)
+install(DIRECTORY "../include/opendatacon" DESTINATION ${INSTALLDIR_INCLUDES})
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${INSTALLDIR_BINS})
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER bins)

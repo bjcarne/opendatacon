@@ -35,5 +35,5 @@ link_directories("${DNP3_HOME}/lib")
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SRC})
 target_link_libraries(${PROJECT_NAME} ODC JSON ${PTHREAD} ${DL})
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "bin")
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${INSTALLDIR_BINS})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER tests)

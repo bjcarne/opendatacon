@@ -17,22 +17,21 @@
  #	See the License for the specific language governing permissions and
  #	limitations under the License.
  # 
-project(opendatacon)
-file(GLOB SRC_LIST *.cpp *.h)
+project(SimPort)
+cmake_minimum_required(VERSION 2.8)
+file(GLOB ${PROJECT_NAME}_SRC *.cpp *.h *.def)
+
 include_directories(
-	"../include"
-	"../JSON"
-	"../logging"
-	"${DNP3_HOME}/include"
-	"${ASIO_HOME}/include"
-	"${TCLAP_HOME}/include"
+	../include
+	../JSON
+	${DNP3_HOME}/include
+	${ASIO_HOME}/include
 )
 
-link_directories("${DNP3_HOME}/lib")
+link_directories(${DNP3_HOME}/lib)
 
-add_executable(${PROJECT_NAME} ${SRC_LIST})
-target_link_libraries(${PROJECT_NAME} ODC logging asiodnp3 JSON ${PTHREAD} ${DL})
+add_library(${PROJECT_NAME} MODULE ${${PROJECT_NAME}_SRC})
+target_link_libraries(${PROJECT_NAME} ODC ${opendnp3_libs})
 
-install(DIRECTORY "include/opendatacon" DESTINATION "include")
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "bin")
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER bins)
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${INSTALLDIR_MODULES})
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ports)

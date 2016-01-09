@@ -30,7 +30,7 @@
 #include <opendatacon/DataPort.h>
 
 /* The equivalent of /dev/null as a DataPort */
-class NullPort: public DataPort
+class NullPort: public ODC::DataPort
 {
 private:
 	typedef asio::basic_waitable_timer<std::chrono::steady_clock> Timer_t;
@@ -52,8 +52,8 @@ public:
 			
 					for (auto IOHandler_pair : Subscribers)
 					{
-						IOHandler_pair.second->Event(ConnectState::PORT_UP, 0, this->Name);
-						IOHandler_pair.second->Event(ConnectState::CONNECTED, 0, this->Name);
+						IOHandler_pair.second->Event(ODC::ConnectState::PORT_UP, 0, this->Name);
+						IOHandler_pair.second->Event(ODC::ConnectState::CONNECTED, 0, this->Name);
 					}
 				}
 			});
@@ -65,8 +65,8 @@ public:
 		pTimer.reset();
 		for (auto IOHandler_pair : Subscribers)
 		{
-			IOHandler_pair.second->Event(ConnectState::PORT_DOWN, 0, this->Name);
-			IOHandler_pair.second->Event(ConnectState::DISCONNECTED, 0, this->Name);
+			IOHandler_pair.second->Event(ODC::ConnectState::PORT_DOWN, 0, this->Name);
+			IOHandler_pair.second->Event(ODC::ConnectState::DISCONNECTED, 0, this->Name);
 		}
 	};
 	void BuildOrRebuild(){};
@@ -86,15 +86,15 @@ public:
 	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
 	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
 
-	std::future<ODC::CommandStatus> Event(const BinaryQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
-	std::future<ODC::CommandStatus> Event(const DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
-	std::future<ODC::CommandStatus> Event(const AnalogQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
-	std::future<ODC::CommandStatus> Event(const CounterQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
-	std::future<ODC::CommandStatus> Event(const FrozenCounterQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
-	std::future<ODC::CommandStatus> Event(const BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
-	std::future<ODC::CommandStatus> Event(const AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
+	std::future<ODC::CommandStatus> Event(const ODC::BinaryQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
+	std::future<ODC::CommandStatus> Event(const ODC::DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
+	std::future<ODC::CommandStatus> Event(const ODC::AnalogQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
+	std::future<ODC::CommandStatus> Event(const ODC::CounterQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
+	std::future<ODC::CommandStatus> Event(const ODC::FrozenCounterQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
+	std::future<ODC::CommandStatus> Event(const ODC::BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
+	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
 
-	std::future<ODC::CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
+	std::future<ODC::CommandStatus> ConnectionEvent(ODC::ConnectState state, const std::string& SenderName) { return IOHandler::CommandFutureSuccess(); };
 };
 
 #endif /* NULLPORT_H_ */

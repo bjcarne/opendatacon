@@ -29,15 +29,13 @@ include_directories(
 	${MODBUS_HOME}/include
 )
 
-link_directories("${DNP3_HOME}/lib")
-
 find_library(MODBUS_LIB NAMES modbus libmodbus
 	PATHS ${MODBUS_HOME}/lib)
 add_library(modbus_target UNKNOWN IMPORTED)
 set_property(TARGET modbus_target PROPERTY IMPORTED_LOCATION "${MODBUS_LIB}")
 
 add_library(${PROJECT_NAME} MODULE ${${PROJECT_NAME}_SRC})
-target_link_libraries(${PROJECT_NAME} ODC logging modbus_target)
+target_link_libraries(${PROJECT_NAME} ODC logging modbus_target ${openpal_libs} ${opendnp3_libs})
 
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION "plugin")
+install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${INSTALLDIR_MODULES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ports)

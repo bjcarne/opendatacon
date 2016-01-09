@@ -44,15 +44,15 @@
 #include <opendatacon/DataPort.h>
 #include <opendatacon/IUI.h>
 
-class DataConcentrator: public ConfigParser, public IUIResponder
+class DataConcentrator: public ODC::ConfigParser, public ODC::IUIResponder
 {
 public:
 	DataConcentrator(std::string FileName);
 	//~DataConcentrator();
-	DataPortCollection DataPorts;
-	DataConnectorCollection DataConnectors;
-	LogCollection AdvancedLoggers;
-	InterfaceCollection Interfaces;
+	ODC::DataPortCollection DataPorts;
+	ODC::DataConnectorCollection DataConnectors;
+	ODC::LogCollection AdvancedLoggers;
+	ODC::InterfaceCollection Interfaces;
 	asio::io_service IOS;
 	std::unique_ptr<asio::io_service::work> ios_working;
 	openpal::LogFilters LOG_LEVEL;

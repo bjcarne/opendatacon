@@ -49,10 +49,9 @@
  */
 
 #include "DataConcentrator.h"
-#include <tclap/CmdLine.h>
+#include "DaemonInterface.h"
+#include "ODCArgs.h"
 #include <opendatacon/Platform.h>
-#include <opendatacon/Version.h>
-#include <errno.h>
 #include <csignal>
 
 int main(int argc, char* argv[])
@@ -63,45 +62,56 @@ int main(int argc, char* argv[])
 	{
 		static std::unique_ptr<DataConcentrator> TheDataConcentrator(nullptr);
 
-		TCLAP::CmdLine cmd("High performance asynchronous data concentrator", ' ', ODC_VERSION_STRING);
-		TCLAP::ValueArg<std::string> ConfigFileArg("c", "config", "Configuration file, specified as an absolute path or relative to the working directory.", false, "opendatacon.conf", "string");
-		cmd.add(ConfigFileArg);
-		TCLAP::ValueArg<std::string> PathArg("p", "path", "Working directory path, all configuration files and log files are relative to this path.", false, "", "string");
-		cmd.add(PathArg);
+        // Turn command line arguments into easy to query struct
+		ODCArgs Args(argc, argv);
 
-		cmd.parse(argc, argv);
-
-		std::string ConfFileName = ConfigFileArg.getValue();
-
-		if (PathArg.isSet())
+        // If arg "-p <path>" is set, try and change directory to <path>
+        if (Args.PathArg.isSet())
 		{
-			// Try to change working directory
-			std::string PathName = PathArg.getValue();
-			if (CHDIR(PathName.c_str()))
+			std::string PathName = Args.PathArg.getValue();
+			if (ChangeWorkingDir(PathName))
 			{
 				const size_t strmax = 80;
 				char buf[strmax];
-                char* str = strerror_rp(errno, buf, strmax);
-                std::string msg;
-                if (str)
-                {
-                    msg = "Unable to change working directory to '"+PathName+"' : "+str;
-                }
-                else
-                {
-                    msg = "Unable to change working directory to '"+PathName+"' : UNKNOWN ERROR";
-                }
+				char* str = strerror_rp(errno, buf, strmax);
+				std::string msg;
+				if (str)
+				{
+					msg = "Unable to change working directory to '" + PathName + "' : " + str;
+				}
+				else
+				{
+					msg = "Unable to change working directory to '" + PathName + "' : UNKNOWN ERROR";
+				}
 				throw std::runtime_error(msg);
 			}
 		}
 
+        // If arg "-r" provided, unregister daemon (for platforms that provide support)
+		if (Args.DaemonRemoveArg.isSet())
+		{
+			daemon_remove();
+		}
+        // If arg "-i" provided, register daemon (for platforms that provide support)
+		if (Args.DaemonInstallArg.isSet())
+		{
+			daemon_install(Args);
+		}
+        // If arg "-d" provided, daemonise (for platforms that provide support)
+		if (Args.DaemonArg.isSet())
+		{
+			daemonp(Args);
+		}
+
+        // Construct and build opendatacon object
 		std::cout << "This is opendatacon version " << ODC_VERSION_STRING << std::endl;
 		std::cout << "Loading configuration... ";
-		TheDataConcentrator.reset(new DataConcentrator(ConfFileName));
+		TheDataConcentrator.reset(new DataConcentrator(Args.ConfigFileArg.getValue()));
 		std::cout << "done" << std::endl << "Initialising objects... " << std::endl;
 		TheDataConcentrator->BuildOrRebuild();
 		std::cout << "done" << std::endl << "Starting up opendatacon..." << std::endl;
         
+        // Configure signal handlers
         auto shutdown_func = [](int signum)
         {
             TheDataConcentrator->Shutdown();
@@ -116,16 +126,17 @@ int main(int argc, char* argv[])
             ::signal(SIG,SIG_IGN);
         }
         
+        // Start opendatacon, returns after a clean shutdown
 		TheDataConcentrator->Run();
         
 		std::cout << "opendatacon version " << ODC_VERSION_STRING << " shutdown cleanly." << std::endl;
 	}
-	catch (TCLAP::ArgException &e) // catch any exceptions
+	catch (TCLAP::ArgException &e) // catch command line argument exceptions
 	{
 		std::cerr << "Command line error: " << e.error() << " for arg " << e.argId() << std::endl;
 		return 1;
 	}
-	catch (std::exception& e)
+	catch (std::exception& e) // catch opendatacon runtime exceptions
 	{
 		std::cerr << "Caught exception: " << e.what() << std::endl;
 		return 1;

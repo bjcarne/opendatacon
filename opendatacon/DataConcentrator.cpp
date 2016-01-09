@@ -131,7 +131,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			}
 
 			//try to load the lib
-			auto* pluginlib = DYNLIBLOAD(libname.c_str());
+			auto* pluginlib = LoadModule(libname);
 
 			if(pluginlib == nullptr)
 			{
@@ -143,7 +143,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			//Our API says the library should export a creation function: IUI* new_<Type>Plugin(Name, Filename, Overrides)
 			//it should return a pointer to a heap allocated instance of a descendant of IUI
 			std::string new_funcname = "new_"+Plugins[n]["Type"].asString()+"Plugin";
-			auto new_plugin_func = (IUI*(*)(std::string, std::string, const Json::Value))DYNLIBGETSYM(pluginlib, new_funcname.c_str());
+			auto new_plugin_func = (ODC::IUI*(*)(std::string, std::string, const Json::Value))LoadSymbol(pluginlib, new_funcname);
 
 			if(new_plugin_func == nullptr)
 			{
@@ -153,7 +153,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			}
 
 			//call the creation function and wrap the returned pointer to a new plugin
-			Interfaces[PluginName] = std::unique_ptr<IUI>(new_plugin_func(PluginName, Plugins[n]["ConfFilename"].asString(), Plugins[n]["ConfOverrides"]));
+			Interfaces[PluginName] = std::unique_ptr<ODC::IUI>(new_plugin_func(PluginName, Plugins[n]["ConfFilename"].asString(), Plugins[n]["ConfOverrides"]));
 		}
 	}
 
@@ -196,7 +196,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			}
 			if(Ports[n]["Type"].asString() == "Null")
 			{
-				DataPorts[Ports[n]["Name"].asString()] = std::unique_ptr<DataPort>(new NullPort(Ports[n]["Name"].asString(), Ports[n]["ConfFilename"].asString(), Ports[n]["ConfOverrides"]));
+				DataPorts[Ports[n]["Name"].asString()] = std::unique_ptr<ODC::DataPort>(new NullPort(Ports[n]["Name"].asString(), Ports[n]["ConfFilename"].asString(), Ports[n]["ConfOverrides"]));
 				continue;
 			}
 
@@ -213,29 +213,29 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			}
 
 			//try to load the lib
-			auto* portlib = DYNLIBLOAD(libname.c_str());
+			auto* portlib = LoadModule(libname.c_str());
 
 			if(portlib == nullptr)
 			{
 				std::cout << "Warning: failed to load library '"<<libname<<"' mapping to null port..."<<std::endl;
-				DataPorts[Ports[n]["Name"].asString()] = std::unique_ptr<DataPort>(new NullPort(Ports[n]["Name"].asString(), Ports[n]["ConfFilename"].asString(), Ports[n]["ConfOverrides"]));
+				DataPorts[Ports[n]["Name"].asString()] = std::unique_ptr<ODC::DataPort>(new NullPort(Ports[n]["Name"].asString(), Ports[n]["ConfFilename"].asString(), Ports[n]["ConfOverrides"]));
 				continue;
 			}
 
 			//Our API says the library should export a creation function: DataPort* new_<Type>Port(Name, Filename, Overrides)
 			//it should return a pointer to a heap allocated instance of a descendant of DataPort
 			std::string new_funcname = "new_"+Ports[n]["Type"].asString()+"Port";
-			auto new_port_func = (DataPort*(*)(std::string, std::string, const Json::Value))DYNLIBGETSYM(portlib, new_funcname.c_str());
+			auto new_port_func = (ODC::DataPort*(*)(std::string, std::string, const Json::Value))LoadSymbol(portlib, new_funcname);
 
 			if(new_port_func == nullptr)
 			{
 				std::cout << "Warning: failed to load symbol '"<<new_funcname<<"' for port type '"<<Ports[n]["Type"].asString()<<"' mapping to null port..."<<std::endl;
-				DataPorts[Ports[n]["Name"].asString()] = std::unique_ptr<DataPort>(new NullPort(Ports[n]["Name"].asString(), Ports[n]["ConfFilename"].asString(), Ports[n]["ConfOverrides"]));
+				DataPorts[Ports[n]["Name"].asString()] = std::unique_ptr<ODC::DataPort>(new NullPort(Ports[n]["Name"].asString(), Ports[n]["ConfFilename"].asString(), Ports[n]["ConfOverrides"]));
 				continue;
 			}
 
 			//call the creation function and wrap the returned pointer to a new port
-			DataPorts[Ports[n]["Name"].asString()] = std::unique_ptr<DataPort>(new_port_func(Ports[n]["Name"].asString(), Ports[n]["ConfFilename"].asString(), Ports[n]["ConfOverrides"]));
+			DataPorts[Ports[n]["Name"].asString()] = std::unique_ptr<ODC::DataPort>(new_port_func(Ports[n]["Name"].asString(), Ports[n]["ConfFilename"].asString(), Ports[n]["ConfOverrides"]));
 
 		}
 	}
@@ -250,7 +250,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			{
 				std::cout<<"Warning: invalid Connector config: need at least Name, ConfFilename: \n'"<<Connectors[n].toStyledString()<<"\n' : ignoring"<<std::endl;
 			}
-			DataConnectors[Connectors[n]["Name"].asString()] = std::unique_ptr<DataConnector>(new DataConnector(Connectors[n]["Name"].asString(), Connectors[n]["ConfFilename"].asString(), Connectors[n]["ConfOverrides"]));
+			DataConnectors[Connectors[n]["Name"].asString()] = std::unique_ptr<ODC::DataConnector>(new ODC::DataConnector(Connectors[n]["Name"].asString(), Connectors[n]["ConfFilename"].asString(), Connectors[n]["ConfOverrides"]));
 		}
 	}
 }
@@ -260,7 +260,7 @@ void DataConcentrator::BuildOrRebuild()
     for(auto& Name_n_UI : Interfaces)
     {
         // TODO: BuildOrRebuild for UserInterfaces
-        // Name_n_UI.second->BuildOrRebuild(DNP3Mgr,LOG_LEVEL);
+        // Name_n_UI.second->BuildOrRebuild();
     }
 	std::cout << "Ports" << std::endl;
 	for(auto& Name_n_Port : DataPorts)
@@ -310,7 +310,7 @@ void DataConcentrator::EnablePortOrConn(std::stringstream& args, bool enable)
 	std::string arg = "";
 	std::string mregex;
 	std::regex reg;
-	if(!extract_delimited_string(args,mregex))
+	if(!ODC::extract_delimited_string(args,mregex))
 	{
 		std::cout<<"Syntax error: Delimited regex expected, found \"..."<<mregex<<"\""<<std::endl;
 		return;
