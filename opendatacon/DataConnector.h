@@ -30,15 +30,16 @@
 #include <opendatacon/IOHandler.h>
 #include <opendatacon/ConfigParser.h>
 #include <opendatacon/Transform.h>
+#include <opendatacon/Logger.h>
 
 namespace ODC
 {
-	class DataConnector : public IOHandler, public ConfigParser
+	class DataConnector : public Logger, public IOHandler, public ConfigParser
 	{
 	public:
 		DataConnector(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides);
 		~DataConnector(){};
-
+        
 		std::future<CommandStatus> Event(const Binary& meas, uint16_t index, const std::string& SenderName);
 		std::future<CommandStatus> Event(const DoubleBitBinary& meas, uint16_t index, const std::string& SenderName);
 		std::future<CommandStatus> Event(const Analog& meas, uint16_t index, const std::string& SenderName);

@@ -223,7 +223,6 @@ endforeach()
 
 add_subdirectory(JSON)
 add_subdirectory(ODC)
-add_subdirectory(logging)
 add_subdirectory(opendatacon)
 if(DNP3PORT)
 	add_subdirectory(DNP3Port)

@@ -25,7 +25,7 @@
 #include <iomanip>
 #include <exception>
 
-ConsoleUI::ConsoleUI(): tinyConsole("odc> "), context("")
+ConsoleUI::ConsoleUI(): IUI("ConsoleUI","{}","{}"), Logger("ConsoleUI"), tinyConsole("odc> "), context("")
 {
     //mDescriptions["help"] = "Get help on commands. Optional argument of specific command.";
     AddCommand("help",[this](std::stringstream& LineStream){

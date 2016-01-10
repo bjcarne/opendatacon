@@ -121,9 +121,9 @@ private:
 	inline void DoOverrideControlCode(opendnp3::ControlRelayOutputBlock& arCommand)
 	{
 		DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
-		if(pConf->pPointConf->OverrideControlCode != opendnp3::ControlCode::UNDEFINED)
+		if(pConf->OverrideControlCode != opendnp3::ControlCode::UNDEFINED)
 		{
-			arCommand.functionCode = pConf->pPointConf->OverrideControlCode;
+            arCommand.functionCode = pConf->OverrideControlCode;
 			arCommand.rawCode = opendnp3::ControlCodeToType(arCommand.functionCode);
 		}
 

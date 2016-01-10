@@ -31,24 +31,22 @@
 #include "IOHandler.h"
 #include "ConfigParser.h"
 #include "IUIResponder.h"
+#include "Plugin.h"
+#include "Logger.h"
 
 namespace ODC
 {
 
-	class DataPort : public IOHandler, public ConfigParser
+	class DataPort : public Plugin, public IOHandler, public Logger
 	{
 	public:
 		DataPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides) :
+            Plugin(aName, aConfFilename, aConfOverrides),
 			IOHandler(aName),
-			ConfigParser(aConfFilename, aConfOverrides),
+        	Logger(aName),
 			pConf(nullptr)
 		{};
 		virtual ~DataPort(){};
-
-		virtual void Enable() = 0;
-		virtual void Disable() = 0;
-		virtual void BuildOrRebuild() = 0;
-		virtual void ProcessElements(const Json::Value& JSONRoot) = 0;
 
 		std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) final
 		{

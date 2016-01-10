@@ -36,7 +36,7 @@ include_directories(
 )
 
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${DAEMON_SRC_LIST})
-target_link_libraries(${PROJECT_NAME} ODC JSON logging ${asiopal_libs} ${openpal_libs} ${asiodnp3_libs} ${opendnp3_libs} ${PTHREAD} ${DL})
+target_link_libraries(${PROJECT_NAME} ODC JSON ${asiopal_libs} ${openpal_libs} ${asiodnp3_libs} ${opendnp3_libs} ${PTHREAD} ${DL})
 
 install(DIRECTORY "../include/opendatacon" DESTINATION ${INSTALLDIR_INCLUDES})
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${INSTALLDIR_BINS})

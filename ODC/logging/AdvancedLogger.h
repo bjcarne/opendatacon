@@ -17,7 +17,9 @@
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
  */
-#pragma once
+
+#ifndef ADVANCEDLOGGER_H
+#define ADVANCEDLOGGER_H
 
 #include <openpal/logging/ILogHandler.h>
 #include <asiopal/UTCTimeSource.h>
@@ -82,3 +84,8 @@ private:
 	std::vector<MessageCount> IgnoreRepeats;
 };
 
+//void cmd_ignore_message(std::stringstream& args, AdvancedLogger& AdvLog);
+//void cmd_unignore_message(std::stringstream& args, AdvancedLogger& AdvLog);
+//void cmd_show_ignored(std::stringstream& args, AdvancedLogger& AdvLog);
+
+#endif

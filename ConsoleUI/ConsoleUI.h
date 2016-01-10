@@ -29,6 +29,7 @@
 #define __opendatacon__WebUI__
 
 #include <opendatacon/IUI.h>
+#include <opendatacon/Logger.h>
 
 #include <asio.hpp>
 #include <vector>
@@ -37,7 +38,7 @@
 #include <functional>
 #include "tinycon.h"
 
-class ConsoleUI: public ODC::IUI, tinyConsole
+class ConsoleUI: public ODC::IUI, public ODC::Logger, tinyConsole
 {
 public:
 	ConsoleUI();
@@ -57,6 +58,9 @@ public:
     void BuildOrRebuild() {};
     void Enable();
     void Disable();
+    
+    /* Implement ConfigParser interface */
+    void ProcessElements(const Json::Value& JSONRoot) {};
     
 private:
     /* */

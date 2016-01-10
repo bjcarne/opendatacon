@@ -68,15 +68,20 @@ namespace ODC
 			std::ifstream fin(FileName);
 			if (fin.fail())
 			{
-				std::cout << "WARNING: Config file " << FileName << " open fail." << std::endl;
+                std::string msg = "WARNING: Could not find or open config file '" + FileName + "'";
+                auto log_entry = ODC::LogEntry("ConfigParser", -1, "", msg.c_str(), -1);
+                this->Log(log_entry);
+                
 				return nullptr;
 			}
 			Json::Reader JSONReader;
 			bool parse_success = JSONReader.parse(fin, JSONCache[FileName]);
 			if (!parse_success)
 			{
-				std::cout << "Failed to parse configuration from '" << FileName << "'\n"
-					<< JSONReader.getFormattedErrorMessages() << std::endl;
+                std::string msg = "Failed to parse configuration from '" + FileName + "'\n" + JSONReader.getFormattedErrorMessages();
+                auto log_entry = ODC::LogEntry("ConfigParser", -1, "", msg.c_str(), -1);
+                this->Log(log_entry);
+                
 				return nullptr;
 			}
 		}

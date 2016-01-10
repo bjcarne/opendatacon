@@ -27,18 +27,16 @@
 
 namespace ODC
 {
-    class Plugin : ConfigParser
+    class Plugin : public ConfigParser
     {
     public:
         Plugin(const std::string& aName, const std::string& aConfFilename, const Json::Value aConfOverrides):
-        ConfigParser(aConfFilename, aConfOverrides),
-        Name(aName)
+        ConfigParser(aConfFilename, aConfOverrides)
         {};
         virtual void BuildOrRebuild() = 0;
         virtual void Enable() = 0;
         virtual void Disable() = 0;
     private:
-        std::string Name;
     };
 }
     

@@ -72,16 +72,16 @@ struct ModbusAddrConf
 	{};
 };
 
-class ModbusPortConf: public DataPortConf
+class ModbusPortConf: public Logger, public DataPortConf, public ModbusPointConf
 {
 public:
 	ModbusPortConf(std::string FileName):
+    	Logger(FileName),
+    	ModbusPointConf(FileName),
 		mAddrConf()
 	{
-		pPointConf.reset(new ModbusPointConf(FileName));
 	};
 
-	std::unique_ptr<ModbusPointConf> pPointConf;
 	ModbusAddrConf mAddrConf;
 };
 

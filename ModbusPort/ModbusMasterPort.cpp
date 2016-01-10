@@ -67,16 +67,16 @@ void ModbusMasterPort::Connect()
 	if (mb == NULL)
 	{
 		std::string msg = Name+": Connect error: 'Modbus stack failed'";
-		auto log_entry = openpal::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		Log(log_entry);
 		return;
 	}
 
 	if (modbus_connect(mb) == -1)
 	{
 		std::string msg = Name+": Connect error: '" + modbus_strerror(errno) + "'";
-		auto log_entry = openpal::LogEntry("ModbusMasterPort", openpal::logflags::WARN,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+		Log(log_entry);
 
 		//try again later - except for manual connections
 		if (pConf->mAddrConf.ServerType == server_type_t::PERSISTENT || pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
@@ -97,8 +97,8 @@ void ModbusMasterPort::Connect()
 
 	{
 		std::string msg = Name + ": Connect success!";
-		auto log_entry = openpal::LogEntry("ModbusMasterPort", openpal::logflags::INFO,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+		Log(log_entry);
 	}
 
 	modbus_set_slave(mb, pConf->mAddrConf.OutstationAddr);
@@ -109,12 +109,12 @@ void ModbusMasterPort::Connect()
 //    if (rc > 1)
 //    {
 //	    std::string msg = Name + "Run Status Indicator: %s" + (tab_bytes[1] ? "ON" : "OFF");
-//	    auto log_entry = openpal::LogEntry("ModbusMasterPort", openpal::logflags::INFO,"", msg.c_str(), -1);
-//	    pLoggers->Log(log_entry);
+//	    auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+//	    Log(log_entry);
 //    }
 
 	PollScheduler->Clear();
-	for(auto pg : pConf->pPointConf->PollGroups)
+	for(auto pg : pConf->PollGroups)
 	{
 		auto id = pg.second.ID;
 		auto action = [=](){
@@ -148,22 +148,22 @@ void ModbusMasterPort::Disconnect()
 	for(auto IOHandler_pair : Subscribers)
 	{
 		// Modbus function code 0x01 (read coil status)
-		for(auto range : pConf->pPointConf->BitIndicies)
+		for(auto range : pConf->BitIndicies)
 			for(uint16_t index = range.start; index < range.start + range.count; index++ )
 				IOHandler_pair.second->Event(BinaryQuality::COMM_LOST, index, this->Name);
 
 		// Modbus function code 0x02 (read input status)
-		for(auto range : pConf->pPointConf->InputBitIndicies)
+		for(auto range : pConf->InputBitIndicies)
 			for(uint16_t index = range.start; index < range.start + range.count; index++ )
 				IOHandler_pair.second->Event(BinaryQuality::COMM_LOST, index, this->Name);
 
 		// Modbus function code 0x03 (read holding registers)
-		for(auto range : pConf->pPointConf->RegIndicies)
+		for(auto range : pConf->RegIndicies)
 			for(uint16_t index = range.start; index < range.start + range.count; index++ )
 				IOHandler_pair.second->Event(AnalogQuality::COMM_LOST,index,this->Name);
 
 		// Modbus function code 0x04 (read input registers)
-		for(auto range : pConf->pPointConf->InputRegIndicies)
+		for(auto range : pConf->InputRegIndicies)
 			for(uint16_t index = range.start; index < range.start + range.count; index++ )
 				IOHandler_pair.second->Event(AnalogQuality::COMM_LOST,index,this->Name);
 	}
@@ -172,8 +172,8 @@ void ModbusMasterPort::Disconnect()
 void ModbusMasterPort::HandleError(int errnum, const std::string& source)
 {
 	std::string msg = Name + ": " + source + " error: '" + modbus_strerror(errno) + "'";
-	auto log_entry = openpal::LogEntry("ModbusMasterPort", openpal::logflags::WARN,"", msg.c_str(), -1);
-	pLoggers->Log(log_entry);
+	auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+	Log(log_entry);
 
 	// If not a modbus error, tear down the connection?
 //    if (errnum < MODBUS_ENOBASE)
@@ -240,8 +240,8 @@ void ModbusMasterPort::BuildOrRebuild()
 		if (mb == NULL)
 		{
 			std::string msg = Name + ": Stack error: 'Modbus stack creation failed'";
-			auto log_entry = openpal::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			Log(log_entry);
 			throw std::runtime_error(msg);
 		}
 	}
@@ -252,8 +252,8 @@ void ModbusMasterPort::BuildOrRebuild()
 		if (mb == NULL)
 		{
 			std::string msg = Name + ": Stack error: 'Modbus stack creation failed'";
-			auto log_entry = openpal::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			Log(log_entry);
 			throw std::runtime_error(msg);
 		}
 
@@ -261,16 +261,16 @@ void ModbusMasterPort::BuildOrRebuild()
 //		if(modbus_rtu_set_serial_mode(mb,MODBUS_RTU_RS232) == -1)
 //		{
 //			std::string msg = Name + ": Stack error: 'Failed to set Modbus serial mode to RS232'";
-//			auto log_entry = openpal::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-//			pLoggers->Log(log_entry);
+//			auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+//			Log(log_entry);
 //			throw std::runtime_error(msg);
 //		}
 	}
 	else
 	{
 		std::string msg = Name + ": No IP address or serial device defined";
-		auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		Log(log_entry);
 		throw std::runtime_error(msg);
 	}
 }
@@ -283,7 +283,7 @@ void ModbusMasterPort::DoPoll(uint32_t pollgroup)
 	int rc;
 
 	// Modbus function code 0x01 (read coil status)
-	for(auto range : pConf->pPointConf->BitIndicies)
+	for(auto range : pConf->BitIndicies)
 	{
 		if (pollgroup && (range.pollgroup != pollgroup))
 			continue;
@@ -315,7 +315,7 @@ void ModbusMasterPort::DoPoll(uint32_t pollgroup)
 	}
 
 	// Modbus function code 0x02 (read input status)
-	for(auto range : pConf->pPointConf->InputBitIndicies)
+	for(auto range : pConf->InputBitIndicies)
 	{
 		if (pollgroup && (range.pollgroup != pollgroup))
 			continue;
@@ -347,7 +347,7 @@ void ModbusMasterPort::DoPoll(uint32_t pollgroup)
 	}
 
 	// Modbus function code 0x03 (read holding registers)
-	for(auto range : pConf->pPointConf->RegIndicies)
+	for(auto range : pConf->RegIndicies)
 	{
 		if (pollgroup && (range.pollgroup != pollgroup))
 			continue;
@@ -379,7 +379,7 @@ void ModbusMasterPort::DoPoll(uint32_t pollgroup)
 	}
 
 	// Modbus function code 0x04 (read input registers)
-	for(auto range : pConf->pPointConf->InputRegIndicies)
+	for(auto range : pConf->InputRegIndicies)
 	{
 		if (pollgroup && (range.pollgroup != pollgroup))
 			continue;
@@ -448,7 +448,7 @@ std::future<CommandStatus> ModbusMasterPort::ConnectionEvent(ConnectState state,
 ModbusReadGroup<Binary>* ModbusMasterPort::GetRange(uint16_t index)
 {
 	ModbusPortConf* pConf = static_cast<ModbusPortConf*>(this->pConf.get());
-	for(auto& range : pConf->pPointConf->BitIndicies)
+	for(auto& range : pConf->BitIndicies)
 	{
 		if ((index >= range.start) && (index < range.start + range.count))
 			return &range;

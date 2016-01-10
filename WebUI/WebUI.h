@@ -29,13 +29,14 @@
 #define __opendatacon__WebUI__
 
 #include <opendatacon/IUI.h>
+#include <opendatacon/Logger.h>
 #include "MhdWrapper.h"
 
 const char ROOTPAGE[] = "/index.html";
 
 using namespace ODC;
 
-class WebUI: public IUI
+class WebUI: public IUI, public ODC::Logger
 {
 public:
 	WebUI(uint16_t port);
@@ -49,6 +50,8 @@ public:
 	void Enable();
 	void Disable();
 
+    void ProcessElements(const Json::Value& JSONRoot) {};
+    
 	/* HTTP response handler call back */
 	int http_ahc(void *cls,
 	             struct MHD_Connection *connection,

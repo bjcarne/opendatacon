@@ -29,11 +29,12 @@
 
 #include <unordered_map>
 #include <json/json.h>
+#include "ILoggable.h"
 
 namespace ODC
 {
 
-	class ConfigParser
+    class ConfigParser : public virtual ILoggable
 	{
 	public:
 		ConfigParser(const std::string& aConfFilename, const Json::Value& aConfOverrides = Json::Value());
@@ -49,10 +50,10 @@ namespace ODC
 
 	private:
 		void ProcessInherits(const std::string& FileName);
+        Json::Value* RecallOrCreate(const std::string& FileName);
 
 		static const Json::Value GetConfiguration(const std::string& FileName);
 		static void AddInherits(Json::Value& JSONRoot, const Json::Value& Inherits);
-		static Json::Value* RecallOrCreate(const std::string& FileName);
 		static std::unordered_map<std::string, Json::Value> JSONCache;
 	};
 

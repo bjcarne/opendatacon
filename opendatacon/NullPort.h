@@ -28,6 +28,7 @@
 #define NULLPORT_H_
 
 #include <opendatacon/DataPort.h>
+#include <opendatacon/Logger.h>
 
 /* The equivalent of /dev/null as a DataPort */
 class NullPort: public ODC::DataPort
@@ -40,7 +41,7 @@ public:
 		DataPort(aName, aConfFilename, aConfOverrides)
 	{};
     using DataPort::IOHandler::Event;
-
+    
 	void Enable()
 	{
 		pTimer.reset(new Timer_t(*pIOS, std::chrono::seconds(3)));

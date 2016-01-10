@@ -71,8 +71,8 @@ void ModbusOutstationPort::Connect()
 	if (mb == NULL)
 	{
 		std::string msg = Name+": Connect error: 'Modbus stack failed'";
-		auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		Log(log_entry);
 		return;
 	}
 
@@ -80,8 +80,8 @@ void ModbusOutstationPort::Connect()
 	if (s == -1)
 	{
 		std::string msg = Name+": Connect error: '" + modbus_strerror(errno) + "'";
-		auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::WARN,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+		Log(log_entry);
 		return;
 	}
 
@@ -89,8 +89,8 @@ void ModbusOutstationPort::Connect()
 	if (r == -1)
 	{
 		std::string msg = Name+": Connect error: '" + modbus_strerror(errno) + "'";
-		auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::WARN,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+		Log(log_entry);
 		return;
 	}
 }
@@ -145,8 +145,8 @@ void ModbusOutstationPort::BuildOrRebuild()
 		if (mb == NULL)
 		{
 			std::string msg = Name + ": Stack error: 'Modbus stack creation failed'";
-			auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			Log(log_entry);
 			//TODO: should this throw an exception instead of return?
 			return;
 		}
@@ -158,16 +158,16 @@ void ModbusOutstationPort::BuildOrRebuild()
 		if (mb == NULL)
 		{
 			std::string msg = Name + ": Stack error: 'Modbus stack creation failed'";
-			auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			Log(log_entry);
 			//TODO: should this throw an exception instead of return?
 			return;
 		}
 		if(modbus_rtu_set_serial_mode(mb,MODBUS_RTU_RS232))
 		{
 			std::string msg = Name + ": Stack error: 'Failed to set Modbus serial mode to RS232'";
-			auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			Log(log_entry);
 			//TODO: should this throw an exception instead of return?
 			return;
 		}
@@ -175,23 +175,23 @@ void ModbusOutstationPort::BuildOrRebuild()
 	else
 	{
 		std::string msg = Name + ": No IP interface or serial device defined";
-		auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		Log(log_entry);
 		//TODO: should this throw an exception instead of return?
 		return;
 	}
 
 
 	//Allocate memory for bits, input bits, registers, and input registers */
-	mb_mapping = modbus_mapping_new(pConf->pPointConf->BitIndicies.Total(),
-	                                pConf->pPointConf->InputBitIndicies.Total(),
-	                                pConf->pPointConf->RegIndicies.Total(),
-	                                pConf->pPointConf->InputRegIndicies.Total());
+	mb_mapping = modbus_mapping_new(pConf->BitIndicies.Total(),
+	                                pConf->InputBitIndicies.Total(),
+	                                pConf->RegIndicies.Total(),
+	                                pConf->InputRegIndicies.Total());
 	if (mb_mapping == NULL)
 	{
 		std::string msg = Name + ": Failed to allocate the modbus register mapping: " + std::string(modbus_strerror(errno));
-		auto log_entry = openpal::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		Log(log_entry);
 		//TODO: should this throw an exception instead of return?
 		return;
 	}
@@ -209,7 +209,7 @@ inline CommandStatus ModbusOutstationPort::SupportsT(T& arCommand, uint16_t aInd
 	auto pConf = static_cast<ModbusPortConf*>(this->pConf.get());
 	if(std::is_same<T,ControlRelayOutputBlock>::value) //TODO: add support for other types of controls (probably un-templatise when we support more)
 	{
-		        for(auto index : pConf->pPointConf->ControlIndicies)
+		        for(auto index : pConf->ControlIndicies)
 		                if(index == aIndex)
 		                        return CommandStatus::SUCCESS;
 	}
@@ -279,24 +279,24 @@ inline std::future<CommandStatus> ModbusOutstationPort::EventT(T& meas, uint16_t
 
 	if(std::is_same<T,Analog>::value)
 	{
-		int map_index = find_index(pConf->pPointConf->InputRegIndicies, index);
+		int map_index = find_index(pConf->InputRegIndicies, index);
 		if(map_index >= 0)
 			*(mb_mapping->tab_input_registers + map_index) = (uint16_t)meas.value;
 		else
 		{
-			map_index = find_index(pConf->pPointConf->RegIndicies, index);
+			map_index = find_index(pConf->RegIndicies, index);
 			if(map_index >= 0)
 				*(mb_mapping->tab_registers + map_index) = (uint16_t)meas.value;
 		}
 	}
 	else if(std::is_same<T,Binary>::value)
 	{
-		int map_index = find_index(pConf->pPointConf->InputBitIndicies, index);
+		int map_index = find_index(pConf->InputBitIndicies, index);
 		if(map_index >= 0)
 			*(mb_mapping->tab_input_bits + index) = (uint8_t)meas.value;
 		else
 		{
-			map_index = find_index(pConf->pPointConf->BitIndicies, index);
+			map_index = find_index(pConf->BitIndicies, index);
 			if(map_index >= 0)
 				*(mb_mapping->tab_bits + index) = (uint8_t)meas.value;
 		}

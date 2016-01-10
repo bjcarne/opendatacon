@@ -38,7 +38,6 @@ namespace ODC
 	}
 
 	IOHandler::IOHandler(std::string aName) : Name(aName),
-		pLoggers(new asiopal::LogFanoutHandler()),
 		LOG_LEVEL(openpal::logflags::WARN),
 		enabled(false)
 	{
@@ -50,10 +49,6 @@ namespace ODC
 		this->Subscribers[aName] = pIOHandler;
 	}
 
-	void IOHandler::AddLogSubscriber(openpal::ILogHandler* logger)
-	{
-		pLoggers->Subscribe(*logger);
-	}
 	void IOHandler::SetLogLevel(openpal::LogFilters LOG_LEVEL)
 	{
 		this->LOG_LEVEL = LOG_LEVEL;

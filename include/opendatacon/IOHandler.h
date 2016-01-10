@@ -94,13 +94,11 @@ namespace ODC
 		virtual std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) = 0;
 
 		void Subscribe(IOHandler* pIOHandler, std::string aName);
-		void AddLogSubscriber(openpal::ILogHandler* logger);
 		void SetLogLevel(openpal::LogFilters LOG_LEVEL);
 		void SetIOS(asio::io_service* ios_ptr);
 
-		std::string Name;
+        std::string Name;
 		std::unordered_map<std::string, IOHandler*> Subscribers;
-		std::unique_ptr<asiopal::LogFanoutHandler> pLoggers;
 		openpal::LogFilters LOG_LEVEL;
 		asio::io_service* pIOS;
 		bool enabled;

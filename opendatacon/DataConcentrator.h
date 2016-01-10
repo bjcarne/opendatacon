@@ -29,7 +29,6 @@
 
 #include "DataConnector.h"
 #include "DataConnectorCollection.h"
-#include "AdvancedLogger.h"
 #include "LogToFile.h"
 #include "LogCollection.h"
 
@@ -43,24 +42,25 @@
 #include <opendatacon/Platform.h>
 #include <opendatacon/DataPort.h>
 #include <opendatacon/IUI.h>
+#include <opendatacon/Logger.h>
 
-class DataConcentrator: public ODC::ConfigParser, public ODC::IUIResponder
+class DataConcentrator: public ODC::ConfigParser, public ODC::IUIResponder, public ODC::Logger
 {
 public:
 	DataConcentrator(std::string FileName);
 	//~DataConcentrator();
 	ODC::DataPortCollection DataPorts;
 	ODC::DataConnectorCollection DataConnectors;
-	ODC::LogCollection AdvancedLoggers;
-	ODC::InterfaceCollection Interfaces;
+    ODC::InterfaceCollection Interfaces;
 	asio::io_service IOS;
 	std::unique_ptr<asio::io_service::work> ios_working;
 	openpal::LogFilters LOG_LEVEL;
-	std::shared_ptr<AdvancedLogger> AdvConsoleLog; //just prints messages to the console plus filtering (Adv)
-	LogToFile FileLog;                             //Prints all messages to a rolling set of log files.
-	std::shared_ptr<AdvancedLogger> AdvFileLog;
-	asiopal::LogFanoutHandler FanoutHandler;
-
+//ODC::LogCollection AdvancedLoggers;
+//	std::shared_ptr<AdvancedLogger> AdvConsoleLog; //just prints messages to the console plus filtering (Adv)
+//	LogToFile FileLog;                             //Prints all messages to a rolling set of log files.
+//	std::shared_ptr<AdvancedLogger> AdvFileLog;
+//	asiopal::LogFanoutHandler FanoutHandler;
+    
 	void ProcessElements(const Json::Value& JSONRoot) override;
 	void BuildOrRebuild();
 	void Run();

@@ -30,6 +30,7 @@
 #include <memory>
 #include <opendatacon/DataPortConf.h>
 #include "JSONPointConf.h"
+#include <opendatacon/Logger.h>
 
 typedef struct
 {
@@ -37,16 +38,16 @@ typedef struct
 	uint16_t Port;
 }JSONAddrConf;
 
-class JSONPortConf: public DataPortConf
+class JSONPortConf : public DataPortConf, public JSONPointConf, public Logger
 {
 public:
 	JSONPortConf(std::string FileName):
+    	JSONPointConf(FileName),
+    	Logger(FileName),
 		retry_time_ms(20000)
 	{
-		pPointConf.reset(new JSONPointConf(FileName));
 	};
 
-	std::unique_ptr<JSONPointConf> pPointConf;
 	JSONAddrConf mAddrConf;
 	unsigned int retry_time_ms;
 };

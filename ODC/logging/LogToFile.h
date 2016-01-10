@@ -22,9 +22,10 @@
 #include <chrono>
 #include <mutex>
 #include <fstream>
-#include <openpal/logging/ILogHandler.h>
+#include <opendatacon/ILoggable.h>
 
-class LogToFile: public openpal::ILogHandler
+/*
+class LogToFile
 {
 
 public:
@@ -43,7 +44,7 @@ public:
 		mFileIndex(0)
 	{}
 
-	void Log( const openpal::LogEntry& arEntry ) override;
+	void Log( const ODC::LogEntry& arEntry );
 	void SetPrintLocation(bool print_loc);
 
 	void SetLogFileSizekB(size_t kB);
@@ -54,8 +55,6 @@ public:
 	std::string GetLogName();
 
 private:
-	static std::string FilterToString(const openpal::LogFilters& filters);
-
 	bool mPrintLocation;
 	std::string mLogName;
 	size_t mNumFiles;
@@ -64,3 +63,4 @@ private:
 	std::ofstream mLogFile;
 	std::mutex mMutex;
 };
+*/

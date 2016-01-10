@@ -32,9 +32,9 @@
 #include "RandTransform.h"
 #include "RateLimitTransform.h"
 #include <opendatacon/Platform.h>
-#include "../logging/LogLevels.h"
 
 DataConnector::DataConnector(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
+	Logger(aName),
 	IOHandler(aName),
 	ConfigParser(aConfFilename, aConfOverrides)
 {
@@ -230,8 +230,8 @@ inline std::future<ODC::CommandStatus> DataConnector::EventT(const T& event_obj,
 	}
 	//no connection for sender if we get here
 	std::string msg = "Connector '"+this->Name+"' discarding event from '"+SenderName+"' (No connection defined)";
-	auto log_entry = openpal::LogEntry("DataConnector", openpal::logflags::WARN,"", msg.c_str(), -1);
-	pLoggers->Log(log_entry);
+	auto log_entry = ODC::LogEntry("DataConnector", openpal::logflags::WARN,"", msg.c_str(), -1);
+	Log(log_entry);
 
 	return IOHandler::CommandFutureUndefined();
 }

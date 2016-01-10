@@ -30,6 +30,36 @@
 #include <opendatacon/DataPort.h>
 #include <opendnp3/gen/LinkStatus.h>
 #include <asiodnp3/DNP3Manager.h>
+#include <openpal/logging/ILogHandler.h>
+#include <openpal/logging/LogEntry.h>
+
+class DNP3LogWrapper : public openpal::ILogHandler
+{
+public:
+    DNP3LogWrapper(ODC::ILoggable& target) :
+    theLogger(target)
+    {
+        
+    }
+    
+    virtual void Log( const openpal::LogEntry& entry )
+    {
+        /* TODO: filter down to only log messages for this port */
+        ODC::LogEntry newentry(entry.GetAlias(), entry.GetFilters().GetBitfield(), entry.GetLocation(), entry.GetMessage(), entry.GetErrorCode());
+        try
+        {
+            theLogger.Log(newentry);
+        }
+        catch (std::exception& e)
+        {
+            
+        }
+    }
+    
+private:
+    ODC::ILoggable& theLogger;
+    
+};
 
 class DNP3Port: public ODC::DataPort
 {
@@ -68,12 +98,9 @@ public:
 	virtual std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName) { return IOHandler::CommandFutureNotSupported(); };
 
 	void ProcessElements(const Json::Value& JSONRoot);
-	/*
-		DNP3Mgr(std::thread::hardware_concurrency()),
-		DNP3Mgr.AddLogSubscriber(*AdvConsoleLog.get());
-		DNP3Mgr.AddLogSubscriber(*AdvFileLog.get());
-	*/
+
 protected:
+    DNP3LogWrapper LogWrapper;
 	asiodnp3::IChannel* pChannel;
 	static std::unordered_map<std::string, asiodnp3::IChannel*> TCPChannels;
 	static asiodnp3::DNP3Manager* DNP3Mgr;

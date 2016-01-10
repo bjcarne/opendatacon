@@ -24,6 +24,7 @@ file(GLOB ${PROJECT_NAME}_SRC *.cpp *.h *.def)
 include_directories(
 	../include
 	../JSON
+	${DNP3_HOME}/include
 	${MICROHTTPD_HOME}/include
 )
 

@@ -32,7 +32,7 @@
 #include <opendatacon/IUIResponder.h>
 
 namespace ODC
-{
+{/*
     class LogCollection: public ResponderMap<AdvancedLogger>
     {
     public:
@@ -77,7 +77,7 @@ namespace ODC
             }, "Shows all message ignore regexes and how many messages they've matched.");
         }
         virtual ~LogCollection(){};
-    };
+    };*/
 }
 
 #endif

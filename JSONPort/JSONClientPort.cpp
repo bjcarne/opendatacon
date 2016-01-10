@@ -53,8 +53,8 @@ void JSONClientPort::Enable()
 	catch(std::exception& e)
 	{
 		std::string msg = "Problem opening connection: "+Name+": "+e.what();
-		auto log_entry = openpal::LogEntry("JSONClientPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		Log(log_entry);
 		return;
 	}
 }
@@ -63,8 +63,8 @@ void JSONClientPort::ConnectCompletionHandler(asio::error_code err_code)
 	if(err_code)
 	{
 		std::string msg = Name+": Connect error: '"+err_code.message()+"'";
-		auto log_entry = openpal::LogEntry("JSONClientPort", openpal::logflags::INFO,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+		Log(log_entry);
 		//try again later
 		JSONPortConf* pConf = static_cast<JSONPortConf*>(this->pConf.get());
 		pTCPRetryTimer.reset(new Timer_t(*pIOS, std::chrono::milliseconds(pConf->retry_time_ms)));
@@ -77,8 +77,8 @@ void JSONClientPort::ConnectCompletionHandler(asio::error_code err_code)
 		return;
 	}
 	std::string msg = Name+": Connect success!";
-	auto log_entry = openpal::LogEntry("JSONClientPort", openpal::logflags::INFO,"", msg.c_str(), -1);
-	pLoggers->Log(log_entry);
+    auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+    Log(log_entry);
 
 	enabled = true;
 	Read();
@@ -94,15 +94,15 @@ void JSONClientPort::ReadCompletionHandler(asio::error_code err_code)
 		if(err_code != asio::error::eof)
 		{
 			std::string msg = Name+": Read error: '"+err_code.message()+"'";
-			auto log_entry = openpal::LogEntry("JSONClientPort", openpal::logflags::ERR,"", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			Log(log_entry);
 			return;
 		}
 		else
 		{
 			std::string msg = Name+": '"+err_code.message()+"' : Retrying...";
-			auto log_entry = openpal::LogEntry("JSONClientPort", openpal::logflags::WARN,"", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+			Log(log_entry);
 		}
 	}
 
@@ -176,9 +176,9 @@ void JSONClientPort::ProcessBraced(std::string braced)
 			return val;
 		};
 
-		Json::Value timestamp_val = TraversePath(pConf->pPointConf->TimestampPath);
+		Json::Value timestamp_val = TraversePath(pConf->TimestampPath);
 
-		for(auto& point_pair : pConf->pPointConf->Analogs)
+		for(auto& point_pair : pConf->Analogs)
 		{
 			Json::Value val = TraversePath(point_pair.second["JSONPath"]);
 			//if the path existed, load up the point
@@ -203,7 +203,7 @@ void JSONClientPort::ProcessBraced(std::string braced)
 			}
 		}
 
-		for(auto& point_pair : pConf->pPointConf->Binaries)
+		for(auto& point_pair : pConf->Binaries)
 		{
 			Json::Value val = TraversePath(point_pair.second["JSONPath"]);
 			//if the path existed, load up the point
@@ -238,16 +238,16 @@ void JSONClientPort::ProcessBraced(std::string braced)
 	else
 	{
 		std::string msg = "Error parsing JSON string: '"+braced+"'";
-		auto log_entry = openpal::LogEntry("JSONClientPort", openpal::logflags::WARN,"", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+		Log(log_entry);
 	}
 }
 template<typename T>
 inline void JSONClientPort::LoadT(T meas, uint16_t index, Json::Value timestamp_val)
 {
 	std::string msg = "Measurement Event '"+std::string(typeid(meas).name())+"'";
-	auto log_entry = openpal::LogEntry("JSONClientPort", openpal::logflags::DBG,"", msg.c_str(), -1);
-	pLoggers->Log(log_entry);
+	auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::DBG,"", msg.c_str(), -1);
+	Log(log_entry);
 
 	if(!timestamp_val.isNull() && timestamp_val.isUInt64())
 	{

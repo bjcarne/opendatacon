@@ -41,9 +41,8 @@ void DNP3MasterPort::Enable()
 	if(nullptr == pMaster)
 	{
 		std::string msg = Name + ": Port not configured.";
-		auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
-
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		Log(log_entry);
 		return;
 	}
 
@@ -77,17 +76,17 @@ void DNP3MasterPort::PortUp()
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 
 	// Update the comms state point if configured
-	if (pConf->pPointConf->mCommsPoint.first.quality & static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE))
+	if (pConf->mCommsPoint.first.quality & static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE))
 	{
 		for (auto IOHandler_pair : Subscribers)
 		{
 			{
 				std::string msg = Name + ": Updating comms state point to good";
-				auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
-				pLoggers->Log(log_entry);
+				auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
+				this->Log(log_entry);
 			}
-			opendnp3::Binary commsUpEvent(!pConf->pPointConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
-			IOHandler_pair.second->Event(commsUpEvent, pConf->pPointConf->mCommsPoint.second, this->Name);
+			opendnp3::Binary commsUpEvent(!pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
+			IOHandler_pair.second->Event(commsUpEvent, pConf->mCommsPoint.second, this->Name);
 		}
 	}
 }
@@ -101,25 +100,25 @@ void DNP3MasterPort::PortDown()
 	{
 		{
 			std::string msg = Name + ": Setting point quality to COMM_LOST";
-			auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
+			Log(log_entry);
 		}
 
-		for (auto index : pConf->pPointConf->BinaryIndicies)
+		for (auto index : pConf->BinaryIndicies)
 			IOHandler_pair.second->Event(opendnp3::BinaryQuality::COMM_LOST, index, this->Name);
-		for (auto index : pConf->pPointConf->AnalogIndicies)
+		for (auto index : pConf->AnalogIndicies)
 			IOHandler_pair.second->Event(opendnp3::AnalogQuality::COMM_LOST, index, this->Name);
 
 		// Update the comms state point if configured
-		if (pConf->pPointConf->mCommsPoint.first.quality & static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE))
+		if (pConf->mCommsPoint.first.quality & static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE))
 		{
 			{
 				std::string msg = Name + ": Updating comms state point to bad";
-				auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
-				pLoggers->Log(log_entry);
+				auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
+				Log(log_entry);
 			}
-			opendnp3::Binary commsDownEvent(pConf->pPointConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
-			IOHandler_pair.second->Event(commsDownEvent, pConf->pPointConf->mCommsPoint.second, this->Name);
+			opendnp3::Binary commsDownEvent(pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
+			IOHandler_pair.second->Event(commsDownEvent, pConf->mCommsPoint.second, this->Name);
 		}
 	}
 }
@@ -157,8 +156,8 @@ void DNP3MasterPort::OnKeepAliveFailure()
 		if (stack_enabled && pConf->mAddrConf.ServerType != server_type_t::PERSISTENT && !InDemand())
 		{
 			std::string msg = Name + ": disabling stack following disconnect on non-persistent port.";
-			auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
+			Log(log_entry);
 
 			// For all but persistent connections, and in-demand ONDEMAND connections, disable the stack
 			pIOS->post([&]()
@@ -186,8 +185,8 @@ void DNP3MasterPort::BuildOrRebuild()
 	{
 		//TODO:Get rid of this cludge!
 		DNP3Mgr = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
-		DNP3Mgr->AddLogSubscriber(*this->pLoggers);
 	}
+    DNP3Mgr->AddLogSubscriber(this->LogWrapper);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 	auto IPPort = pConf->mAddrConf.IP +":"+ std::to_string(pConf->mAddrConf.Port);
 	auto log_id = "mast_"+IPPort;
@@ -205,8 +204,8 @@ void DNP3MasterPort::BuildOrRebuild()
 	if (pChannel == nullptr)
 	{
 		std::string msg = Name + ": TCP channel not found for masterstation.";
-		auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		Log(log_entry);
 
 		return;
 	}
@@ -216,44 +215,44 @@ void DNP3MasterPort::BuildOrRebuild()
 	// Link layer configuration
 	StackConfig.link.LocalAddr = pConf->mAddrConf.MasterAddr;
 	StackConfig.link.RemoteAddr = pConf->mAddrConf.OutstationAddr;
-	StackConfig.link.NumRetry = pConf->pPointConf->LinkNumRetry;
-	StackConfig.link.Timeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->LinkTimeoutms);
-	if(pConf->pPointConf->LinkKeepAlivems == 0)
+	StackConfig.link.NumRetry = pConf->LinkNumRetry;
+	StackConfig.link.Timeout = openpal::TimeDuration::Milliseconds(pConf->LinkTimeoutms);
+	if(pConf->LinkKeepAlivems == 0)
 		StackConfig.link.KeepAliveTimeout = openpal::TimeDuration::Max();
 	else
-		StackConfig.link.KeepAliveTimeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->LinkKeepAlivems);
-	StackConfig.link.UseConfirms = pConf->pPointConf->LinkUseConfirms;
+		StackConfig.link.KeepAliveTimeout = openpal::TimeDuration::Milliseconds(pConf->LinkKeepAlivems);
+	StackConfig.link.UseConfirms = pConf->LinkUseConfirms;
 
 	// Master station configuration
-	StackConfig.master.responseTimeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->MasterResponseTimeoutms);
-	StackConfig.master.timeSyncMode = pConf->pPointConf->MasterRespondTimeSync ? opendnp3::TimeSyncMode::SerialTimeSync : opendnp3::TimeSyncMode::None;
-	StackConfig.master.disableUnsolOnStartup = !pConf->pPointConf->DoUnsolOnStartup;
-	StackConfig.master.unsolClassMask = pConf->pPointConf->GetUnsolClassMask();
-	StackConfig.master.startupIntegrityClassMask = pConf->pPointConf->GetStartupIntegrityClassMask(); //TODO: report/investigate bug - doesn't recognise response to integrity scan if not ALL_CLASSES
-	StackConfig.master.integrityOnEventOverflowIIN = pConf->pPointConf->IntegrityOnEventOverflowIIN;
-	StackConfig.master.taskRetryPeriod = openpal::TimeDuration::Milliseconds(pConf->pPointConf->TaskRetryPeriodms);
+	StackConfig.master.responseTimeout = openpal::TimeDuration::Milliseconds(pConf->MasterResponseTimeoutms);
+	StackConfig.master.timeSyncMode = pConf->MasterRespondTimeSync ? opendnp3::TimeSyncMode::SerialTimeSync : opendnp3::TimeSyncMode::None;
+	StackConfig.master.disableUnsolOnStartup = !pConf->DoUnsolOnStartup;
+	StackConfig.master.unsolClassMask = pConf->GetUnsolClassMask();
+	StackConfig.master.startupIntegrityClassMask = pConf->GetStartupIntegrityClassMask(); //TODO: report/investigate bug - doesn't recognise response to integrity scan if not ALL_CLASSES
+	StackConfig.master.integrityOnEventOverflowIIN = pConf->IntegrityOnEventOverflowIIN;
+	StackConfig.master.taskRetryPeriod = openpal::TimeDuration::Milliseconds(pConf->TaskRetryPeriodms);
 
 	pMaster = pChannel->AddMaster(Name.c_str(), *this, asiodnp3::DefaultMasterApplication::Instance(), StackConfig);
 	if (pMaster == nullptr)
 	{
 		std::string msg = Name + ": Error creating masterstation.";
-		auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		Log(log_entry);
 
 		return;
 	}
 
 	// Master Station scanning configuration
-	if(pConf->pPointConf->IntegrityScanRatems > 0)
-		IntegrityScan = pMaster->AddClassScan(opendnp3::ClassField::ALL_CLASSES, openpal::TimeDuration::Milliseconds(pConf->pPointConf->IntegrityScanRatems));
+	if(pConf->IntegrityScanRatems > 0)
+		IntegrityScan = pMaster->AddClassScan(opendnp3::ClassField::ALL_CLASSES, openpal::TimeDuration::Milliseconds(pConf->IntegrityScanRatems));
 	else
 		IntegrityScan = pMaster->AddClassScan(opendnp3::ClassField::ALL_CLASSES, openpal::TimeDuration::Minutes(600000000)); //ten million hours
-	if(pConf->pPointConf->EventClass1ScanRatems > 0)
-		pMaster->AddClassScan(opendnp3::ClassField::CLASS_1, openpal::TimeDuration::Milliseconds(pConf->pPointConf->EventClass1ScanRatems));
-	if(pConf->pPointConf->EventClass2ScanRatems > 0)
-		pMaster->AddClassScan(opendnp3::ClassField::CLASS_2, openpal::TimeDuration::Milliseconds(pConf->pPointConf->EventClass2ScanRatems));
-	if(pConf->pPointConf->EventClass3ScanRatems > 0)
-		pMaster->AddClassScan(opendnp3::ClassField::CLASS_3, openpal::TimeDuration::Milliseconds(pConf->pPointConf->EventClass3ScanRatems));
+	if(pConf->EventClass1ScanRatems > 0)
+		pMaster->AddClassScan(opendnp3::ClassField::CLASS_1, openpal::TimeDuration::Milliseconds(pConf->EventClass1ScanRatems));
+	if(pConf->EventClass2ScanRatems > 0)
+		pMaster->AddClassScan(opendnp3::ClassField::CLASS_2, openpal::TimeDuration::Milliseconds(pConf->EventClass2ScanRatems));
+	if(pConf->EventClass3ScanRatems > 0)
+		pMaster->AddClassScan(opendnp3::ClassField::CLASS_3, openpal::TimeDuration::Milliseconds(pConf->EventClass3ScanRatems));
 }
 
 // Called by OpenDNP3 Thread Pool
@@ -301,8 +300,8 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::Connec
 	if (stack_enabled && state == ODC::ConnectState::PORT_UP)
 	{
 		std::string msg = Name + ": upstream port enabled, performing integrity scan.";
-		auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
+		Log(log_entry);
 
 		IntegrityScan.Demand();
 	}
@@ -313,8 +312,8 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::Connec
 	if (!stack_enabled && state == ODC::ConnectState::CONNECTED && pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
 	{
 		std::string msg = Name + ": upstream port connected, performing on-demand connection.";
-		auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
+		Log(log_entry);
 
 		pIOS->post([&]()
 		           {
@@ -351,7 +350,7 @@ inline std::future<opendnp3::CommandStatus> DNP3MasterPort::EventT(T& arCommand,
 	}
 
 	auto pConf = static_cast<DNP3PortConf*>(this->pConf.get());
-	for(auto i : pConf->pPointConf->ControlIndicies)
+	for(auto i : pConf->ControlIndicies)
 	{
 		if(i == index)
 		{
@@ -364,8 +363,8 @@ inline std::future<opendnp3::CommandStatus> DNP3MasterPort::EventT(T& arCommand,
 			DoOverrideControlCode(lCommand);
 
 			std::string msg = "Executing direct operate to index: " + std::to_string(index);
-			auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
-			pLoggers->Log(log_entry);
+			auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
+			Log(log_entry);
 
 			this->pMaster->DirectOperate(lCommand,index,*CommandCorrespondant::GetCallback(std::move(cmd_promise)));
 
@@ -373,8 +372,8 @@ inline std::future<opendnp3::CommandStatus> DNP3MasterPort::EventT(T& arCommand,
 		}
 	}
 	std::string msg = "Control sent to invalid DNP3 index: " + std::to_string(index);
-	auto log_entry = openpal::LogEntry("DNP3MasterPort", openpal::logflags::WARN, "", msg.c_str(), -1);
-	pLoggers->Log(log_entry);
+	auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::WARN, "", msg.c_str(), -1);
+	Log(log_entry);
 	return IOHandler::CommandFutureUndefined();
 }
 

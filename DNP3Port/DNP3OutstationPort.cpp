@@ -49,8 +49,8 @@ void DNP3OutstationPort::Enable()
 	if(nullptr == pOutstation)
 	{
 		std::string msg = Name + ": Port not configured.";
-		auto log_entry = openpal::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		Log(log_entry);
 
 		return;
 	}
@@ -119,8 +119,8 @@ void DNP3OutstationPort::BuildOrRebuild()
 	{
 		//TODO:Get rid of this cludge!
 		DNP3Mgr = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
-		DNP3Mgr->AddLogSubscriber(*this->pLoggers);
 	}
+    DNP3Mgr->AddLogSubscriber(this->LogWrapper);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 	auto IPPort = pConf->mAddrConf.IP +":"+ std::to_string(pConf->mAddrConf.Port);
 	auto log_id = "outst_"+IPPort;
@@ -139,41 +139,41 @@ void DNP3OutstationPort::BuildOrRebuild()
 	// Link layer configuration
 	StackConfig.link.LocalAddr = pConf->mAddrConf.OutstationAddr;
 	StackConfig.link.RemoteAddr = pConf->mAddrConf.MasterAddr;
-	StackConfig.link.NumRetry = pConf->pPointConf->LinkNumRetry;
-	StackConfig.link.Timeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->LinkTimeoutms);
-	if(pConf->pPointConf->LinkKeepAlivems == 0)
+	StackConfig.link.NumRetry = pConf->LinkNumRetry;
+	StackConfig.link.Timeout = openpal::TimeDuration::Milliseconds(pConf->LinkTimeoutms);
+	if(pConf->LinkKeepAlivems == 0)
 		StackConfig.link.KeepAliveTimeout = openpal::TimeDuration::Max();
 	else
-		StackConfig.link.KeepAliveTimeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->LinkKeepAlivems);
-	StackConfig.link.UseConfirms = pConf->pPointConf->LinkUseConfirms;
+		StackConfig.link.KeepAliveTimeout = openpal::TimeDuration::Milliseconds(pConf->LinkKeepAlivems);
+	StackConfig.link.UseConfirms = pConf->LinkUseConfirms;
 
 	// Outstation parameters
 	StackConfig.outstation.params.indexMode = opendnp3::IndexMode::Discontiguous;
-	StackConfig.outstation.params.allowUnsolicited = pConf->pPointConf->EnableUnsol;
-	StackConfig.outstation.params.unsolClassMask = pConf->pPointConf->GetUnsolClassMask();
+	StackConfig.outstation.params.allowUnsolicited = pConf->EnableUnsol;
+	StackConfig.outstation.params.unsolClassMask = pConf->GetUnsolClassMask();
 	StackConfig.outstation.params.typesAllowedInClass0 = opendnp3::StaticTypeBitField::AllTypes();                                     /// TODO: Create parameter
-	StackConfig.outstation.params.maxControlsPerRequest = pConf->pPointConf->MaxControlsPerRequest;                                    /// The maximum number of controls the outstation will attempt to process from a single APDU
-	StackConfig.outstation.params.maxTxFragSize = pConf->pPointConf->MaxTxFragSize;                                                    /// The maximum fragment size the outstation will use for fragments it sends
-	StackConfig.outstation.params.maxRxFragSize = pConf->pPointConf->MaxTxFragSize;                                                    /// The maximum fragment size the outstation will use for fragments it sends
-	StackConfig.outstation.params.selectTimeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->SelectTimeoutms);             /// How long the outstation will allow an operate to proceed after a prior select
-	StackConfig.outstation.params.solConfirmTimeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->SolConfirmTimeoutms);     /// Timeout for solicited confirms
-	StackConfig.outstation.params.unsolConfirmTimeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->UnsolConfirmTimeoutms); /// Timeout for unsolicited confirms
-	StackConfig.outstation.params.unsolRetryTimeout = openpal::TimeDuration::Milliseconds(pConf->pPointConf->UnsolConfirmTimeoutms);   /// Timeout for unsolicited retried
+	StackConfig.outstation.params.maxControlsPerRequest = pConf->MaxControlsPerRequest;                                    /// The maximum number of controls the outstation will attempt to process from a single APDU
+	StackConfig.outstation.params.maxTxFragSize = pConf->MaxTxFragSize;                                                    /// The maximum fragment size the outstation will use for fragments it sends
+	StackConfig.outstation.params.maxRxFragSize = pConf->MaxTxFragSize;                                                    /// The maximum fragment size the outstation will use for fragments it sends
+	StackConfig.outstation.params.selectTimeout = openpal::TimeDuration::Milliseconds(pConf->SelectTimeoutms);             /// How long the outstation will allow an operate to proceed after a prior select
+	StackConfig.outstation.params.solConfirmTimeout = openpal::TimeDuration::Milliseconds(pConf->SolConfirmTimeoutms);     /// Timeout for solicited confirms
+	StackConfig.outstation.params.unsolConfirmTimeout = openpal::TimeDuration::Milliseconds(pConf->UnsolConfirmTimeoutms); /// Timeout for unsolicited confirms
+	StackConfig.outstation.params.unsolRetryTimeout = openpal::TimeDuration::Milliseconds(pConf->UnsolConfirmTimeoutms);   /// Timeout for unsolicited retried
 
 	// TODO: Expose event limits for any new event types to be supported by opendatacon
-	StackConfig.outstation.eventBufferConfig.maxBinaryEvents = pConf->pPointConf->MaxBinaryEvents;   /// The number of binary events the outstation will buffer before overflowing
-	StackConfig.outstation.eventBufferConfig.maxAnalogEvents = pConf->pPointConf->MaxAnalogEvents;   /// The number of analog events the outstation will buffer before overflowing
-	StackConfig.outstation.eventBufferConfig.maxCounterEvents = pConf->pPointConf->MaxCounterEvents; /// The number of counter events the outstation will buffer before overflowing
+	StackConfig.outstation.eventBufferConfig.maxBinaryEvents = pConf->MaxBinaryEvents;   /// The number of binary events the outstation will buffer before overflowing
+	StackConfig.outstation.eventBufferConfig.maxAnalogEvents = pConf->MaxAnalogEvents;   /// The number of analog events the outstation will buffer before overflowing
+	StackConfig.outstation.eventBufferConfig.maxCounterEvents = pConf->MaxCounterEvents; /// The number of counter events the outstation will buffer before overflowing
 
-	StackConfig.dbTemplate = opendnp3::DatabaseTemplate(pConf->pPointConf->BinaryIndicies.size(), 0, pConf->pPointConf->AnalogIndicies.size());
+	StackConfig.dbTemplate = opendnp3::DatabaseTemplate(pConf->BinaryIndicies.size(), 0, pConf->AnalogIndicies.size());
 
 	pChannel = TCPChannels[IPPort];
 
 	if (pChannel == nullptr)
 	{
 		std::string msg = Name + ": TCP channel not found for outstation.";
-		auto log_entry = openpal::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		Log(log_entry);
 		return;
 	}
 
@@ -182,8 +182,8 @@ void DNP3OutstationPort::BuildOrRebuild()
 	if (pOutstation == nullptr)
 	{
 		std::string msg = Name + ": Error creating outstation.";
-		auto log_entry = openpal::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
-		pLoggers->Log(log_entry);
+		auto log_entry = ODC::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		Log(log_entry);
 		return;
 	}
 
@@ -191,24 +191,24 @@ void DNP3OutstationPort::BuildOrRebuild()
 
 	{
 		uint16_t rawIndex = 0;
-		for (auto index : pConf->pPointConf->AnalogIndicies)
+		for (auto index : pConf->AnalogIndicies)
 		{
 			configView.analogs[rawIndex].vIndex = index;
-			configView.analogs[rawIndex].variation = pConf->pPointConf->StaticAnalogResponse;
-			configView.analogs[rawIndex].metadata.clazz = pConf->pPointConf->AnalogClasses[index];
-			configView.analogs[rawIndex].metadata.variation = pConf->pPointConf->EventAnalogResponse;
-			configView.analogs[rawIndex].metadata.deadband = pConf->pPointConf->AnalogDeadbands[index];
+			configView.analogs[rawIndex].variation = pConf->StaticAnalogResponse;
+			configView.analogs[rawIndex].metadata.clazz = pConf->AnalogClasses[index];
+			configView.analogs[rawIndex].metadata.variation = pConf->EventAnalogResponse;
+			configView.analogs[rawIndex].metadata.deadband = pConf->AnalogDeadbands[index];
 			++rawIndex;
 		}
 	}
 	{
 		uint16_t rawIndex = 0;
-		for (auto index : pConf->pPointConf->BinaryIndicies)
+		for (auto index : pConf->BinaryIndicies)
 		{
 			configView.binaries[rawIndex].vIndex = index;
-			configView.binaries[rawIndex].variation = pConf->pPointConf->StaticBinaryResponse;
-			configView.binaries[rawIndex].metadata.clazz = pConf->pPointConf->BinaryClasses[index];
-			configView.binaries[rawIndex].metadata.variation = pConf->pPointConf->EventBinaryResponse;
+			configView.binaries[rawIndex].variation = pConf->StaticBinaryResponse;
+			configView.binaries[rawIndex].metadata.clazz = pConf->BinaryClasses[index];
+			configView.binaries[rawIndex].metadata.variation = pConf->EventBinaryResponse;
 			++rawIndex;
 		}
 	}
@@ -277,7 +277,7 @@ inline opendnp3::CommandStatus DNP3OutstationPort::SupportsT(T& arCommand, uint1
 	auto pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 	if(std::is_same<T,opendnp3::ControlRelayOutputBlock>::value) //TODO: add support for other types of controls (probably un-templatise when we support more)
 	{
-		for(auto index : pConf->pPointConf->ControlIndicies)
+		for(auto index : pConf->ControlIndicies)
 			if(index == aIndex)
 				return opendnp3::CommandStatus::SUCCESS;
 	}
@@ -300,7 +300,7 @@ inline opendnp3::CommandStatus DNP3OutstationPort::PerformT(T& arCommand, uint16
 	}
 
 	auto pConf = static_cast<DNP3PortConf*>(this->pConf.get());
-	if (!pConf->pPointConf->WaitForCommandResponses)
+	if (!pConf->WaitForCommandResponses)
 	{
 		return opendnp3::CommandStatus::SUCCESS;
 	}
@@ -378,8 +378,8 @@ inline std::future<ODC::CommandStatus> DNP3OutstationPort::EventT(T& meas, uint1
 		asiodnp3::MeasUpdate tx(pOutstation);
 
 		if (
-		      (pConf->pPointConf->TimestampOverride == DNP3PointConf::TimestampOverride_t::ALWAYS) ||
-		      ((pConf->pPointConf->TimestampOverride == DNP3PointConf::TimestampOverride_t::ZERO) && (meas.time == 0))
+		      (pConf->TimestampOverride == DNP3PointConf::TimestampOverride_t::ALWAYS) ||
+		      ((pConf->TimestampOverride == DNP3PointConf::TimestampOverride_t::ZERO) && (meas.time == 0))
 		      )
 		{
 			T newmeas(meas.value, meas.quality, opendnp3::DNPTime(eventTime));

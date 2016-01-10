@@ -25,36 +25,10 @@
 #include <cstdio>
 #include <map>
 #include <opendnp3/LogLevels.h>
+#include <opendatacon/ILoggable.h>
 
-namespace platformtime
-{
-tm localtime(const std::time_t* time)
-{
-	std::tm tm_snapshot;
-	#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
-	localtime_s(&tm_snapshot, time);
-	#else
-	localtime_r(time, &tm_snapshot); // POSIX
-	#endif
-	return tm_snapshot;
-}
-std::string time_string()
-{
-	using namespace std::chrono;
-
-	high_resolution_clock::time_point time = std::chrono::high_resolution_clock::now();
-	milliseconds ms = duration_cast<milliseconds>(time.time_since_epoch());
-	seconds s = duration_cast<seconds>(ms);
-	std::time_t t = s.count();
-	std::size_t fractional_seconds = ms.count() % 1000;
-	auto local_time = platformtime::localtime(&t);
-	char time_formatted[25];
-	std::strftime(time_formatted, 25, "%Y-%m-%d %H:%M:%S", &local_time);
-	return std::string(time_formatted)+"."+std::to_string(fractional_seconds);
-}
-}
-
-void LogToFile::Log( const openpal::LogEntry& arEntry )
+/*
+void LogToFile::Log( const ODC::LogEntry& arEntry )
 {
 	std::string time_str = platformtime::time_string();
 
@@ -66,7 +40,7 @@ void LogToFile::Log( const openpal::LogEntry& arEntry )
 			throw std::runtime_error("Failed to open log file");
 	}
 
-	mLogFile <<time_str<<" - "<< FilterToString(arEntry.GetFilters())<<" - "<<arEntry.GetAlias();
+	mLogFile <<time_str<<" - "<< arEntry.toString()<<" - "<<arEntry.GetAlias();
 	if(mPrintLocation && !arEntry.GetLocation())
 		mLogFile << " - " << arEntry.GetLocation();
 	mLogFile << " - " << arEntry.GetMessage();
@@ -79,42 +53,6 @@ void LogToFile::Log( const openpal::LogEntry& arEntry )
 		mLogFile.close();
 		mFileIndex++;
 		mFileIndex %= mNumFiles;
-	}
-}
-
-std::string LogToFile::FilterToString(const openpal::LogFilters& filters)
-{
-	switch (filters.GetBitfield())
-	{
-
-		case (opendnp3::flags::EVENT):
-			return "EVENT";
-		case (opendnp3::flags::ERR):
-			return "ERROR";
-		case (opendnp3::flags::WARN):
-			return "WARN";
-		case (opendnp3::flags::INFO):
-			return "INFO";
-		case (opendnp3::flags::DBG):
-			return "DEBUG";
-		case (opendnp3::flags::LINK_RX):
-		case (opendnp3::flags::LINK_RX_HEX):
-			return "<--LINK-";
-		case (opendnp3::flags::LINK_TX):
-		case (opendnp3::flags::LINK_TX_HEX):
-			return "-LINK-->";
-		case (opendnp3::flags::TRANSPORT_RX):
-			return "<--TRANS-";
-		case (opendnp3::flags::TRANSPORT_TX):
-			return "-TRANS-->";
-		case (opendnp3::flags::APP_HEADER_RX):
-		case (opendnp3::flags::APP_OBJECT_RX):
-			return "<--APP-";
-		case (opendnp3::flags::APP_HEADER_TX):
-		case (opendnp3::flags::APP_OBJECT_TX):
-			return "-APP-->";
-		default:
-			return "UNKNOWN";
 	}
 }
 
@@ -148,4 +86,4 @@ void LogToFile::SetPrintLocation(bool print_loc)
 {
 	mPrintLocation = print_loc;
 }
-
+*/

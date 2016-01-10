@@ -127,3 +127,40 @@ void AdvancedLogger::SetLogLevel(openpal::LogFilters aLOG_LEVEL)
 {
 	LOG_LEVEL = aLOG_LEVEL;
 }
+
+/*
+ void cmd_ignore_message(std::stringstream& args, AdvancedLogger& AdvLog)
+ {
+	std::string mregex;
+	if(!ODC::extract_delimited_string(args,mregex))
+	{
+ std::cout<<"Syntax error: Delimited regex expected, found \"..."<<mregex<<"\""<<std::endl;
+ return;
+	}
+	if(mregex == "")
+	{
+ std::cout<<"Please supply a regex filter"<<std::endl;
+ return;
+	}
+	std::cout<<"adding regex "<<mregex<<std::endl;
+	AdvLog.AddIngoreAlways(mregex);
+ }
+ void cmd_unignore_message(std::stringstream& args, AdvancedLogger& AdvLog)
+ {
+	std::string arg = "";
+	std::string mregex;
+	if(!ODC::extract_delimited_string(args,mregex))
+	{
+ std::cout<<"Syntax error: Delimited regex expected, found \"..."<<mregex<<"\""<<std::endl;
+ return;
+	}
+	std::cout<<"removing regex "<<mregex<<std::endl;
+	AdvLog.RemoveIgnore(mregex);
+ }
+ void cmd_show_ignored(std::stringstream& args, AdvancedLogger& AdvLog)
+ {
+	AdvLog.ShowIgnored();
+ }
+ 
+ */
+
