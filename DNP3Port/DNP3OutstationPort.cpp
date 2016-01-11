@@ -115,24 +115,8 @@ void DNP3OutstationPort::OnKeepAliveSuccess()
 
 void DNP3OutstationPort::BuildOrRebuild()
 {
-	if (!DNP3Mgr)
-	{
-		//TODO:Get rid of this cludge!
-		DNP3Mgr = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
-	}
-    DNP3Mgr->AddLogSubscriber(this->LogWrapper);
+    DNP3Mgr.AddLogSubscriber(this->LogWrapper);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
-	auto IPPort = pConf->mAddrConf.IP +":"+ std::to_string(pConf->mAddrConf.Port);
-	auto log_id = "outst_"+IPPort;
-
-	//create a new channel if one isn't already up
-	if(!TCPChannels.count(IPPort))
-	{
-		TCPChannels[IPPort] = DNP3Mgr->AddTCPServer(log_id.c_str(), opendnp3::levels::ALL,
-		                                           opendnp3::ChannelRetry::Default(),
-		                                           pConf->mAddrConf.IP,
-		                                           pConf->mAddrConf.Port);
-	}
 
 	opendnp3::OutstationStackConfig StackConfig;
 
@@ -167,7 +151,7 @@ void DNP3OutstationPort::BuildOrRebuild()
 
 	StackConfig.dbTemplate = opendnp3::DatabaseTemplate(pConf->BinaryIndicies.size(), 0, pConf->AnalogIndicies.size());
 
-	pChannel = TCPChannels[IPPort];
+	pChannel = getTCPServer(pConf->mAddrConf);
 
 	if (pChannel == nullptr)
 	{

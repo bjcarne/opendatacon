@@ -47,7 +47,6 @@ namespace ODC
             oss << " - " << arEntry.GetMessage();
             if(arEntry.GetErrorCode() != -1)
                 oss << " - " << arEntry.GetErrorCode();
-            oss <<std::endl;
             
             std::unique_lock<std::mutex> lock(mutex);
             std::cout << oss.str() << std::endl;

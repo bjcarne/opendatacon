@@ -27,12 +27,13 @@
 #include <iostream>
 #include "DNP3PortConf.h"
 
-std::unordered_map<std::string, asiodnp3::IChannel*> DNP3Port::TCPChannels;
-asiodnp3::DNP3Manager* DNP3Port::DNP3Mgr(nullptr);
+std::unordered_map<std::string, asiodnp3::IChannel*> DNP3Port::TCPServers;
+std::unordered_map<std::string, asiodnp3::IChannel*> DNP3Port::TCPClients;
+asiodnp3::DNP3Manager DNP3Port::DNP3Mgr(std::thread::hardware_concurrency());
 
 DNP3Port::DNP3Port(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
 	DataPort(aName, aConfFilename, aConfOverrides),
-	LogWrapper(*this),
+	LogWrapper(aName, *this),
 	pChannel(nullptr),
 	status(opendnp3::LinkStatus::UNRESET),
 	link_dead(true)

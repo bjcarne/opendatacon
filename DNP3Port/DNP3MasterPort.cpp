@@ -181,26 +181,10 @@ void DNP3MasterPort::OnKeepAliveSuccess()
 
 void DNP3MasterPort::BuildOrRebuild()
 {
-	if (!DNP3Mgr)
-	{
-		//TODO:Get rid of this cludge!
-		DNP3Mgr = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
-	}
-    DNP3Mgr->AddLogSubscriber(this->LogWrapper);
+    DNP3Mgr.AddLogSubscriber(this->LogWrapper);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
-	auto IPPort = pConf->mAddrConf.IP +":"+ std::to_string(pConf->mAddrConf.Port);
-	auto log_id = "mast_"+IPPort;
-
-	//create a new channel if one isn't already up
-	if(!TCPChannels.count(IPPort))
-	{
-		TCPChannels[IPPort] = DNP3Mgr->AddTCPClient(log_id.c_str(), opendnp3::levels::ALL,
-		                                           opendnp3::ChannelRetry::Default(),
-		                                           pConf->mAddrConf.IP,
-		                                           "0.0.0.0",
-		                                           pConf->mAddrConf.Port);
-	}
-	pChannel = TCPChannels[IPPort];
+    
+    pChannel = getTCPClient(pConf->mAddrConf);
 	if (pChannel == nullptr)
 	{
 		std::string msg = Name + ": TCP channel not found for masterstation.";
