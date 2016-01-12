@@ -21,6 +21,7 @@
  */
 #include <opendatacon/Logger.h>
 
-namespace ODC {
-    std::mutex Logger::mutex;
+namespace ODC
+{
+std::mutex Logger::mutex;
 }

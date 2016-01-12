@@ -36,10 +36,11 @@
 
 DataConcentrator::DataConcentrator(std::string FileName):
 	ConfigParser(FileName),
+	Context("DataConcentrator"),
 	Logger("DataConcentrator"),
 	IOS(std::thread::hardware_concurrency()),
 	ios_working(new asio::io_service::work(IOS)),
-	LOG_LEVEL(opendnp3::levels::NORMAL)//,
+	LOG_LEVEL(opendnp3::levels::NORMAL) //,
 	//AdvConsoleLog(new AdvancedLogger(asiodnp3::ConsoleLogger::Instance(),LOG_LEVEL)),
 	//FileLog("datacon_log"),
 	//AdvFileLog(new AdvancedLogger(FileLog,LOG_LEVEL))
@@ -65,19 +66,20 @@ DataConcentrator::DataConcentrator(std::string FileName):
 	//Parse the configs and create all user interfaces, ports and connections
 	ProcessFile();
 
-    for(auto& interface : Interfaces)
-    {
-        interface.second->AddCommand("shutdown",[this](std::stringstream& ss){this->Shutdown();},"Shutdown opendatacon");
-        interface.second->AddCommand("version",[] (std::stringstream& ss){
-            std::cout<<"Release " << ODC_VERSION_STRING <<std::endl;},"Print version information");
-        
-        interface.second->AddResponder("OpenDataCon", *this);
-        interface.second->AddResponder("DataPorts", DataPorts);
-        interface.second->AddResponder("DataConnectors", DataConnectors);
+	for(auto& interface : Interfaces)
+	{
+		interface.second->AddCommand("shutdown",[this](std::stringstream& ss){this->Shutdown();},"Shutdown opendatacon");
+		interface.second->AddCommand("version",[] (std::stringstream& ss){
+		                                   std::cout<<"Release " << ODC_VERSION_STRING <<std::endl;
+						     },"Print version information");
+
+		interface.second->AddResponder("OpenDataCon", *this);
+		interface.second->AddResponder("DataPorts", DataPorts);
+		interface.second->AddResponder("DataConnectors", DataConnectors);
 //        interface.second->AddResponder("Loggers", AdvancedLoggers);
-        interface.second->AddResponder("Plugins", Interfaces);
-    }
-    for(auto& port : DataPorts)
+		interface.second->AddResponder("Plugins", Interfaces);
+	}
+	for(auto& port : DataPorts)
 	{
 //		port.second->AddLogSubscriber(AdvConsoleLog.get());
 //		port.second->AddLogSubscriber(AdvFileLog.get());
@@ -106,20 +108,20 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 		{
 			if(Plugins[n]["Type"].isNull() || Plugins[n]["Name"].isNull() || Plugins[n]["ConfFilename"].isNull())
 			{
-                std::string msg = "Invalid plugin config: need at least Type, Name, ConfFilename: \n'" + Plugins[n].toStyledString() + "\n' : ignoring";
-                auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
-                Log(log_entry);
-                
+				std::string msg = "Invalid plugin config: need at least Type, Name, ConfFilename: \n'" + Plugins[n].toStyledString() + "\n' : ignoring";
+				auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
+				Log(log_entry);
+
 				continue;
 			}
 
 			auto PluginName = Plugins[n]["Name"].asString();
 			if(Interfaces.count(PluginName) > 0)
 			{
-                std::string msg = "Ignoring duplicate plugin name: " + PluginName;
-                auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
-                Log(log_entry);
-                
+				std::string msg = "Ignoring duplicate plugin name: " + PluginName;
+				auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
+				Log(log_entry);
+
 				continue;
 			}
 
@@ -140,10 +142,10 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 
 			if(pluginlib == nullptr)
 			{
-                std::string msg = "Plugin " + PluginName + " load failed. Dynamic library '" + libname + "' load failed.";
-                auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
-                Log(log_entry);
-                
+				std::string msg = "Plugin " + PluginName + " load failed. Dynamic library '" + libname + "' load failed.";
+				auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
+				Log(log_entry);
+
 				continue;
 			}
 
@@ -154,11 +156,11 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 
 			if(new_plugin_func == nullptr)
 			{
-                std::string msg = "Plugin " + PluginName + " load failed. Failed to load symbol '" + new_funcname + "' in library '" + libname + "' + " + LastSystemError();
-                auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
-                Log(log_entry);
+				std::string msg = "Plugin " + PluginName + " load failed. Failed to load symbol '" + new_funcname + "' in library '" + libname + "' + " + LastSystemError();
+				auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
+				Log(log_entry);
 
-                continue;
+				continue;
 			}
 
 			//call the creation function and wrap the returned pointer to a new plugin
@@ -265,11 +267,11 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 }
 void DataConcentrator::BuildOrRebuild()
 {
-    std::cout << "User Interfaces" << std::endl;
-    for(auto& Name_n_UI : Interfaces)
-    {
-        Name_n_UI.second->BuildOrRebuild();
-    }
+	std::cout << "User Interfaces" << std::endl;
+	for(auto& Name_n_UI : Interfaces)
+	{
+		Name_n_UI.second->BuildOrRebuild();
+	}
 	std::cout << "Ports" << std::endl;
 	for(auto& Name_n_Port : DataPorts)
 	{
@@ -283,29 +285,29 @@ void DataConcentrator::BuildOrRebuild()
 }
 void DataConcentrator::Run()
 {
-    for(auto& Name_n_UI : Interfaces)
-    {
-        IOS.post([=]()
-                 {
-                     Name_n_UI.second->Enable();
-                 });
-    }
-    for(auto& Name_n_Conn : DataConnectors)
-    {
-        IOS.post([=]()
-                 {
-                     Name_n_Conn.second->Enable();
-                 });
-    }
-    for(auto& Name_n_Port : DataPorts)
-    {
-        IOS.post([=]()
-                 {
-                     Name_n_Port.second->Enable();
-                 });
-    }
-    
-    IOS.run();
+	for(auto& Name_n_UI : Interfaces)
+	{
+		IOS.post([=]()
+		         {
+		               Name_n_UI.second->Enable();
+			   });
+	}
+	for(auto& Name_n_Conn : DataConnectors)
+	{
+		IOS.post([=]()
+		         {
+		               Name_n_Conn.second->Enable();
+			   });
+	}
+	for(auto& Name_n_Port : DataPorts)
+	{
+		IOS.post([=]()
+		         {
+		               Name_n_Port.second->Enable();
+			   });
+	}
+
+	IOS.run();
 }
 
 void DataConcentrator::RestartPortOrConn(std::stringstream& args)
@@ -332,12 +334,12 @@ void DataConcentrator::EnablePortOrConn(std::stringstream& args, bool enable)
 		std::cout<<e.what()<<std::endl;
 		return;
 	}
-    for(auto& Name_n_UI : Interfaces)
-    {
-        if(std::regex_match(Name_n_UI.first, reg))
-            enable ? Name_n_UI.second->Enable() : Name_n_UI.second->Disable();
-    }
-    for(auto& Name_n_Conn : DataConnectors)
+	for(auto& Name_n_UI : Interfaces)
+	{
+		if(std::regex_match(Name_n_UI.first, reg))
+			enable ? Name_n_UI.second->Enable() : Name_n_UI.second->Disable();
+	}
+	for(auto& Name_n_Conn : DataConnectors)
 	{
 		if(std::regex_match(Name_n_Conn.first, reg))
 			enable ? Name_n_Conn.second->Enable() : Name_n_Conn.second->Disable();
@@ -351,12 +353,12 @@ void DataConcentrator::EnablePortOrConn(std::stringstream& args, bool enable)
 
 void DataConcentrator::Shutdown()
 {
-    std::cout << "done" << std::endl << "Disabling user interfaces... ";
-    for(auto& Name_n_UI : Interfaces)
-    {
-        Name_n_UI.second->Disable();
-    }
-    std::cout << "done" << std::endl << "Disabling data connectors... ";
+	std::cout << "done" << std::endl << "Disabling user interfaces... ";
+	for(auto& Name_n_UI : Interfaces)
+	{
+		Name_n_UI.second->Disable();
+	}
+	std::cout << "done" << std::endl << "Disabling data connectors... ";
 	for(auto& Name_n_Conn : DataConnectors)
 	{
 		Name_n_Conn.second->Disable();
@@ -367,5 +369,5 @@ void DataConcentrator::Shutdown()
 		Name_n_Port.second->Disable();
 	}
 	std::cout << "done" << std::endl;
-    ios_working.reset();
+	ios_working.reset();
 }

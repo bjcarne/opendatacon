@@ -205,15 +205,15 @@ inline CommandStatus ModbusOutstationPort::SupportsT(T& arCommand, uint16_t aInd
 
 	//FIXME: this is meant to return if we support the type of command
 	//at the moment we just return success if it's configured as a control
-    /*
-	auto pConf = static_cast<ModbusPortConf*>(this->pConf.get());
-	if(std::is_same<T,ControlRelayOutputBlock>::value) //TODO: add support for other types of controls (probably un-templatise when we support more)
-	{
-		        for(auto index : pConf->ControlIndicies)
-		                if(index == aIndex)
-		                        return CommandStatus::SUCCESS;
-	}
-    */
+	/*
+	    auto pConf = static_cast<ModbusPortConf*>(this->pConf.get());
+	    if(std::is_same<T,ControlRelayOutputBlock>::value) //TODO: add support for other types of controls (probably un-templatise when we support more)
+	    {
+	                    for(auto index : pConf->ControlIndicies)
+	                            if(index == aIndex)
+	                                    return CommandStatus::SUCCESS;
+	    }
+	*/
 	return CommandStatus::NOT_SUPPORTED;
 }
 template<typename T>

@@ -115,7 +115,7 @@ void DNP3OutstationPort::OnKeepAliveSuccess()
 
 void DNP3OutstationPort::BuildOrRebuild()
 {
-    DNP3Mgr.AddLogSubscriber(this->LogWrapper);
+	DNP3Mgr.AddLogSubscriber(this->LogWrapper);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 
 	opendnp3::OutstationStackConfig StackConfig;
@@ -135,7 +135,7 @@ void DNP3OutstationPort::BuildOrRebuild()
 	StackConfig.outstation.params.indexMode = opendnp3::IndexMode::Discontiguous;
 	StackConfig.outstation.params.allowUnsolicited = pConf->EnableUnsol;
 	StackConfig.outstation.params.unsolClassMask = pConf->GetUnsolClassMask();
-	StackConfig.outstation.params.typesAllowedInClass0 = opendnp3::StaticTypeBitField::AllTypes();                                     /// TODO: Create parameter
+	StackConfig.outstation.params.typesAllowedInClass0 = opendnp3::StaticTypeBitField::AllTypes();                         /// TODO: Create parameter
 	StackConfig.outstation.params.maxControlsPerRequest = pConf->MaxControlsPerRequest;                                    /// The maximum number of controls the outstation will attempt to process from a single APDU
 	StackConfig.outstation.params.maxTxFragSize = pConf->MaxTxFragSize;                                                    /// The maximum fragment size the outstation will use for fragments it sends
 	StackConfig.outstation.params.maxRxFragSize = pConf->MaxTxFragSize;                                                    /// The maximum fragment size the outstation will use for fragments it sends
@@ -322,15 +322,15 @@ inline std::future<ODC::CommandStatus> DNP3OutstationPort::EventQ(Q& qual, uint1
 	}
 	auto eventTime = asiopal::UTCTimeSource::Instance().Now().msSinceEpoch;
 	auto lambda = [=](const T &existing)
-	{
-		//TODO: break out specialised templates for Binary types. The state bit for binary quality is 'reserved' for other currently supported types - preserving it will be OK for now
-		uint8_t state = existing.quality & static_cast<uint8_t>(ODC::BinaryQuality::STATE);
+			  {
+				  //TODO: break out specialised templates for Binary types. The state bit for binary quality is 'reserved' for other currently supported types - preserving it will be OK for now
+				  uint8_t state = existing.quality & static_cast<uint8_t>(ODC::BinaryQuality::STATE);
 
-		T updated = existing;
-		updated.quality = static_cast<uint8_t>(qual) | state;
-		updated.time = opendnp3::DNPTime(eventTime);
-		return updated;
-	};
+				  T updated = existing;
+				  updated.quality = static_cast<uint8_t>(qual) | state;
+				  updated.time = opendnp3::DNPTime(eventTime);
+				  return updated;
+			  };
 	const auto modify = openpal::Function1<const T&, T>::Bind(lambda);
 	{ //transaction scope
 		asiodnp3::MeasUpdate tx(pOutstation);

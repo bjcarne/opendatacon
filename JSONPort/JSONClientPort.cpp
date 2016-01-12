@@ -77,8 +77,8 @@ void JSONClientPort::ConnectCompletionHandler(asio::error_code err_code)
 		return;
 	}
 	std::string msg = Name+": Connect success!";
-    auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::INFO,"", msg.c_str(), -1);
-    Log(log_entry);
+	auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+	Log(log_entry);
 
 	enabled = true;
 	Read();
@@ -166,15 +166,15 @@ void JSONClientPort::ProcessBraced(std::string braced)
 		//little functor to traverse any paths, starting at the root
 		//pass a JSON array of nodes representing the path (that's how we store our point config after all)
 		auto TraversePath = [&JSONRoot](const Json::Value nodes)
-		{
-			//val will traverse any paths, starting at the root
-			auto val = JSONRoot;
-			//traverse
-			for(unsigned int n = 0; n < nodes.size(); ++n)
-				if((val = val[nodes[n].asCString()]).isNull())
-					break;
-			return val;
-		};
+					  {
+						  //val will traverse any paths, starting at the root
+						  auto val = JSONRoot;
+						  //traverse
+						  for(unsigned int n = 0; n < nodes.size(); ++n)
+							  if((val = val[nodes[n].asCString()]).isNull())
+								  break;
+						  return val;
+					  };
 
 		Json::Value timestamp_val = TraversePath(pConf->TimestampPath);
 

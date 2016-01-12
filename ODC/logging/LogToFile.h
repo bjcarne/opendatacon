@@ -29,38 +29,38 @@ class LogToFile
 {
 
 public:
-	LogToFile(std::string log_name):
-		mPrintLocation(false),
-		mLogName(log_name),
-		mNumFiles(5),
-		mFileSizekB(5*1024),
-		mFileIndex(0)
-	{}
-	LogToFile(std::string log_name,size_t file_size_kb, size_t num_files):
-		mPrintLocation(false),
-		mLogName(log_name),
-		mNumFiles(num_files),
-		mFileSizekB(file_size_kb),
-		mFileIndex(0)
-	{}
+        LogToFile(std::string log_name):
+                mPrintLocation(false),
+                mLogName(log_name),
+                mNumFiles(5),
+                mFileSizekB(5*1024),
+                mFileIndex(0)
+        {}
+        LogToFile(std::string log_name,size_t file_size_kb, size_t num_files):
+                mPrintLocation(false),
+                mLogName(log_name),
+                mNumFiles(num_files),
+                mFileSizekB(file_size_kb),
+                mFileIndex(0)
+        {}
 
-	void Log( const ODC::LogEntry& arEntry );
-	void SetPrintLocation(bool print_loc);
+        void Log( const ODC::LogEntry& arEntry );
+        void SetPrintLocation(bool print_loc);
 
-	void SetLogFileSizekB(size_t kB);
-	void SetNumLogFiles(size_t num);
-	void SetLogName(std::string name);
-	size_t GetLogFileSizekB();
-	size_t GetNumLogFiles();
-	std::string GetLogName();
+        void SetLogFileSizekB(size_t kB);
+        void SetNumLogFiles(size_t num);
+        void SetLogName(std::string name);
+        size_t GetLogFileSizekB();
+        size_t GetNumLogFiles();
+        std::string GetLogName();
 
 private:
-	bool mPrintLocation;
-	std::string mLogName;
-	size_t mNumFiles;
-	size_t mFileSizekB;
-	size_t mFileIndex;
-	std::ofstream mLogFile;
-	std::mutex mMutex;
+        bool mPrintLocation;
+        std::string mLogName;
+        size_t mNumFiles;
+        size_t mFileSizekB;
+        size_t mFileIndex;
+        std::ofstream mLogFile;
+        std::mutex mMutex;
 };
 */

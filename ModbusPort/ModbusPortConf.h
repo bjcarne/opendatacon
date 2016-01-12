@@ -76,11 +76,10 @@ class ModbusPortConf: public Logger, public DataPortConf, public ModbusPointConf
 {
 public:
 	ModbusPortConf(std::string FileName):
-    	Logger(FileName),
-    	ModbusPointConf(FileName),
+		Logger(FileName),
+		ModbusPointConf(FileName),
 		mAddrConf()
-	{
-	};
+	{};
 
 	ModbusAddrConf mAddrConf;
 };

@@ -30,37 +30,37 @@
 namespace ODC
 {
 
-	const Json::Value IUIResponder::GenerateResult(const std::string& message)
-	{
-		Json::Value result;
-		result["RESULT"] = message;
-		return result;
-	}
+const Json::Value IUIResponder::GenerateResult(const std::string& message)
+{
+	Json::Value result;
+	result["RESULT"] = message;
+	return result;
+}
 
-	const Json::Value IUIResponder::GetCommandList() const
+const Json::Value IUIResponder::GetCommandList() const
+{
+	Json::Value result;
+	for (auto command : commands)
 	{
-		Json::Value result;
-		for (auto command : commands)
-		{
-			if (!command.second.hidden) result.append(command.first);
-		}
-		return result;
+		if (!command.second.hidden) result.append(command.first);
 	}
+	return result;
+}
 
-	Json::Value IUIResponder::ExecuteCommand(const std::string& arCommandName, const ParamCollection& params) const
+Json::Value IUIResponder::ExecuteCommand(const std::string& arCommandName, const ParamCollection& params) const
+{
+	if (commands.count(arCommandName) != 0)
 	{
-		if (commands.count(arCommandName) != 0)
-		{
-			auto command = commands.at(arCommandName);
-			return command.function(params);
-		}
-		return IUIResponder::GenerateResult("Bad command");
+		auto command = commands.at(arCommandName);
+		return command.function(params);
 	}
+	return IUIResponder::GenerateResult("Bad command");
+}
 
-	void IUIResponder::AddCommand(const std::string& arCommandName, UIFunction arCommand, const std::string& desc, const bool hide)
-	{
+void IUIResponder::AddCommand(const std::string& arCommandName, UIFunction arCommand, const std::string& desc, const bool hide)
+{
 
-		commands.insert(std::pair<std::string, UICommand>(arCommandName, UICommand(arCommand, desc, hide)));
-	}
+	commands.insert(std::pair<std::string, UICommand>(arCommandName, UICommand(arCommand, desc, hide)));
+}
 
 }

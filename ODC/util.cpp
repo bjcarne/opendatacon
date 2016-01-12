@@ -32,80 +32,80 @@ using namespace std;
 namespace ODC
 {
 
-	bool GetBool(const string& value)
+bool GetBool(const string& value)
+{
+	if (value == "true")
 	{
-		if (value == "true")
-		{
-			return true;
-		}
-		else if (value == "false")
-		{
-			return false;
-		}
-		throw new std::runtime_error("Expected true or false after element name");
-	}
-
-	bool getline_noncomment(istream& is, string& line)
-	{
-		//chew up blank lines and comments
-		do
-		{
-			std::getline(is, line);
-		} while (std::regex_match(line, std::regex("^[:space:]*#.*|^[^_[:alnum:]]*$", std::regex::extended)) && !is.eof());
-
-		//fail if we hit the end
-		if (is.eof())
-			return false;
-		//success!
 		return true;
 	}
-
-	bool extract_delimited_string(istream& ist, string& extracted)
+	else if (value == "false")
 	{
-		extracted.clear();
-		char delim;
-		//The first char is the delimiter
-		if (!(ist >> delim))
-			return true; //nothing to extract - return successfully extracted nothing
-		char ch;
-		while (ist.get(ch))
-		{
-			//return success once we find the second delimiter
-			if (ch == delim)
-				return true;
-			//otherwise keep extracting
-			extracted.push_back(ch);
-		}
-		//if we get to here, there wasn't a matching end delimiter - return failed
 		return false;
 	}
+	throw new std::runtime_error("Expected true or false after element name");
+}
 
-    bool extract_delimited_string(const std::string& delims, istream& ist, string& extracted)
-    {
-        extracted.clear();
-        char delim;
-        //The first char is the delimiter
-        if(!(ist>>delim))
-            return true; //nothing to extract - return successfully extracted nothing
-        if(delims.find(delim) == std::string::npos)
-        {
-            /* no delimiter so just extract until we get to a space or end of string */
-            extracted.push_back(delim);
-            std::string temptoken;
-            ist>>temptoken;
-            extracted.append(temptoken);
-            return true;
-        }
-        char ch;
-        while(ist.get(ch))
-        {
-            //return success once we find the second delimiter
-            if(ch == delim)
-                return true;
-            //otherwise keep extracting
-            extracted.push_back(ch);
-        }
-        //if we get to here, there wasn't a matching end delimiter
-        return false;
-    }
+bool getline_noncomment(istream& is, string& line)
+{
+	//chew up blank lines and comments
+	do
+	{
+		std::getline(is, line);
+	} while (std::regex_match(line, std::regex("^[:space:]*#.*|^[^_[:alnum:]]*$", std::regex::extended)) && !is.eof());
+
+	//fail if we hit the end
+	if (is.eof())
+		return false;
+	//success!
+	return true;
+}
+
+bool extract_delimited_string(istream& ist, string& extracted)
+{
+	extracted.clear();
+	char delim;
+	//The first char is the delimiter
+	if (!(ist >> delim))
+		return true; //nothing to extract - return successfully extracted nothing
+	char ch;
+	while (ist.get(ch))
+	{
+		//return success once we find the second delimiter
+		if (ch == delim)
+			return true;
+		//otherwise keep extracting
+		extracted.push_back(ch);
+	}
+	//if we get to here, there wasn't a matching end delimiter - return failed
+	return false;
+}
+
+bool extract_delimited_string(const std::string& delims, istream& ist, string& extracted)
+{
+	extracted.clear();
+	char delim;
+	//The first char is the delimiter
+	if(!(ist>>delim))
+		return true; //nothing to extract - return successfully extracted nothing
+	if(delims.find(delim) == std::string::npos)
+	{
+		/* no delimiter so just extract until we get to a space or end of string */
+		extracted.push_back(delim);
+		std::string temptoken;
+		ist>>temptoken;
+		extracted.append(temptoken);
+		return true;
+	}
+	char ch;
+	while(ist.get(ch))
+	{
+		//return success once we find the second delimiter
+		if(ch == delim)
+			return true;
+		//otherwise keep extracting
+		extracted.push_back(ch);
+	}
+	//if we get to here, there wasn't a matching end delimiter
+	return false;
+}
 }

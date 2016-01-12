@@ -30,31 +30,31 @@
 
 namespace ODC
 {
-    class Logger : public virtual ILoggable
-    {
-    public:
-        Logger(const std::string& aName) {};
-        
-        virtual inline void Log(const ODC::LogEntry& arEntry)
-        {
-            std::ostringstream oss;
+class Logger: public virtual ILoggable
+{
+public:
+	Logger(const std::string& aName) {};
 
-            std::string time_str = platformtime::time_string();
+	virtual inline void Log(const ODC::LogEntry& arEntry)
+	{
+		std::ostringstream oss;
 
-            oss <<time_str<<" - "<< arEntry.GetFilters().toString()<<" - "<<arEntry.GetAlias();
-            if(!arEntry.GetLocation())
-                oss << " - " << arEntry.GetLocation();
-            oss << " - " << arEntry.GetMessage();
-            if(arEntry.GetErrorCode() != -1)
-                oss << " - " << arEntry.GetErrorCode();
-            
-            std::unique_lock<std::mutex> lock(mutex);
-            std::cout << oss.str() << std::endl;
-        };
-        
-    private:
-        static std::mutex mutex;
-    };
+		std::string time_str = platformtime::time_string();
+
+		oss <<time_str<<" - "<< arEntry.GetFilters().toString()<<" - "<<arEntry.GetAlias();
+		if(!arEntry.GetLocation())
+			oss << " - " << arEntry.GetLocation();
+		oss << " - " << arEntry.GetMessage();
+		if(arEntry.GetErrorCode() != -1)
+			oss << " - " << arEntry.GetErrorCode();
+
+		std::unique_lock<std::mutex> lock(mutex);
+		std::cout << oss.str() << std::endl;
+	};
+
+private:
+	static std::mutex mutex;
+};
 }
 
 #endif

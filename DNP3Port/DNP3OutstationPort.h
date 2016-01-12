@@ -32,7 +32,7 @@
 
 #include "DNP3Port.h"
 
-class DNP3OutstationPort : public DNP3Port, public opendnp3::ICommandHandler
+class DNP3OutstationPort: public DNP3Port, public opendnp3::ICommandHandler
 {
 public:
 	DNP3OutstationPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides);

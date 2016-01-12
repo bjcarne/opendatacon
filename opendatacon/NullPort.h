@@ -40,21 +40,21 @@ public:
 	NullPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
 		DataPort(aName, aConfFilename, aConfOverrides)
 	{};
-    using DataPort::IOHandler::Event;
-    
+	using DataPort::IOHandler::Event;
+
 	void Enable()
 	{
 		pTimer.reset(new Timer_t(*pIOS, std::chrono::seconds(3)));
 		pTimer->async_wait(
 		      [this](asio::error_code err_code)
 		      {
-				if (err_code != asio::error::operation_aborted)
-				{
-			
-					for (auto IOHandler_pair : Subscribers)
-					{
-						IOHandler_pair.second->Event(ODC::ConnectState::PORT_UP, 0, this->Name);
-						IOHandler_pair.second->Event(ODC::ConnectState::CONNECTED, 0, this->Name);
+		            if (err_code != asio::error::operation_aborted)
+		            {
+
+		                  for (auto IOHandler_pair: Subscribers)
+		                  {
+		                        IOHandler_pair.second->Event(ODC::ConnectState::PORT_UP, 0, this->Name);
+		                        IOHandler_pair.second->Event(ODC::ConnectState::CONNECTED, 0, this->Name);
 					}
 				}
 			});

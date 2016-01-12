@@ -37,45 +37,45 @@
 namespace ODC
 {
 
-	class DataPort : public Plugin, public IOHandler, public Logger
+class DataPort: public Plugin, public IOHandler, public Logger
+{
+public:
+	DataPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
+		Plugin(aName, aConfFilename, aConfOverrides),
+		IOHandler(aName),
+		Logger(aName),
+		pConf(nullptr)
+	{};
+	virtual ~DataPort(){};
+
+	std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) final
 	{
-	public:
-		DataPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides) :
-            Plugin(aName, aConfFilename, aConfOverrides),
-			IOHandler(aName),
-        	Logger(aName),
-			pConf(nullptr)
-		{};
-		virtual ~DataPort(){};
-
-		std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) final
-		{
-			if (MuxConnectionEvents(state, SenderName))
-				return ConnectionEvent(state, SenderName);
-			else
-				return IOHandler::CommandFutureUndefined();
-		};
-
-		virtual std::future<CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName) = 0;
-
-		virtual const Json::Value GetStatistics() const
-		{
-			return Json::Value();
-		};
-
-		virtual const Json::Value GetCurrentState() const
-		{
-			return Json::Value();
-		};
-
-		virtual const Json::Value GetStatus() const
-		{
-			return Json::Value();
-		};
-
-	protected:
-		std::unique_ptr<DataPortConf> pConf;
+		if (MuxConnectionEvents(state, SenderName))
+			return ConnectionEvent(state, SenderName);
+		else
+			return IOHandler::CommandFutureUndefined();
 	};
+
+	virtual std::future<CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName) = 0;
+
+	virtual const Json::Value GetStatistics() const
+	{
+		return Json::Value();
+	};
+
+	virtual const Json::Value GetCurrentState() const
+	{
+		return Json::Value();
+	};
+
+	virtual const Json::Value GetStatus() const
+	{
+		return Json::Value();
+	};
+
+protected:
+	std::unique_ptr<DataPortConf> pConf;
+};
 
 }
 

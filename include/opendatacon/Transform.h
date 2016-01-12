@@ -34,37 +34,37 @@
 namespace ODC
 {
 
-	class Transform
-	{
-	public:
-		Transform(Json::Value params) : params(params){};
-		virtual ~Transform(){};
+class Transform
+{
+public:
+	Transform(Json::Value params): params(params){};
+	virtual ~Transform(){};
 
-		virtual bool Event(Binary& meas, uint16_t& index) { return true; };
-		virtual bool Event(DoubleBitBinary& meas, uint16_t& index) { return true; };
-		virtual bool Event(Analog& meas, uint16_t& index) { return true; };
-		virtual bool Event(Counter& meas, uint16_t& index) { return true; };
-		virtual bool Event(FrozenCounter& meas, uint16_t& index) { return true; };
-		virtual bool Event(BinaryOutputStatus& meas, uint16_t& index) { return true; };
-		virtual bool Event(AnalogOutputStatus& meas, uint16_t& index) { return true; };
-		virtual bool Event(ControlRelayOutputBlock& arCommand, uint16_t index) { return true; };
-		virtual bool Event(AnalogOutputInt16& arCommand, uint16_t index) { return true; };
-		virtual bool Event(AnalogOutputInt32& arCommand, uint16_t index) { return true; };
-		virtual bool Event(AnalogOutputFloat32& arCommand, uint16_t index) { return true; };
-		virtual bool Event(AnalogOutputDouble64& arCommand, uint16_t index) { return true; };
+	virtual bool Event(Binary& meas, uint16_t& index) { return true; };
+	virtual bool Event(DoubleBitBinary& meas, uint16_t& index) { return true; };
+	virtual bool Event(Analog& meas, uint16_t& index) { return true; };
+	virtual bool Event(Counter& meas, uint16_t& index) { return true; };
+	virtual bool Event(FrozenCounter& meas, uint16_t& index) { return true; };
+	virtual bool Event(BinaryOutputStatus& meas, uint16_t& index) { return true; };
+	virtual bool Event(AnalogOutputStatus& meas, uint16_t& index) { return true; };
+	virtual bool Event(ControlRelayOutputBlock& arCommand, uint16_t index) { return true; };
+	virtual bool Event(AnalogOutputInt16& arCommand, uint16_t index) { return true; };
+	virtual bool Event(AnalogOutputInt32& arCommand, uint16_t index) { return true; };
+	virtual bool Event(AnalogOutputFloat32& arCommand, uint16_t index) { return true; };
+	virtual bool Event(AnalogOutputDouble64& arCommand, uint16_t index) { return true; };
 
-		virtual bool Event(BinaryQuality qual, uint16_t index) { return true; };
-		virtual bool Event(DoubleBitBinaryQuality qual, uint16_t index) { return true; };
-		virtual bool Event(AnalogQuality qual, uint16_t index) { return true; };
-		virtual bool Event(CounterQuality qual, uint16_t index) { return true; };
-		virtual bool Event(FrozenCounterQuality qual, uint16_t index) { return true; };
-		virtual bool Event(BinaryOutputStatusQuality qual, uint16_t index) { return true; };
-		virtual bool Event(AnalogOutputStatusQuality qual, uint16_t index) { return true; };
+	virtual bool Event(BinaryQuality qual, uint16_t index) { return true; };
+	virtual bool Event(DoubleBitBinaryQuality qual, uint16_t index) { return true; };
+	virtual bool Event(AnalogQuality qual, uint16_t index) { return true; };
+	virtual bool Event(CounterQuality qual, uint16_t index) { return true; };
+	virtual bool Event(FrozenCounterQuality qual, uint16_t index) { return true; };
+	virtual bool Event(BinaryOutputStatusQuality qual, uint16_t index) { return true; };
+	virtual bool Event(AnalogOutputStatusQuality qual, uint16_t index) { return true; };
 
-		virtual bool Event(ConnectState state, uint16_t index){ return true; };
+	virtual bool Event(ConnectState state, uint16_t index){ return true; };
 
-		Json::Value params;
-	};
+	Json::Value params;
+};
 
 }
 

@@ -31,96 +31,96 @@
 namespace ODC
 {
 
-	std::unordered_map<std::string, Json::Value> ConfigParser::JSONCache;
+std::unordered_map<std::string, Json::Value> ConfigParser::JSONCache;
 
-	ConfigParser::ConfigParser(const std::string& aConfFilename, const Json::Value& aConfOverrides) :
-		ConfFilename(aConfFilename),
-		ConfOverrides(aConfOverrides)
-	{}
+ConfigParser::ConfigParser(const std::string& aConfFilename, const Json::Value& aConfOverrides):
+	ConfFilename(aConfFilename),
+	ConfOverrides(aConfOverrides)
+{}
 
-	void ConfigParser::ProcessInherits(const std::string& FileName)
+void ConfigParser::ProcessInherits(const std::string& FileName)
+{
+	Json::Value* pJSONRoot;
+	pJSONRoot = RecallOrCreate(FileName);
+	if (pJSONRoot != nullptr)
 	{
-		Json::Value* pJSONRoot;
-		pJSONRoot = RecallOrCreate(FileName);
-		if (pJSONRoot != nullptr)
-		{
-			if (!(*pJSONRoot)["Inherits"].isNull())
+		if (!(*pJSONRoot)["Inherits"].isNull())
 			for (Json::ArrayIndex n = 0; n < (*pJSONRoot)["Inherits"].size(); n++)
 				ProcessInherits((*pJSONRoot)["Inherits"][n].asString());
-			ProcessElements(*pJSONRoot);
-		}
+		ProcessElements(*pJSONRoot);
 	}
+}
 
-	void ConfigParser::ProcessFile()
-	{
-		if (!ConfFilename.empty())
-			ProcessInherits(ConfFilename);
-		if (!ConfOverrides.isNull())
-			ProcessElements(ConfOverrides);
-	}
+void ConfigParser::ProcessFile()
+{
+	if (!ConfFilename.empty())
+		ProcessInherits(ConfFilename);
+	if (!ConfOverrides.isNull())
+		ProcessElements(ConfOverrides);
+}
 
-	Json::Value* ConfigParser::RecallOrCreate(const std::string& FileName)
+Json::Value* ConfigParser::RecallOrCreate(const std::string& FileName)
+{
+	Json::Value JSONRoot;
+	std::string Err;
+	if (!(JSONCache.count(FileName))) //not cached - read it in
 	{
-		Json::Value JSONRoot;
-		std::string Err;
-		if (!(JSONCache.count(FileName))) //not cached - read it in
+		std::ifstream fin(FileName);
+		if (fin.fail())
 		{
-			std::ifstream fin(FileName);
-			if (fin.fail())
-			{
-                std::string msg = "WARNING: Could not find or open config file '" + FileName + "'";
-                auto log_entry = ODC::LogEntry("ConfigParser", -1, "", msg.c_str(), -1);
-                this->Log(log_entry);
-                
-				return nullptr;
-			}
-			Json::Reader JSONReader;
-			bool parse_success = JSONReader.parse(fin, JSONCache[FileName]);
-			if (!parse_success)
-			{
-                std::string msg = "Failed to parse configuration from '" + FileName + "'\n" + JSONReader.getFormattedErrorMessages();
-                auto log_entry = ODC::LogEntry("ConfigParser", -1, "", msg.c_str(), -1);
-                this->Log(log_entry);
-                
-				return nullptr;
-			}
-		}
-		return &JSONCache[FileName];
-	}
+			std::string msg = "WARNING: Could not find or open config file '" + FileName + "'";
+			auto log_entry = ODC::LogEntry("ConfigParser", -1, "", msg.c_str(), -1);
+			this->Log(log_entry);
 
-	const Json::Value ConfigParser::GetConfiguration(const std::string& pFileName)
-	{
-		if (JSONCache.count(pFileName))
+			return nullptr;
+		}
+		Json::Reader JSONReader;
+		bool parse_success = JSONReader.parse(fin, JSONCache[FileName]);
+		if (!parse_success)
 		{
-			return JSONCache[pFileName];
-		}
-		return Json::Value();
-	}
+			std::string msg = "Failed to parse configuration from '" + FileName + "'\n" + JSONReader.getFormattedErrorMessages();
+			auto log_entry = ODC::LogEntry("ConfigParser", -1, "", msg.c_str(), -1);
+			this->Log(log_entry);
 
-	void ConfigParser::AddInherits(Json::Value& JSONRoot, const Json::Value& Inherits)
+			return nullptr;
+		}
+	}
+	return &JSONCache[FileName];
+}
+
+const Json::Value ConfigParser::GetConfiguration(const std::string& pFileName)
+{
+	if (JSONCache.count(pFileName))
 	{
-		for (Json::Value InheritFile : Inherits)
-		{
-			Json::Value InheritRoot = ConfigParser::GetConfiguration(InheritFile.asString());
-			JSONRoot[InheritFile.asString()] = InheritRoot;
-			if (!(InheritRoot["Inherits"].isNull()))
-			{
-				AddInherits(JSONRoot, InheritRoot["Inherits"]);
-			}
-		}
+		return JSONCache[pFileName];
 	}
+	return Json::Value();
+}
 
-	const Json::Value ConfigParser::GetConfiguration() const
+void ConfigParser::AddInherits(Json::Value& JSONRoot, const Json::Value& Inherits)
+{
+	for (Json::Value InheritFile : Inherits)
 	{
-		Json::Value JSONRoot;
-		JSONRoot[ConfFilename] = GetConfiguration(ConfFilename);
-		if (!JSONRoot[ConfFilename]["Inherits"].isNull())
+		Json::Value InheritRoot = ConfigParser::GetConfiguration(InheritFile.asString());
+		JSONRoot[InheritFile.asString()] = InheritRoot;
+		if (!(InheritRoot["Inherits"].isNull()))
 		{
-			AddInherits(JSONRoot, JSONRoot[ConfFilename]["Inherits"]);
+			AddInherits(JSONRoot, InheritRoot["Inherits"]);
 		}
-		JSONRoot["ConfigOverrides"] = ConfOverrides;
-
-		return JSONRoot;
 	}
+}
+
+const Json::Value ConfigParser::GetConfiguration() const
+{
+	Json::Value JSONRoot;
+	JSONRoot[ConfFilename] = GetConfiguration(ConfFilename);
+	if (!JSONRoot[ConfFilename]["Inherits"].isNull())
+	{
+		AddInherits(JSONRoot, JSONRoot[ConfFilename]["Inherits"]);
+	}
+	JSONRoot["ConfigOverrides"] = ConfOverrides;
+
+	return JSONRoot;
+}
 
 }

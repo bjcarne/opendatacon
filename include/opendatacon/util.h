@@ -31,9 +31,9 @@
 typedef uint32_t rand_t;
 
 namespace ODC
-{    
-    bool getline_noncomment(std::istream& is, std::string& line);
-    bool extract_delimited_string(std::istream& ist, std::string& extracted);
-    bool extract_delimited_string(const std::string& delims, std::istream& ist, std::string& extracted);
-	bool GetBool(const std::string& value);
+{
+bool getline_noncomment(std::istream& is, std::string& line);
+bool extract_delimited_string(std::istream& ist, std::string& extracted);
+bool extract_delimited_string(const std::string& delims, std::istream& ist, std::string& extracted);
+bool GetBool(const std::string& value);
 }

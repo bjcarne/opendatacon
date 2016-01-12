@@ -42,41 +42,41 @@ class ConsoleUI: public ODC::IUI, public ODC::Logger, tinyConsole
 {
 public:
 	ConsoleUI();
-    virtual ~ConsoleUI(void);
+	virtual ~ConsoleUI(void);
 
-    void AddHelp(std::string help);    
-    
-    /* tinyConsole functions */
-    int trigger (std::string s) override;
-    int hotkeys(char c) override;
-    
+	void AddHelp(std::string help);
+
+	/* tinyConsole functions */
+	int trigger (std::string s) override;
+	int hotkeys(char c) override;
+
 	/* Implement IUI interface */
-    void AddCommand(const std::string name, std::function<void (std::stringstream&)> callback, const std::string desc = "No description available\n");
+	void AddCommand(const std::string name, std::function<void (std::stringstream&)> callback, const std::string desc = "No description available\n");
 	void AddResponder(const std::string name, const ODC::IUIResponder& pResponder);
 
-    /* Implement Plugin interface */
-    void BuildOrRebuild() {};
-    void Enable();
-    void Disable();
-    
-    /* Implement ConfigParser interface */
-    void ProcessElements(const Json::Value& JSONRoot) {};
-    
+	/* Implement Plugin interface */
+	void BuildOrRebuild() {};
+	void Enable();
+	void Disable();
+
+	/* Implement ConfigParser interface */
+	void ProcessElements(const Json::Value& JSONRoot) {};
+
 private:
-    /* */
-    std::string context;
-    std::unique_ptr<asio::thread> uithread;
-    
-    /* tinyConsole functions */
-    std::map<std::string,std::function<void (std::stringstream&)> > mCmds;
-    std::map<std::string,std::string> mDescriptions;
-    std::string help_intro;
+	/* */
+	std::string context;
+	std::unique_ptr<asio::thread> uithread;
+
+	/* tinyConsole functions */
+	std::map<std::string,std::function<void (std::stringstream&)> > mCmds;
+	std::map<std::string,std::string> mDescriptions;
+	std::string help_intro;
 
 	/* UI response handlers */
-    std::unordered_map<std::string, const ODC::IUIResponder*> Responders;
-    
-    /* Internal functions */
-    void ExecuteCommand(const ODC::IUIResponder* pResponder, const std::string& command, std::stringstream& args);
+	std::unordered_map<std::string, const ODC::IUIResponder*> Responders;
+
+	/* Internal functions */
+	void ExecuteCommand(const ODC::IUIResponder* pResponder, const std::string& command, std::stringstream& args);
 };
 
 #endif /* defined(__opendatacon__WebUI__) */

@@ -29,16 +29,16 @@
 
 namespace ODC
 {
-    class IUI : public Plugin
-    {
-    public:
-        IUI(const std::string& aName, const std::string& aConfFilename, const Json::Value aConfOverrides):
-        Plugin(aName, aConfFilename, aConfOverrides)
-        {};
-        virtual ~IUI(){};
-        virtual void AddCommand(const std::string name, std::function<void (std::stringstream&)> callback, const std::string desc = "No description available\n") = 0;
-        virtual void AddResponder(const std::string name, const IUIResponder& pResponder) = 0;
-    };
+class IUI: public Plugin
+{
+public:
+	IUI(const std::string& aName, const std::string& aConfFilename, const Json::Value aConfOverrides):
+		Plugin(aName, aConfFilename, aConfOverrides)
+	{};
+	virtual ~IUI(){};
+	virtual void AddCommand(const std::string name, std::function<void (std::stringstream&)> callback, const std::string desc = "No description available\n") = 0;
+	virtual void AddResponder(const std::string name, const IUIResponder& pResponder) = 0;
+};
 }
 
 #endif

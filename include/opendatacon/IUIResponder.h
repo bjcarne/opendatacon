@@ -37,30 +37,30 @@
 namespace ODC
 {
 
-	typedef std::function<Json::Value(const ParamCollection& params)> UIFunction;
+typedef std::function<Json::Value(const ParamCollection& params)> UIFunction;
 
-	class UICommand
-	{
-	public:
-		UICommand(const UIFunction& func, const std::string& desc, const bool hide) : function(func), description(desc), hidden(hide) {};
-		UIFunction function;
-		std::string description;
-		bool hidden; // if true, command is not listed during a call to GetCommandList
-	};
+class UICommand
+{
+public:
+	UICommand(const UIFunction& func, const std::string& desc, const bool hide): function(func), description(desc), hidden(hide) {};
+	UIFunction function;
+	std::string description;
+	bool hidden; // if true, command is not listed during a call to GetCommandList
+};
 
-	class IUIResponder
-	{
-	public:
-		virtual ~IUIResponder(){};
-		static const Json::Value GenerateResult(const std::string& message);
+class IUIResponder
+{
+public:
+	virtual ~IUIResponder(){};
+	static const Json::Value GenerateResult(const std::string& message);
 
-        const virtual Json::Value GetCommandList() const;
-		virtual Json::Value ExecuteCommand(const std::string& arCommandName, const ParamCollection& params) const;
-		void AddCommand(const std::string& arCommandName, UIFunction arCommand, const std::string& desc = "", const bool hide = false);
+	const virtual Json::Value GetCommandList() const;
+	virtual Json::Value ExecuteCommand(const std::string& arCommandName, const ParamCollection& params) const;
+	void AddCommand(const std::string& arCommandName, UIFunction arCommand, const std::string& desc = "", const bool hide = false);
 
-	private:
-		std::unordered_map<std::string, UICommand> commands;
-	};
+private:
+	std::unordered_map<std::string, UICommand> commands;
+};
 
 }
 

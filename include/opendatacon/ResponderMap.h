@@ -34,70 +34,70 @@
 
 namespace ODC
 {
-    template <class T>
-    class ResponderMap : public std::unordered_map<std::string, std::shared_ptr<T> >, public IUIResponder
-    {
-    public:
-        ResponderMap()
-        {
-            this->AddCommand("List", [this](const ParamCollection &params) {
-                Json::Value result;
-                
-                result["Commands"] = GetCommandList();
-                
-                Json::Value vec;
-                for (auto responder : *this)
-                {
-                    vec.append(Json::Value(responder.first));
-                }
-                
-                result["Items"] = vec;
-                
-                return result;
-            }, "", true);
-        }
-        virtual ~ResponderMap(){};
-        
-        std::vector<T*> GetTargets(const ParamCollection& params)
-        {
-            std::vector<T*> targets;
-            
-            if (params.count("Target"))
-            {
-                
-                std::string mregex = params.at("Target");
-                std::regex reg;
-                
-                try
-                {
-                    reg = std::regex(mregex);
-                    for(auto& pName_n_pVal : *this)
-                    {
-                        if(std::regex_match(pName_n_pVal.first, reg))
-                        {
-                            targets.push_back(pName_n_pVal.second.get());
-                        }
-                    }
-                }
-                catch(std::exception& e)
-                {
-                    std::cout<<e.what()<<std::endl;
-                }
-            }
-            return targets;
-        }
-        
-        T* GetTarget(const ParamCollection& params)
-        {
-            if (params.count("Target") && this->count(params.at("Target")))
-            {
-                return this->at(params.at("Target")).get();
-            }
-            return nullptr;
-        }
-        
-    };
-    
+template <class T>
+class ResponderMap: public std::unordered_map<std::string, std::shared_ptr<T> >, public IUIResponder
+{
+public:
+	ResponderMap()
+	{
+		this->AddCommand("List", [this](const ParamCollection &params) {
+		                       Json::Value result;
+
+		                       result["Commands"] = GetCommandList();
+
+		                       Json::Value vec;
+		                       for (auto responder: *this)
+		                       {
+		                             vec.append(Json::Value(responder.first));
+					     }
+
+		                       result["Items"] = vec;
+
+		                       return result;
+				     }, "", true);
+	}
+	virtual ~ResponderMap(){};
+
+	std::vector<T*> GetTargets(const ParamCollection& params)
+	{
+		std::vector<T*> targets;
+
+		if (params.count("Target"))
+		{
+
+			std::string mregex = params.at("Target");
+			std::regex reg;
+
+			try
+			{
+				reg = std::regex(mregex);
+				for(auto& pName_n_pVal : *this)
+				{
+					if(std::regex_match(pName_n_pVal.first, reg))
+					{
+						targets.push_back(pName_n_pVal.second.get());
+					}
+				}
+			}
+			catch(std::exception& e)
+			{
+				std::cout<<e.what()<<std::endl;
+			}
+		}
+		return targets;
+	}
+
+	T* GetTarget(const ParamCollection& params)
+	{
+		if (params.count("Target") && this->count(params.at("Target")))
+		{
+			return this->at(params.at("Target")).get();
+		}
+		return nullptr;
+	}
+
+};
+
 }
 
 #endif

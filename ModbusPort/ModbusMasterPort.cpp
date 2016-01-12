@@ -118,8 +118,8 @@ void ModbusMasterPort::Connect()
 	{
 		auto id = pg.second.ID;
 		auto action = [=](){
-			this->DoPoll(id);
-		};
+					  this->DoPoll(id);
+				  };
 		PollScheduler->Add(pg.second.pollrate, action);
 	}
 

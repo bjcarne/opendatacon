@@ -123,7 +123,7 @@ private:
 		DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 		if(pConf->OverrideControlCode != opendnp3::ControlCode::UNDEFINED)
 		{
-            arCommand.functionCode = pConf->OverrideControlCode;
+			arCommand.functionCode = pConf->OverrideControlCode;
 			arCommand.rawCode = opendnp3::ControlCodeToType(arCommand.functionCode);
 		}
 

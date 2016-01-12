@@ -34,28 +34,28 @@
 namespace ODC
 {
 
-    class ConfigParser : public virtual ILoggable
-	{
-	public:
-		ConfigParser(const std::string& aConfFilename, const Json::Value& aConfOverrides = Json::Value());
-		virtual ~ConfigParser(){};
-		void ProcessFile();
+class ConfigParser: public virtual ILoggable
+{
+public:
+	ConfigParser(const std::string& aConfFilename, const Json::Value& aConfOverrides = Json::Value());
+	virtual ~ConfigParser(){};
+	void ProcessFile();
 
-		virtual void ProcessElements(const Json::Value& JSONRoot) = 0;
-		const Json::Value GetConfiguration() const;
+	virtual void ProcessElements(const Json::Value& JSONRoot) = 0;
+	const Json::Value GetConfiguration() const;
 
-	protected:
-		const std::string ConfFilename;
-		const Json::Value ConfOverrides;
+protected:
+	const std::string ConfFilename;
+	const Json::Value ConfOverrides;
 
-	private:
-		void ProcessInherits(const std::string& FileName);
-        Json::Value* RecallOrCreate(const std::string& FileName);
+private:
+	void ProcessInherits(const std::string& FileName);
+	Json::Value* RecallOrCreate(const std::string& FileName);
 
-		static const Json::Value GetConfiguration(const std::string& FileName);
-		static void AddInherits(Json::Value& JSONRoot, const Json::Value& Inherits);
-		static std::unordered_map<std::string, Json::Value> JSONCache;
-	};
+	static const Json::Value GetConfiguration(const std::string& FileName);
+	static void AddInherits(Json::Value& JSONRoot, const Json::Value& Inherits);
+	static std::unordered_map<std::string, Json::Value> JSONCache;
+};
 
 }
 

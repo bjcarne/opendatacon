@@ -30,56 +30,56 @@
 namespace ODC
 {
 
-	std::unordered_map<std::string, IOHandler*> IOHandler::IOHandlers;
+std::unordered_map<std::string, IOHandler*> IOHandler::IOHandlers;
 
-	std::unordered_map<std::string, IOHandler*>& GetIOHandlers()
-	{
-		return IOHandler::IOHandlers;
-	}
+std::unordered_map<std::string, IOHandler*>& GetIOHandlers()
+{
+	return IOHandler::IOHandlers;
+}
 
-	IOHandler::IOHandler(std::string aName) : Name(aName),
-		LOG_LEVEL(openpal::logflags::WARN),
-		enabled(false)
-	{
-		IOHandlers[Name] = this;
-	}
+IOHandler::IOHandler(std::string aName): Name(aName),
+	LOG_LEVEL(openpal::logflags::WARN),
+	enabled(false)
+{
+	IOHandlers[Name] = this;
+}
 
-	void IOHandler::Subscribe(IOHandler* pIOHandler, std::string aName)
-	{
-		this->Subscribers[aName] = pIOHandler;
-	}
+void IOHandler::Subscribe(IOHandler* pIOHandler, std::string aName)
+{
+	this->Subscribers[aName] = pIOHandler;
+}
 
-	void IOHandler::SetLogLevel(openpal::LogFilters LOG_LEVEL)
-	{
-		this->LOG_LEVEL = LOG_LEVEL;
-	}
-	void IOHandler::SetIOS(asio::io_service* ios_ptr)
-	{
-		pIOS = ios_ptr;
-	}
+void IOHandler::SetLogLevel(openpal::LogFilters LOG_LEVEL)
+{
+	this->LOG_LEVEL = LOG_LEVEL;
+}
+void IOHandler::SetIOS(asio::io_service* ios_ptr)
+{
+	pIOS = ios_ptr;
+}
 
-	bool IOHandler::InDemand()
-	{
-		for (auto demand : connection_demands)
+bool IOHandler::InDemand()
+{
+	for (auto demand : connection_demands)
 		if (demand.second)
 			return true;
-		return false;
-	}
+	return false;
+}
 
-	bool IOHandler::MuxConnectionEvents(ConnectState state, const std::string& SenderName)
+bool IOHandler::MuxConnectionEvents(ConnectState state, const std::string& SenderName)
+{
+	if (state == ConnectState::DISCONNECTED)
 	{
-		if (state == ConnectState::DISCONNECTED)
-		{
-			connection_demands[SenderName] = false;
-			return !InDemand();
-		}
-		else if (state == ConnectState::CONNECTED)
-		{
-			bool new_demand = !connection_demands[SenderName];
-			connection_demands[SenderName] = true;
-			return new_demand;
-		}
-		return true;
+		connection_demands[SenderName] = false;
+		return !InDemand();
 	}
+	else if (state == ConnectState::CONNECTED)
+	{
+		bool new_demand = !connection_demands[SenderName];
+		connection_demands[SenderName] = true;
+		return new_demand;
+	}
+	return true;
+}
 
 }

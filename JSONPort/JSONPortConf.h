@@ -38,15 +38,14 @@ typedef struct
 	uint16_t Port;
 }JSONAddrConf;
 
-class JSONPortConf : public DataPortConf, public JSONPointConf, public Logger
+class JSONPortConf: public DataPortConf, public JSONPointConf, public Logger
 {
 public:
 	JSONPortConf(std::string FileName):
-    	JSONPointConf(FileName),
-    	Logger(FileName),
+		JSONPointConf(FileName),
+		Logger(FileName),
 		retry_time_ms(20000)
-	{
-	};
+	{};
 
 	JSONAddrConf mAddrConf;
 	unsigned int retry_time_ms;

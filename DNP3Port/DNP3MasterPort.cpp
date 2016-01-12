@@ -181,10 +181,10 @@ void DNP3MasterPort::OnKeepAliveSuccess()
 
 void DNP3MasterPort::BuildOrRebuild()
 {
-    DNP3Mgr.AddLogSubscriber(this->LogWrapper);
+	DNP3Mgr.AddLogSubscriber(this->LogWrapper);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
-    
-    pChannel = getTCPClient(pConf->mAddrConf);
+
+	pChannel = getTCPClient(pConf->mAddrConf);
 	if (pChannel == nullptr)
 	{
 		std::string msg = Name + ": TCP channel not found for masterstation.";
