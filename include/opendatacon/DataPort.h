@@ -32,18 +32,16 @@
 #include "ConfigParser.h"
 #include "IUIResponder.h"
 #include "Plugin.h"
-#include "Logger.h"
 
 namespace ODC
 {
 
-class DataPort: public Plugin, public IOHandler, public Logger
+class DataPort: public Plugin, public IOHandler
 {
 public:
-	DataPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-		Plugin(aName, aConfFilename, aConfOverrides),
+	DataPort(std::string aName, Context& parent, std::string aConfFilename, const Json::Value aConfOverrides):
+		Plugin(aName, parent, aConfFilename, aConfOverrides),
 		IOHandler(aName),
-		Logger(aName),
 		pConf(nullptr)
 	{};
 	virtual ~DataPort(){};
@@ -76,6 +74,8 @@ public:
 protected:
 	std::unique_ptr<DataPortConf> pConf;
 };
+
+typedef ODC::DataPort*(NewPortFunctionT)(std::string&, Context&, std::string&, const Json::Value&);
 
 }
 

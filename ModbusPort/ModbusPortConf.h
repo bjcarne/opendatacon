@@ -72,11 +72,11 @@ struct ModbusAddrConf
 	{};
 };
 
-class ModbusPortConf: public Logger, public DataPortConf, public ModbusPointConf
+class ModbusPortConf: public Context, public DataPortConf, public ModbusPointConf
 {
 public:
-	ModbusPortConf(std::string FileName):
-		Logger(FileName),
+	ModbusPortConf(std::string FileName, Context& Parent):
+		Context(FileName,Parent),
 		ModbusPointConf(FileName),
 		mAddrConf()
 	{};

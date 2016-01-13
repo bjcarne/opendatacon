@@ -33,8 +33,8 @@
 
 #include <opendnp3/LogLevels.h>
 
-ModbusOutstationPort::ModbusOutstationPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-	ModbusPort(aName, aConfFilename, aConfOverrides)
+ModbusOutstationPort::ModbusOutstationPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+	ModbusPort(aName, aParent, aConfFilename, aConfOverrides)
 {}
 
 ModbusOutstationPort::~ModbusOutstationPort()

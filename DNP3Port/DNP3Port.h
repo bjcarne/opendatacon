@@ -29,7 +29,10 @@
 
 #include <opendatacon/DataPort.h>
 #include <opendnp3/gen/LinkStatus.h>
+
 #include <asiodnp3/DNP3Manager.h>
+#include "ChannelSet.h" //TODO: Reqest this header file be moved into public headers
+
 #include <openpal/logging/ILogHandler.h>
 #include <openpal/logging/LogEntry.h>
 #include "DNP3PortConf.h"
@@ -67,7 +70,7 @@ private:
 class DNP3Port: public ODC::DataPort
 {
 public:
-	DNP3Port(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides);
+	DNP3Port(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides);
 	using DataPort::IOHandler::Event;
 
 	virtual void Enable()=0;
@@ -104,42 +107,14 @@ public:
 
 protected:
 
-	inline asiodnp3::IChannel* getTCPServer(const DNP3AddrConf& mAddrConf)
-	{
-		auto IPPort = "TCPS_" + mAddrConf.IP +":"+ std::to_string(mAddrConf.Port);
-
-		//create a new channel if one isn't already up
-		if(!TCPServers.count(IPPort))
-		{
-			TCPServers[IPPort] = DNP3Mgr.AddTCPServer(IPPort.c_str(), opendnp3::levels::ALL,
-			                                          opendnp3::ChannelRetry::Default(),
-			                                          mAddrConf.IP,
-			                                          mAddrConf.Port);
-		}
-		return TCPServers[IPPort];
-	}
-
-	inline asiodnp3::IChannel* getTCPClient(const DNP3AddrConf& mAddrConf)
-	{
-		auto IPPort = "TCPC_" + mAddrConf.IP +":"+ std::to_string(mAddrConf.Port);
-
-		//create a new channel if one isn't already up
-		if(!TCPClients.count(IPPort))
-		{
-			TCPClients[IPPort] = DNP3Mgr.AddTCPClient(IPPort.c_str(), opendnp3::levels::ALL,
-			                                          opendnp3::ChannelRetry::Default(),
-			                                          mAddrConf.IP,
-			                                          "0.0.0.0",
-			                                          mAddrConf.Port);
-		}
-		return TCPClients[IPPort];
-	}
+	asiodnp3::IChannel* getTCPServer(const DNP3AddrConf& mAddrConf);
+	asiodnp3::IChannel* getTCPClient(const DNP3AddrConf& mAddrConf);
 
 	DNP3LogWrapper LogWrapper;
 	asiodnp3::IChannel* pChannel;
 	static std::unordered_map<std::string, asiodnp3::IChannel*> TCPServers;
 	static std::unordered_map<std::string, asiodnp3::IChannel*> TCPClients;
-	static asiodnp3::DNP3Manager DNP3Mgr;
+	static asiodnp3::ChannelSet* channels;
 	opendnp3::LinkStatus status;
 	bool link_dead;
 };

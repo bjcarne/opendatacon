@@ -27,12 +27,12 @@
 
 //std::unordered_map<std::string, asiodnp3::IChannel*> ModbusPort::TCPChannels;
 
-ModbusPort::ModbusPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-	DataPort(aName, aConfFilename, aConfOverrides),
+ModbusPort::ModbusPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+	DataPort(aName, aParent, aConfFilename, aConfOverrides),
 	stack_enabled(false)
 {
 	//the creation of a new ModbusPortConf will get the point details
-	pConf.reset(new ModbusPortConf(ConfFilename));
+	pConf.reset(new ModbusPortConf(ConfFilename, *this));
 
 	//We still may need to process the file (or overrides) to get Addr details:
 	ProcessFile();

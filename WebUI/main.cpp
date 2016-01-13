@@ -27,18 +27,18 @@
 
 #include "WebUI.h"
 
-extern "C" IUI* new_WebUIPlugin(std::string Name, std::string File, const Json::Value Overrides)
+extern "C" IUI* new_WebUIPlugin(std::string& aName, Context& aParent, std::string& Filename, const Json::Value& aOverrides)
 {
 	std::string ip = "0.0.0.0";
 	uint16_t port = 443;
-	if(Overrides.isObject())
+	if(aOverrides.isObject())
 	{
-		if(!Overrides["IP"].isNull())
-			ip= Overrides["IP"].asString();
+		if(!aOverrides["IP"].isNull())
+			ip= aOverrides["IP"].asString();
 
-		if(!Overrides["Port"].isNull())
-			port = Overrides["Port"].asUInt();
+		if(!aOverrides["Port"].isNull())
+			port = aOverrides["Port"].asUInt();
 	}
 
-	return new WebUI(port);
+	return new WebUI(aName, aParent, port);
 }

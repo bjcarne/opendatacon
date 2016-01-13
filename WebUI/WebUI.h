@@ -36,10 +36,10 @@ const char ROOTPAGE[] = "/index.html";
 
 using namespace ODC;
 
-class WebUI: public IUI, public ODC::Logger
+class WebUI: public IUI
 {
 public:
-	WebUI(uint16_t port);
+	WebUI(const std::string& name, Context& parent, uint16_t port);
 
 	/* Implement IUI interface */
 	void AddCommand(const std::string name, std::function<void (std::stringstream&)> callback, const std::string desc = "No description available\n");

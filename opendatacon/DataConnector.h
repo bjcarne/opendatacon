@@ -27,6 +27,7 @@
 #ifndef DATACONNECTOR_H_
 #define DATACONNECTOR_H_
 
+#include <opendatacon/Context.h>
 #include <opendatacon/IOHandler.h>
 #include <opendatacon/ConfigParser.h>
 #include <opendatacon/Transform.h>
@@ -34,10 +35,10 @@
 
 namespace ODC
 {
-class DataConnector: public Logger, public IOHandler, public ConfigParser
+class DataConnector: public Context, public IOHandler, public ConfigParser
 {
 public:
-	DataConnector(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides);
+	DataConnector(std::string aName, Context& aParent, std::string aConfFilename, const Json::Value aConfOverrides);
 	~DataConnector(){};
 
 	std::future<CommandStatus> Event(const Binary& meas, uint16_t index, const std::string& SenderName);

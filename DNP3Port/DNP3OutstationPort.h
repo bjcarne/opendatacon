@@ -35,7 +35,7 @@
 class DNP3OutstationPort: public DNP3Port, public opendnp3::ICommandHandler
 {
 public:
-	DNP3OutstationPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides);
+	DNP3OutstationPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides);
 
 	void Enable();
 	void Disable();
@@ -109,8 +109,5 @@ private:
 	asiodnp3::IOutstation* pOutstation;
 	void LinkStatusListener(opendnp3::LinkStatus status);
 };
-
-extern "C" DNP3OutstationPort* new_DNP3OutstationPort(std::string Name, std::string File, const Json::Value Overrides);
-
 
 #endif /* DNP3SERVERPORT_H_ */

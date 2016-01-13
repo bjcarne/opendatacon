@@ -20,10 +20,10 @@
 
 #include "ConsoleUI.h"
 
-extern "C" ODC::IUI* new_ConsoleUIPlugin(std::string Name, std::string File, const Json::Value Overrides)
+extern "C" ODC::IUI* new_ConsoleUIPlugin(const std::string& aName, ODC::Context& aParent, const std::string& aFile, const Json::Value& aOverrides)
 {
-	if(Overrides.isObject())
+	if(aOverrides.isObject())
 	{}
 
-	return new ConsoleUI();
+	return new ConsoleUI(aName, aParent, aFile, aOverrides);
 }

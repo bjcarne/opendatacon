@@ -25,10 +25,14 @@
 #include <iomanip>
 #include <exception>
 
-ConsoleUI::ConsoleUI(): IUI("ConsoleUI","{}","{}"), Logger("ConsoleUI"), tinyConsole("odc> "), context("")
+std::mutex ConsoleUI::mutex;
+
+ConsoleUI::ConsoleUI(const std::string& aName, ODC::Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
+	IUI(aName,aParent,aConfFilename,aConfOverrides), tinyConsole("odc> "), context("")
 {
 	//mDescriptions["help"] = "Get help on commands. Optional argument of specific command.";
 	AddCommand("help",[this](std::stringstream& LineStream){
+	                 std::unique_lock<std::mutex> lock(mutex);
 	                 std::string arg;
 	                 std::cout<<std::endl;
 	                 if(LineStream>>arg)
@@ -131,7 +135,10 @@ int ConsoleUI::trigger (std::string s)
 	else
 	{
 		if(cmd != "")
+		{
+			std::unique_lock<std::mutex> lock(mutex);
 			std::cout <<"Unknown command: "<< cmd << std::endl;
+		}
 	}
 
 	return 0;
@@ -139,6 +146,7 @@ int ConsoleUI::trigger (std::string s)
 
 int ConsoleUI::hotkeys(char c)
 {
+	std::unique_lock<std::mutex> lock(mutex);
 	if (c == TAB) //auto complete/list
 	{
 		//store what's been entered so far
@@ -270,6 +278,8 @@ void ConsoleUI::ExecuteCommand(const ODC::IUIResponder* pResponder, const std::s
 		params[pName] = pVal;
 	}
 	auto result = pResponder->ExecuteCommand(command, params);
+
+	std::unique_lock<std::mutex> lock(mutex);
 	std::cout<<result.toStyledString()<<std::endl;
 }
 

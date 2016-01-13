@@ -32,6 +32,8 @@
 #include "LogToFile.h"
 #include "LogCollection.h"
 
+#include <opendatacon/Context.h>
+
 #include <asio.hpp>
 #include <unordered_map>
 
@@ -44,14 +46,14 @@
 #include <opendatacon/IUI.h>
 #include <opendatacon/Logger.h>
 
-class DataConcentrator: public ODC::ConfigParser, public ODC::IUIResponder, public ODC::Logger
+class DataConcentrator: public ODC::ConfigParser, public ODC::IUIResponder, public ODC::Context
 {
 public:
 	DataConcentrator(std::string FileName);
 	//~DataConcentrator();
 	ODC::DataPortCollection DataPorts;
 	ODC::DataConnectorCollection DataConnectors;
-    ODC::InterfaceCollection Interfaces;
+	ODC::InterfaceCollection Interfaces;
 	asio::io_service IOS;
 	std::unique_ptr<asio::io_service::work> ios_working;
 	openpal::LogFilters LOG_LEVEL;
@@ -60,7 +62,7 @@ public:
 //	LogToFile FileLog;                             //Prints all messages to a rolling set of log files.
 //	std::shared_ptr<AdvancedLogger> AdvFileLog;
 //	asiopal::LogFanoutHandler FanoutHandler;
-    
+
 	void ProcessElements(const Json::Value& JSONRoot) override;
 	void BuildOrRebuild();
 	void Run();

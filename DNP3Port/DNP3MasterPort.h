@@ -40,8 +40,8 @@ using opendnp3::Indexed;
 class DNP3MasterPort: public DNP3Port, public opendnp3::ISOEHandler //, public opendnp3::IPollListener
 {
 public:
-	DNP3MasterPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-		DNP3Port(aName, aConfFilename, aConfOverrides),
+	DNP3MasterPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+		DNP3Port(aName, aParent, aConfFilename, aConfOverrides),
 		pMaster(nullptr),
 		stack_enabled(false),
 		assign_class_sent(false)
@@ -129,7 +129,5 @@ private:
 
 	};
 };
-
-extern "C" DNP3MasterPort* new_DNP3MasterPort(std::string Name, std::string File, const Json::Value Overrides);
 
 #endif /* DNP3CLIENTPORT_H_ */

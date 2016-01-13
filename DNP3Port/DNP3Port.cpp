@@ -26,13 +26,15 @@
 #include "DNP3Port.h"
 #include <iostream>
 #include "DNP3PortConf.h"
+#include <asiopal/PhysicalLayerTCPServer.h>
+#include <asiopal/PhysicalLayerTCPClient.h>
 
 std::unordered_map<std::string, asiodnp3::IChannel*> DNP3Port::TCPServers;
 std::unordered_map<std::string, asiodnp3::IChannel*> DNP3Port::TCPClients;
-asiodnp3::DNP3Manager DNP3Port::DNP3Mgr(std::thread::hardware_concurrency());
+asiodnp3::ChannelSet* DNP3Port::channels(new asiodnp3::ChannelSet());
 
-DNP3Port::DNP3Port(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-	DataPort(aName, aConfFilename, aConfOverrides),
+DNP3Port::DNP3Port(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+	DataPort(aName, aParent, aConfFilename, aConfOverrides),
 	LogWrapper(aName, *this),
 	pChannel(nullptr),
 	status(opendnp3::LinkStatus::UNRESET),
@@ -93,3 +95,30 @@ void DNP3Port::ProcessElements(const Json::Value& JSONRoot)
 
 }
 
+asiodnp3::IChannel* DNP3Port::getTCPServer(const DNP3AddrConf& mAddrConf)
+{
+	auto IPPort = "TCPS_" + mAddrConf.IP +":"+ std::to_string(mAddrConf.Port);
+
+	//create a new channel if one isn't already up
+	if(!TCPServers.count(IPPort))
+	{
+		auto pRoot = new openpal::LogRoot(&this->LogWrapper, IPPort.c_str(), opendnp3::levels::ALL);
+		auto pPhys = new asiopal::PhysicalLayerTCPServer(*pRoot, *this->GetIOService(), mAddrConf.IP, mAddrConf.Port);
+		TCPServers[IPPort] = channels->CreateChannel(pRoot, pPhys->executor, opendnp3::ChannelRetry::Default(), pPhys, nullptr);
+	}
+	return TCPServers[IPPort];
+}
+
+asiodnp3::IChannel* DNP3Port::getTCPClient(const DNP3AddrConf& mAddrConf)
+{
+	auto IPPort = "TCPC_" + mAddrConf.IP +":"+ std::to_string(mAddrConf.Port);
+
+	//create a new channel if one isn't already up
+	if(!TCPClients.count(IPPort))
+	{
+		auto pRoot = new openpal::LogRoot(&this->LogWrapper, IPPort.c_str(), opendnp3::levels::ALL);
+		auto pPhys = new asiopal::PhysicalLayerTCPClient(*pRoot, *this->GetIOService(), mAddrConf.IP, "0.0.0.0", mAddrConf.Port);
+		TCPClients[IPPort] = channels->CreateChannel(pRoot, pPhys->executor, opendnp3::ChannelRetry::Default(), pPhys, nullptr);
+	}
+	return TCPClients[IPPort];
+}

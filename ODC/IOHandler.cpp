@@ -37,11 +37,11 @@ std::unordered_map<std::string, IOHandler*>& GetIOHandlers()
 	return IOHandler::IOHandlers;
 }
 
-IOHandler::IOHandler(std::string aName): Name(aName),
+IOHandler::IOHandler(std::string aName): // Name(aName),
 	LOG_LEVEL(openpal::logflags::WARN),
 	enabled(false)
 {
-	IOHandlers[Name] = this;
+	IOHandlers[aName] = this;
 }
 
 void IOHandler::Subscribe(IOHandler* pIOHandler, std::string aName)

@@ -110,9 +110,8 @@ std::string load_key(const char *filename)
 	return(contents);
 }
 
-WebUI::WebUI(uint16_t pPort):
-	IUI("WebUI","{}","{}"),
-	Logger("WebUI"),
+WebUI::WebUI(const std::string& name, Context& parent, uint16_t pPort):
+	IUI(name, parent, "", "{}"),
 	d(nullptr),
 	port(pPort)
 {

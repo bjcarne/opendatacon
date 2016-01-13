@@ -28,6 +28,7 @@
 #define JSONPORTCONF_H_
 
 #include <memory>
+#include <opendatacon/Context.h>
 #include <opendatacon/DataPortConf.h>
 #include "JSONPointConf.h"
 #include <opendatacon/Logger.h>
@@ -38,12 +39,12 @@ typedef struct
 	uint16_t Port;
 }JSONAddrConf;
 
-class JSONPortConf: public DataPortConf, public JSONPointConf, public Logger
+class JSONPortConf: public ODC::Context, public DataPortConf, public JSONPointConf
 {
 public:
-	JSONPortConf(std::string FileName):
-		JSONPointConf(FileName),
-		Logger(FileName),
+	JSONPortConf(std::string& aFileName, ODC::Context& aParent):
+		Context(aFileName, aParent),
+		JSONPointConf(aFileName),
 		retry_time_ms(20000)
 	{};
 

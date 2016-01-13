@@ -33,8 +33,8 @@
 #include "RateLimitTransform.h"
 #include <opendatacon/Platform.h>
 
-DataConnector::DataConnector(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-	Logger(aName),
+DataConnector::DataConnector(std::string aName, ODC::Context& aParent, std::string aConfFilename, const Json::Value aConfOverrides):
+	Context(aName, aParent),
 	IOHandler(aName),
 	ConfigParser(aConfFilename, aConfOverrides)
 {
@@ -216,8 +216,8 @@ inline std::future<ODC::CommandStatus> DataConnector::EventT(const T& event_obj,
 			IOHandler* pSendee = Connections[aMatch_it->second].second;
 
 			//check if we were right and correct if need be
-			if(pSendee->Name == SenderName)
-				pSendee = Connections[aMatch_it->second].first;
+			//if(pSendee->Name == SenderName)
+			//	pSendee = Connections[aMatch_it->second].first;
 
 			returns.push_back(pSendee->Event(new_event_obj, index, this->Name));
 		}

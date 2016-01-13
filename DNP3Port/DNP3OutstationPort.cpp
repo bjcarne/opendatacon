@@ -37,8 +37,8 @@
 #include <opendnp3/LogLevels.h>
 
 
-DNP3OutstationPort::DNP3OutstationPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-	DNP3Port(aName, aConfFilename, aConfOverrides),
+DNP3OutstationPort::DNP3OutstationPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+	DNP3Port(aName, aParent, aConfFilename, aConfOverrides),
 	pOutstation(nullptr)
 {}
 

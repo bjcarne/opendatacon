@@ -97,7 +97,7 @@ public:
 	void SetLogLevel(openpal::LogFilters LOG_LEVEL);
 	void SetIOS(asio::io_service* ios_ptr);
 
-	std::string Name;
+	//std::string Name;
 	std::unordered_map<std::string, IOHandler*> Subscribers;
 	openpal::LogFilters LOG_LEVEL;
 	asio::io_service* pIOS;

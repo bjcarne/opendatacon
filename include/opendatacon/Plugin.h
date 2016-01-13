@@ -23,14 +23,16 @@
 #ifndef opendatacon_suite_Plugin_h
 #define opendatacon_suite_Plugin_h
 
+#include "Context.h"
 #include "ConfigParser.h"
 
 namespace ODC
 {
-class Plugin: public ConfigParser
+class Plugin: public Context, public ConfigParser
 {
 public:
-	Plugin(const std::string& aName, const std::string& aConfFilename, const Json::Value aConfOverrides):
+	Plugin(const std::string& aName, Context &parent, const std::string& aConfFilename, const Json::Value aConfOverrides):
+		Context(aName,parent),
 		ConfigParser(aConfFilename, aConfOverrides)
 	{};
 	virtual void BuildOrRebuild() = 0;

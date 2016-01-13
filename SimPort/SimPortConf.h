@@ -27,14 +27,16 @@
 #ifndef SIMPORTCONF_H
 #define SIMPORTCONF_H
 
+#include <opendatacon/Context.h>
 #include <opendatacon/DataPortConf.h>
 #include <opendnp3/app/MeasurementTypes.h>
 #include <opendnp3/app/ControlRelayOutputBlock.h>
 
-class SimPortConf: public DataPortConf
+class SimPortConf: public ODC::Context, public DataPortConf
 {
 public:
-	SimPortConf():
+	SimPortConf(std::string& aFilename, ODC::Context& aParent):
+		Context(aFilename, aParent),
 		default_std_dev_factor(0.1)
 	{}
 

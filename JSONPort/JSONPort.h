@@ -36,11 +36,11 @@ using namespace ODC;
 class JSONPort: public DataPort
 {
 public:
-	JSONPort(std::string aName, std::string aConfFilename, const Json::Value aConfOverrides):
-		DataPort(aName, aConfFilename, aConfOverrides)
+	JSONPort(std::string& aName, ODC::Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+		DataPort(aName, aParent, aConfFilename, aConfOverrides)
 	{
 		//the creation of a new PortConf will get the point details
-		pConf.reset(new JSONPortConf(ConfFilename));
+		pConf.reset(new JSONPortConf(aConfFilename, *this));
 
 		//We still may need to process the file (or overrides) to get Addr details:
 		ProcessFile();

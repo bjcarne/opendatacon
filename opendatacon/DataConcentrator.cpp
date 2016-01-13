@@ -36,8 +36,7 @@
 
 DataConcentrator::DataConcentrator(std::string FileName):
 	ConfigParser(FileName),
-	Context("DataConcentrator"),
-	Logger("DataConcentrator"),
+	Context("DataConcentrator",IOS),
 	IOS(std::thread::hardware_concurrency()),
 	ios_working(new asio::io_service::work(IOS)),
 	LOG_LEVEL(opendnp3::levels::NORMAL) //,
@@ -81,6 +80,10 @@ DataConcentrator::DataConcentrator(std::string FileName):
 	}
 	for(auto& port : DataPorts)
 	{
+		for(auto& interface : Interfaces)
+		{
+			port.second->LogSubscribe(*interface.second);
+		}
 //		port.second->AddLogSubscriber(AdvConsoleLog.get());
 //		port.second->AddLogSubscriber(AdvFileLog.get());
 		port.second->SetIOS(&IOS);
@@ -99,33 +102,33 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 {
 	if(!JSONRoot.isObject()) return;
 
-    /* Logging System Configuration */
-    //	if(!JSONRoot["LogFileSizekB"].isNull())
-    //		FileLog.SetLogFileSizekB(JSONRoot["LogFileSizekB"].asUInt());
-    
-    //	if(!JSONRoot["NumLogFiles"].isNull())
-    //		FileLog.SetNumLogFiles(JSONRoot["NumLogFiles"].asUInt());
-    
-    //	if(!JSONRoot["LogName"].isNull())
-    //		FileLog.SetLogName(JSONRoot["LogName"].asString());
-    
-    if(!JSONRoot["LOG_LEVEL"].isNull())
-    {
-        std::string value = JSONRoot["LOG_LEVEL"].asString();
-        if(value == "ALL")
-            LOG_LEVEL = opendnp3::levels::ALL;
-        else if(value == "ALL_COMMS")
-            LOG_LEVEL = opendnp3::levels::ALL_COMMS;
-        else if(value == "NORMAL")
-            LOG_LEVEL = opendnp3::levels::NORMAL;
-        else if(value == "NOTHING")
-            LOG_LEVEL = opendnp3::levels::NOTHING;
-        else
-            std::cout << "Warning: invalid LOG_LEVEL setting: '" << value << "' : ignoring and using 'NORMAL' log level." << std::endl;
-        //		AdvFileLog->SetLogLevel(LOG_LEVEL);
-        //		AdvConsoleLog->SetLogLevel(LOG_LEVEL);
-    }
-    
+	/* Logging System Configuration */
+	//	if(!JSONRoot["LogFileSizekB"].isNull())
+	//		FileLog.SetLogFileSizekB(JSONRoot["LogFileSizekB"].asUInt());
+
+	//	if(!JSONRoot["NumLogFiles"].isNull())
+	//		FileLog.SetNumLogFiles(JSONRoot["NumLogFiles"].asUInt());
+
+	//	if(!JSONRoot["LogName"].isNull())
+	//		FileLog.SetLogName(JSONRoot["LogName"].asString());
+
+	if(!JSONRoot["LOG_LEVEL"].isNull())
+	{
+		std::string value = JSONRoot["LOG_LEVEL"].asString();
+		if(value == "ALL")
+			LOG_LEVEL = opendnp3::levels::ALL;
+		else if(value == "ALL_COMMS")
+			LOG_LEVEL = opendnp3::levels::ALL_COMMS;
+		else if(value == "NORMAL")
+			LOG_LEVEL = opendnp3::levels::NORMAL;
+		else if(value == "NOTHING")
+			LOG_LEVEL = opendnp3::levels::NOTHING;
+		else
+			std::cout << "Warning: invalid LOG_LEVEL setting: '" << value << "' : ignoring and using 'NORMAL' log level." << std::endl;
+		//		AdvFileLog->SetLogLevel(LOG_LEVEL);
+		//		AdvConsoleLog->SetLogLevel(LOG_LEVEL);
+	}
+
 	/* Plugin System Configuration */
 	if(!JSONRoot["Plugins"].isNull())
 	{
@@ -143,9 +146,9 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			}
 
 			auto PluginName = Plugins[n]["Name"].asString();
-            auto PluginConfFilename = Plugins[n]["ConfFilename"].asString();
-            auto PluginConfOverrides = Plugins[n]["ConfOverrides"];
-            
+			auto PluginConfFilename = Plugins[n]["ConfFilename"].asString();
+			auto PluginConfOverrides = Plugins[n]["ConfOverrides"];
+
 			if(Interfaces.count(PluginName) > 0)
 			{
 				std::string msg = "Ignoring duplicate plugin name: " + PluginName;
@@ -182,8 +185,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			//Our API says the library should export a creation function: IUI* new_<Type>Plugin(Name, Filename, Overrides)
 			//it should return a pointer to a heap allocated instance of a descendant of IUI
 			std::string new_funcname = "new_"+Plugins[n]["Type"].asString()+"Plugin";
-			auto new_plugin_func = (ODC::IUI*(*)(std::string, std::string, const Json::Value))LoadSymbol(pluginlib, new_funcname);
-
+			auto new_plugin_func = reinterpret_cast<ODC::NewPluginFunctionT*>(LoadSymbol(pluginlib, new_funcname));
 			if(new_plugin_func == nullptr)
 			{
 				std::string msg = "Plugin " + PluginName + " load failed. Failed to load symbol '" + new_funcname + "' in library '" + libname + "' + " + LastSystemError();
@@ -194,11 +196,11 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			}
 
 			//call the creation function and wrap the returned pointer to a new plugin
-			Interfaces[PluginName] = std::unique_ptr<ODC::IUI>(new_plugin_func(PluginName, PluginConfFilename, PluginConfOverrides));
+			Interfaces[PluginName] = std::unique_ptr<ODC::IUI>(new_plugin_func(PluginName, *this, PluginConfFilename, PluginConfOverrides));
 		}
 	}
 
-    /* Port System Configuration */
+	/* Port System Configuration */
 	if(!JSONRoot["Ports"].isNull())
 	{
 		const Json::Value Ports = JSONRoot["Ports"];
@@ -210,15 +212,15 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 				std::cout<<"Warning: invalid port config: need at least Type, Name, ConfFilename: \n'"<<Ports[n].toStyledString()<<"\n' : ignoring"<<std::endl;
 				continue;
 			}
-            
-            auto PortType = Ports[n]["PortType"].asString();
-            auto PortName = Ports[n]["Name"].asString();
-            auto PortConfFilename = Ports[n]["ConfFilename"].asString();
-            auto PortConfOverrides = Ports[n]["ConfOverrides"];
-            
+
+			auto PortType = Ports[n]["Type"].asString();
+			auto PortName = Ports[n]["Name"].asString();
+			auto PortConfFilename = Ports[n]["ConfFilename"].asString();
+			auto PortConfOverrides = Ports[n]["ConfOverrides"];
+
 			if(PortType == "Null")
-			{                
-				DataPorts[PortName] = std::unique_ptr<ODC::DataPort>(new NullPort(PortName, PortConfFilename, PortConfOverrides));
+			{
+				DataPorts[PortName] = std::unique_ptr<ODC::DataPort>(new NullPort(PortName, *this, PortConfFilename, PortConfOverrides));
 				continue;
 			}
 
@@ -240,28 +242,29 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			if(portlib == nullptr)
 			{
 				std::cout << "Warning: failed to load library '"<<libname<<"' mapping to null port..."<<std::endl;
-				DataPorts[PortName] = std::unique_ptr<ODC::DataPort>(new NullPort(PortName, PortConfFilename, PortConfOverrides));
+				DataPorts[PortName] = std::unique_ptr<ODC::DataPort>(new NullPort(PortName, *this, PortConfFilename, PortConfOverrides));
 				continue;
 			}
 
 			//Our API says the library should export a creation function: DataPort* new_<Type>Port(Name, Filename, Overrides)
 			//it should return a pointer to a heap allocated instance of a descendant of DataPort
 			std::string new_funcname = "new_"+PortType+"Port";
-			auto new_port_func = (ODC::DataPort*(*)(std::string, std::string, const Json::Value))LoadSymbol(portlib, new_funcname);
+			auto new_port_func = reinterpret_cast<ODC::NewPortFunctionT*>(LoadSymbol(portlib, new_funcname));
 
 			if(new_port_func == nullptr)
 			{
 				std::cout << "Warning: failed to load symbol '"<<new_funcname<<"' for port type '"<<PortType<<"' mapping to null port..."<<std::endl;
-				DataPorts[PortName] = std::unique_ptr<ODC::DataPort>(new NullPort(PortName, PortConfFilename, PortConfOverrides));
+				DataPorts[PortName] = std::unique_ptr<ODC::DataPort>(new NullPort(PortName, *this, PortConfFilename, PortConfOverrides));
 				continue;
 			}
 
 			//call the creation function and wrap the returned pointer to a new port
-			DataPorts[PortName] = std::unique_ptr<ODC::DataPort>(new_port_func(PortName, PortConfFilename, PortConfOverrides));
+			DataPorts[PortName] = std::unique_ptr<ODC::DataPort>(new_port_func(PortName, *this, PortConfFilename, PortConfOverrides));
 
 		}
 	}
 
+	/* Connector System Configuration */
 	if(!JSONRoot["Connectors"].isNull())
 	{
 		const Json::Value Connectors = JSONRoot["Connectors"];
@@ -272,7 +275,12 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			{
 				std::cout<<"Warning: invalid Connector config: need at least Name, ConfFilename: \n'"<<Connectors[n].toStyledString()<<"\n' : ignoring"<<std::endl;
 			}
-			DataConnectors[Connectors[n]["Name"].asString()] = std::unique_ptr<ODC::DataConnector>(new ODC::DataConnector(Connectors[n]["Name"].asString(), Connectors[n]["ConfFilename"].asString(), Connectors[n]["ConfOverrides"]));
+
+			auto ConnectorName = Connectors[n]["Name"].asString();
+			auto ConnectorConfFilename = Connectors[n]["ConfFilename"].asString();
+			auto ConnectorConfOverrides = Connectors[n]["ConfOverrides"];
+
+			DataConnectors[ConnectorName] = std::unique_ptr<ODC::DataConnector>(new ODC::DataConnector(ConnectorName, *this, ConnectorConfFilename, ConnectorConfOverrides));
 		}
 	}
 }

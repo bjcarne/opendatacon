@@ -27,7 +27,9 @@
 #ifndef DATAPORTCONF_H_
 #define DATAPORTCONF_H_
 
-class DataPortConf
+#include "ILoggable.h"
+
+class DataPortConf: public virtual ODC::ILoggable
 {}; //base class
 
 #endif /* DATAPORTCONF_H_ */

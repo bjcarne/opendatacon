@@ -36,12 +36,13 @@
 #include <map>
 #include <sstream>
 #include <functional>
+#include <opendatacon/ILoggable.h>
 #include "tinycon.h"
 
-class ConsoleUI: public ODC::IUI, public ODC::Logger, tinyConsole
+class ConsoleUI: public ODC::IUI, tinyConsole
 {
 public:
-	ConsoleUI();
+	ConsoleUI(const std::string& aName, ODC::Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides);
 	virtual ~ConsoleUI(void);
 
 	void AddHelp(std::string help);
@@ -62,10 +63,29 @@ public:
 	/* Implement ConfigParser interface */
 	void ProcessElements(const Json::Value& JSONRoot) {};
 
+	/* Implement Log Destination interface */
+	virtual inline void Log(const ODC::LogEntry& arEntry)
+	{
+		std::ostringstream oss;
+
+		std::string time_str = platformtime::time_string();
+
+		oss <<time_str<<" - "<< arEntry.GetFilters().toString()<<" - "<<arEntry.GetAlias();
+		if(!arEntry.GetLocation())
+			oss << " - " << arEntry.GetLocation();
+		oss << " - " << arEntry.GetMessage();
+		if(arEntry.GetErrorCode() != -1)
+			oss << " - " << arEntry.GetErrorCode();
+
+		std::unique_lock<std::mutex> lock(mutex);
+		std::cout << '\r' << oss.str() << std::endl << _prompt << std::flush;
+	};
+
 private:
 	/* */
 	std::string context;
 	std::unique_ptr<asio::thread> uithread;
+	static std::mutex mutex;
 
 	/* tinyConsole functions */
 	std::map<std::string,std::function<void (std::stringstream&)> > mCmds;
