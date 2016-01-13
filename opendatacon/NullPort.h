@@ -28,7 +28,6 @@
 #define NULLPORT_H_
 
 #include <opendatacon/DataPort.h>
-#include <opendatacon/Logger.h>
 
 /* The equivalent of /dev/null as a DataPort */
 class NullPort: public ODC::DataPort

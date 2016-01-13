@@ -28,8 +28,8 @@
 #define DNP3OUTSTATIONPORTCONF_H_
 
 #include <opendatacon/DataPort.h>
-#include <opendatacon/Logger.h>
 #include "DNP3PointConf.h"
+#include <opendatacon/Context.h>
 
 enum server_type_t {ONDEMAND,PERSISTENT,MANUAL};
 struct DNP3AddrConf
@@ -42,10 +42,10 @@ struct DNP3AddrConf
 	DNP3AddrConf(): IP("0.0.0.0"), Port(20000), OutstationAddr(1), MasterAddr(0), ServerType(server_type_t::ONDEMAND){};
 };
 
-class DNP3PortConf: public DataPortConf, public DNP3PointConf, public ODC::Logger
+class DNP3PortConf: public DataPortConf, public DNP3PointConf, public ODC::Context
 {
 public:
-	DNP3PortConf(std::string FileName): DNP3PointConf(FileName), Logger(FileName)
+	DNP3PortConf(const std::string& aFileName, Context& aParent) : DNP3PointConf(aFileName), Context(aFileName, aParent)
 	{};
 
 	DNP3AddrConf mAddrConf;

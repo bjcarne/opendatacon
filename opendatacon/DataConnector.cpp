@@ -32,6 +32,7 @@
 #include "RandTransform.h"
 #include "RateLimitTransform.h"
 #include <opendatacon/Platform.h>
+#include <openpal/logging/LogLevels.h>
 
 DataConnector::DataConnector(std::string aName, ODC::Context& aParent, std::string aConfFilename, const Json::Value aConfOverrides):
 	Context(aName, aParent),

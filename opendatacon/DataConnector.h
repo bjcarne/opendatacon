@@ -31,7 +31,6 @@
 #include <opendatacon/IOHandler.h>
 #include <opendatacon/ConfigParser.h>
 #include <opendatacon/Transform.h>
-#include <opendatacon/Logger.h>
 
 namespace ODC
 {

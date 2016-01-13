@@ -29,7 +29,6 @@
 #define __opendatacon__WebUI__
 
 #include <opendatacon/IUI.h>
-#include <opendatacon/Logger.h>
 
 #include <asio.hpp>
 #include <vector>
@@ -77,8 +76,11 @@ public:
 		if(arEntry.GetErrorCode() != -1)
 			oss << " - " << arEntry.GetErrorCode();
 
+		std::string partial_cmd;
+		partial_cmd.assign(buffer.begin(), buffer.end());
+
 		std::unique_lock<std::mutex> lock(mutex);
-		std::cout << '\r' << oss.str() << std::endl << _prompt << std::flush;
+		std::cout << '\r' << oss.str() << std::endl << _prompt << partial_cmd << std::flush;
 	};
 
 private:

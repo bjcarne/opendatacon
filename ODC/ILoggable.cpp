@@ -23,6 +23,7 @@
 #include <opendatacon/ILoggable.h>
 #include <opendnp3/LogLevels.h>
 #include <chrono>
+#include <ctime>
 
 namespace platformtime
 {

@@ -115,7 +115,6 @@ void DNP3OutstationPort::OnKeepAliveSuccess()
 
 void DNP3OutstationPort::BuildOrRebuild()
 {
-	DNP3Mgr.AddLogSubscriber(this->LogWrapper);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 
 	opendnp3::OutstationStackConfig StackConfig;

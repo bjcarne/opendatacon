@@ -25,6 +25,7 @@ include_directories(
 	../include
 	../JSON
 	${DNP3_HOME}/include
+	${ASIO_HOME}/include
 	${MICROHTTPD_HOME}/include
 )
 

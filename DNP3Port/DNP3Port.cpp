@@ -26,6 +26,8 @@
 #include "DNP3Port.h"
 #include <iostream>
 #include "DNP3PortConf.h"
+
+#include <opendnp3/LogLevels.h>
 #include <asiopal/PhysicalLayerTCPServer.h>
 #include <asiopal/PhysicalLayerTCPClient.h>
 
@@ -41,7 +43,7 @@ DNP3Port::DNP3Port(std::string& aName, Context& aParent, std::string& aConfFilen
 	link_dead(true)
 {
 	//the creation of a new DNP3PortConf will get the point details
-	pConf.reset(new DNP3PortConf(ConfFilename));
+	pConf.reset(new DNP3PortConf(ConfFilename, *this));
 
 	//We still may need to process the file (or overrides) to get Addr details:
 	ProcessFile();

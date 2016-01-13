@@ -30,6 +30,8 @@
 #include <opendatacon/Version.h>
 
 #include <asiodnp3/ConsoleLogger.h>
+#include <opendnp3/LogLevels.h>
+
 #include "DataConcentrator.h"
 #include "logging_cmds.h"
 #include "NullPort.h"

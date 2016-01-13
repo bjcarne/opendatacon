@@ -44,7 +44,6 @@
 #include <opendatacon/Platform.h>
 #include <opendatacon/DataPort.h>
 #include <opendatacon/IUI.h>
-#include <opendatacon/Logger.h>
 
 class DataConcentrator: public ODC::ConfigParser, public ODC::IUIResponder, public ODC::Context
 {

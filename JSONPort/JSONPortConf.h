@@ -31,7 +31,6 @@
 #include <opendatacon/Context.h>
 #include <opendatacon/DataPortConf.h>
 #include "JSONPointConf.h"
-#include <opendatacon/Logger.h>
 
 typedef struct
 {
