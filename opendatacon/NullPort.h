@@ -43,7 +43,7 @@ public:
 
 	void Enable()
 	{
-		pTimer.reset(new Timer_t(*pIOS, std::chrono::seconds(3)));
+		pTimer.reset(new Timer_t(*this->GetIOService(), std::chrono::seconds(3)));
 		pTimer->async_wait(
 		      [this](asio::error_code err_code)
 		      {

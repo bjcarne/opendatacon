@@ -160,7 +160,7 @@ void DNP3MasterPort::OnKeepAliveFailure()
 			Log(log_entry);
 
 			// For all but persistent connections, and in-demand ONDEMAND connections, disable the stack
-			pIOS->post([&]()
+			Post([&]()
 			           {
 			                 DisableStack();
 				     });
@@ -298,7 +298,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::Connec
 		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
 		Log(log_entry);
 
-		pIOS->post([&]()
+		Post([&]()
 		           {
 		                 EnableStack();
 			     });
@@ -307,7 +307,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::Connec
 	// If an upstream port is disconnected, disconnect ourselves if it was the last active connection (if on demand)
 	if (stack_enabled && state == ODC::ConnectState::DISCONNECTED && pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
 	{
-		pIOS->post([&]()
+		Post([&]()
 		           {
 		                 DisableStack();
 		                 PortDown();

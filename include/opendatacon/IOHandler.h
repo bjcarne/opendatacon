@@ -31,8 +31,9 @@
 #include <unordered_map>
 #include <map>
 #include <asio.hpp>
-#include <asiopal/LogFanoutHandler.h>
+//#include <asiopal/LogFanoutHandler.h>
 #include <opendatacon/IOTypes.h>
+#include <opendatacon/ILoggable.h>
 
 namespace ODC
 {
@@ -94,13 +95,11 @@ public:
 	virtual std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) = 0;
 
 	void Subscribe(IOHandler* pIOHandler, std::string aName);
-	void SetLogLevel(openpal::LogFilters LOG_LEVEL);
-	void SetIOS(asio::io_service* ios_ptr);
+	void SetLogLevel(ODC::LogFilters LOG_LEVEL);
 
 	//std::string Name;
 	std::unordered_map<std::string, IOHandler*> Subscribers;
-	openpal::LogFilters LOG_LEVEL;
-	asio::io_service* pIOS;
+	ODC::LogFilters LOG_LEVEL;
 	bool enabled;
 
 	// Don't access the following from outside this dll under Windows

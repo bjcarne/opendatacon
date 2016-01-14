@@ -77,7 +77,7 @@ void SimPort::PortUp()
 			auto pMean = pConf->AnalogStartVals.count(index) ? std::make_shared<ODC::Analog>(pConf->AnalogStartVals[index]) : std::make_shared<ODC::Analog>();
 			auto std_dev = pConf->AnalogStdDevs.count(index) ? pConf->AnalogStdDevs[index] : (pMean->value ? (pConf->default_std_dev_factor*pMean->value) : 20);
 
-			pTimer_t pTimer(new Timer_t(*pIOS));
+			pTimer_t pTimer(new Timer_t(*this->GetIOService()));
 			Timers.push_back(pTimer);
 
 			//use a heap pointer as a random seed
@@ -132,7 +132,7 @@ void SimPort::SpawnEvent(std::shared_ptr<ODC::Analog> pMean, double std_dev, uns
 
 void SimPort::BuildOrRebuild()
 {
-	pEnableDisableSync.reset(new asio::strand(*pIOS));
+	pEnableDisableSync.reset(new asio::strand(*this->GetIOService()));
 }
 
 void SimPort::ProcessElements(const Json::Value& JSONRoot)

@@ -41,7 +41,7 @@ public:
 	virtual void AddResponder(const std::string name, const IUIResponder& pResponder) = 0;
 };
 
-typedef IUI* (NewPluginFunctionT)(std::string&, Context&, std::string&, const Json::Value&);
+typedef IUI* (NewPluginFunctionT)(const std::string&, Context&, const std::string&, const Json::Value&);
 }
 
 #endif

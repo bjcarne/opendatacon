@@ -26,19 +26,18 @@
 #ifndef LOGLEVELS_H
 #define LOGLEVELS_H
 
-#include <openpal/logging/LogLevels.h>
-
 const char* LogFlagToString(int32_t flag);
-
+namespace ODC {
 namespace flags
 {
 
 // define most of these in terms of the base openpal filters
-const int32_t EVENT = openpal::logflags::EVENT;
-const int32_t ERR = openpal::logflags::ERR;
-const int32_t WARN = openpal::logflags::WARN;
-const int32_t INFO = openpal::logflags::INFO;
-const int32_t DBG = openpal::logflags::DBG;
+    const int32_t EVENT	= 1 << 0;
+    const int32_t ERR	= 1 << 1;
+    const int32_t WARN	= 1 << 2;
+    const int32_t INFO	= 1 << 3;
+    const int32_t DBG	= 1 << 4;
+    
 
 // up-shift the custom dnp3 filters
 
@@ -71,6 +70,7 @@ const uint32_t NORMAL = flags::EVENT | flags::ERR | flags::WARN | flags::INFO;
 const uint32_t ALL_APP_COMMS = flags::APP_HEADER_RX | flags::APP_HEADER_TX | flags::APP_OBJECT_RX | flags::APP_OBJECT_TX | flags::APP_HEX_RX | flags::APP_HEX_TX;
 const uint32_t ALL_COMMS = flags::LINK_RX | flags::LINK_TX | flags::TRANSPORT_RX | flags::TRANSPORT_TX | ALL_APP_COMMS;
 
+}
 }
 
 #endif

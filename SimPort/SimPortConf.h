@@ -29,8 +29,7 @@
 
 #include <opendatacon/Context.h>
 #include <opendatacon/DataPortConf.h>
-#include <opendnp3/app/MeasurementTypes.h>
-#include <opendnp3/app/ControlRelayOutputBlock.h>
+#include <opendatacon/IOTypes.h>
 
 class SimPortConf: public ODC::Context, public DataPortConf
 {
@@ -41,10 +40,10 @@ public:
 	{}
 
 	std::vector<uint32_t> BinaryIndicies;
-	std::map<size_t, opendnp3::Binary> BinaryStartVals;
+	std::map<size_t, ODC::Binary> BinaryStartVals;
 	std::map<size_t, unsigned int> BinaryUpdateIntervalms;
 	std::vector<uint32_t> AnalogIndicies;
-	std::map<size_t, opendnp3::Analog> AnalogStartVals;
+	std::map<size_t, ODC::Analog> AnalogStartVals;
 	std::map<size_t, unsigned int> AnalogUpdateIntervalms;
 	std::map<size_t, double> AnalogStdDevs;
 	std::vector<uint32_t> ControlIndicies;

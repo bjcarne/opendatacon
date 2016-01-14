@@ -44,10 +44,10 @@ void JSONClientPort::Enable()
 	JSONPortConf* pConf = static_cast<JSONPortConf*>(this->pConf.get());
 	try
 	{
-		asio::ip::tcp::resolver resolver(*pIOS);
+		asio::ip::tcp::resolver resolver(*this->GetIOService());
 		asio::ip::tcp::resolver::query query(pConf->mAddrConf.IP, std::to_string(pConf->mAddrConf.Port));
 		auto endpoint_iterator = resolver.resolve(query);
-		pSock.reset(new asio::ip::tcp::socket(*pIOS));
+		pSock.reset(new asio::ip::tcp::socket(*this->GetIOService()));
 		asio::async_connect(*pSock.get(), endpoint_iterator,std::bind(&JSONClientPort::ConnectCompletionHandler,this,std::placeholders::_1));
 	}
 	catch(std::exception& e)
@@ -67,7 +67,7 @@ void JSONClientPort::ConnectCompletionHandler(asio::error_code err_code)
 		Log(log_entry);
 		//try again later
 		JSONPortConf* pConf = static_cast<JSONPortConf*>(this->pConf.get());
-		pTCPRetryTimer.reset(new Timer_t(*pIOS, std::chrono::milliseconds(pConf->retry_time_ms)));
+		pTCPRetryTimer.reset(new Timer_t(*this->GetIOService(), std::chrono::milliseconds(pConf->retry_time_ms)));
 		pTCPRetryTimer->async_wait(
 		      [this](asio::error_code err_code)
 		      {

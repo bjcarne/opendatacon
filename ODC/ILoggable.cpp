@@ -21,7 +21,7 @@
  */
 
 #include <opendatacon/ILoggable.h>
-#include <opendnp3/LogLevels.h>
+#include <opendatacon/LogLevels.h>
 #include <chrono>
 #include <ctime>
 
@@ -63,31 +63,31 @@ std::string LogFilters::toString() const
 {
 	switch (filters)
 	{
-		case (opendnp3::flags::EVENT):
+		case (ODC::flags::EVENT):
 			return "EVENT";
-		case (opendnp3::flags::ERR):
+		case (ODC::flags::ERR):
 			return "ERROR";
-		case (opendnp3::flags::WARN):
+		case (ODC::flags::WARN):
 			return "WARN";
-		case (opendnp3::flags::INFO):
+		case (ODC::flags::INFO):
 			return "INFO";
-		case (opendnp3::flags::DBG):
+		case (ODC::flags::DBG):
 			return "DEBUG";
-		case (opendnp3::flags::LINK_RX):
-		case (opendnp3::flags::LINK_RX_HEX):
+		case (ODC::flags::LINK_RX):
+		case (ODC::flags::LINK_RX_HEX):
 			return "<--LINK-";
-		case (opendnp3::flags::LINK_TX):
-		case (opendnp3::flags::LINK_TX_HEX):
+		case (ODC::flags::LINK_TX):
+		case (ODC::flags::LINK_TX_HEX):
 			return "-LINK-->";
-		case (opendnp3::flags::TRANSPORT_RX):
+		case (ODC::flags::TRANSPORT_RX):
 			return "<--TRANS-";
-		case (opendnp3::flags::TRANSPORT_TX):
+		case (ODC::flags::TRANSPORT_TX):
 			return "-TRANS-->";
-		case (opendnp3::flags::APP_HEADER_RX):
-		case (opendnp3::flags::APP_OBJECT_RX):
+		case (ODC::flags::APP_HEADER_RX):
+		case (ODC::flags::APP_OBJECT_RX):
 			return "<--APP-";
-		case (opendnp3::flags::APP_HEADER_TX):
-		case (opendnp3::flags::APP_OBJECT_TX):
+		case (ODC::flags::APP_HEADER_TX):
+		case (ODC::flags::APP_OBJECT_TX):
 			return "-APP-->";
 		default:
 			return "UNKNOWN";

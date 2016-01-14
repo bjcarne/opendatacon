@@ -25,7 +25,8 @@
  */
 
 #include <opendatacon/IOHandler.h>
-#include <openpal/logging/LogLevels.h>
+#include <opendatacon/ILoggable.h>
+#include <opendatacon/LogLevels.h>
 
 namespace ODC
 {
@@ -38,7 +39,7 @@ std::unordered_map<std::string, IOHandler*>& GetIOHandlers()
 }
 
 IOHandler::IOHandler(std::string aName): // Name(aName),
-	LOG_LEVEL(openpal::logflags::WARN),
+	LOG_LEVEL(ODC::flags::WARN),
 	enabled(false)
 {
 	IOHandlers[aName] = this;
@@ -49,13 +50,9 @@ void IOHandler::Subscribe(IOHandler* pIOHandler, std::string aName)
 	this->Subscribers[aName] = pIOHandler;
 }
 
-void IOHandler::SetLogLevel(openpal::LogFilters LOG_LEVEL)
+void IOHandler::SetLogLevel(ODC::LogFilters LOG_LEVEL)
 {
 	this->LOG_LEVEL = LOG_LEVEL;
-}
-void IOHandler::SetIOS(asio::io_service* ios_ptr)
-{
-	pIOS = ios_ptr;
 }
 
 bool IOHandler::InDemand()

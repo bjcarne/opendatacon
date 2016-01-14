@@ -236,7 +236,7 @@ inline CommandStatus ModbusOutstationPort::PerformT(T& arCommand, uint16_t aInde
 		while(future_result.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout)
 		{
 			//not ready - let's lend a hand to speed things up
-			this->pIOS->poll_one();
+			this->GetIOService()->poll_one();
 		}
 		//first one that isn't a success, we can return
 		if(future_result.get() != CommandStatus::SUCCESS)

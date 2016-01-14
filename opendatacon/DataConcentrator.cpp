@@ -88,14 +88,12 @@ DataConcentrator::DataConcentrator(std::string FileName):
 		}
 //		port.second->AddLogSubscriber(AdvConsoleLog.get());
 //		port.second->AddLogSubscriber(AdvFileLog.get());
-		port.second->SetIOS(&IOS);
 		port.second->SetLogLevel(LOG_LEVEL);
 	}
 	for(auto& conn : DataConnectors)
 	{
 //		conn.second->AddLogSubscriber(AdvConsoleLog.get());
 //		conn.second->AddLogSubscriber(AdvFileLog.get());
-		conn.second->SetIOS(&IOS);
 		conn.second->SetLogLevel(LOG_LEVEL);
 	}
 }
