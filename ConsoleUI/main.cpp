@@ -20,6 +20,7 @@
 
 #include "ConsoleUI.h"
 
+extern "C" ODC::NewPluginFunctionT new_ConsoleUIPlugin;
 extern "C" ODC::IUI* new_ConsoleUIPlugin(const std::string& aName, ODC::Context& aParent, const std::string& aFile, const Json::Value& aOverrides)
 {
 	if(aOverrides.isObject())

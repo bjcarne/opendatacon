@@ -27,11 +27,13 @@
 #include "DNP3MasterPort.h"
 #include "DNP3OutstationPort.h"
 
+extern "C" ODC::NewPortFunctionT new_DNP3MasterPort;
 extern "C" ODC::DataPort* new_DNP3MasterPort(std::string& aName, ODC::Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides)
 {
 	return new DNP3MasterPort(aName,aParent,aConfFilename,aConfOverrides);
 }
 
+extern "C" ODC::NewPortFunctionT new_DNP3OutstationPort;
 extern "C" ODC::DataPort* new_DNP3OutstationPort(std::string& aName, ODC::Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides)
 {
 	return new DNP3OutstationPort(aName,aParent,aConfFilename,aConfOverrides);
