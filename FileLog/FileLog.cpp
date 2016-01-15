@@ -17,16 +17,16 @@
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
  */
-#include "LogToFile.h"
+#include "FileLog.h"
 
 #include <sstream>
 #include <fstream>
 #include <ctime>
 #include <cstdio>
 #include <map>
+#include <opendatacon/util.h>
 
-/*
-void LogToFile::Log( const ODC::LogEntry& arEntry )
+void FileLog::Log( const ODC::LogEntry& arEntry )
 {
         std::string time_str = platformtime::time_string();
 
@@ -54,6 +54,7 @@ void LogToFile::Log( const ODC::LogEntry& arEntry )
         }
 }
 
+ /*
 void LogToFile::SetLogFileSizekB(size_t kB)
 {
         mFileSizekB = kB;
