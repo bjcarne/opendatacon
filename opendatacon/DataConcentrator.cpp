@@ -28,6 +28,7 @@
 #include <asio.hpp>
 
 #include <opendatacon/Version.h>
+#include <opendatacon/util.h>
 
 #include <asiodnp3/ConsoleLogger.h>
 #include <opendnp3/LogLevels.h>
@@ -73,7 +74,34 @@ DataConcentrator::DataConcentrator(std::string FileName):
 		interface.second->AddCommand("version",[] (std::stringstream& ss){
 		                                   std::cout<<"Release " << ODC_VERSION_STRING <<std::endl;
 						     },"Print version information");
-
+		interface.second->AddCommand("log", [&](std::stringstream& ss){
+			std::string port;
+			ODC::extract_delimited_string("\"'`", ss, port);
+			if (DataPorts.count(port))
+			{
+				auto target = DataPorts[port];
+				target->LogSubscribe(*interface.second);
+				std::cout << "Subscribed to " << port << std::endl;
+			}
+			else
+			{
+				std::cout << "Unknown port " << port << std::endl;
+			}
+		}, "Subscribe to a port's log messages");
+		interface.second->AddCommand("unlog", [&](std::stringstream& ss){
+			std::string port;
+			ODC::extract_delimited_string("\"'`", ss, port);
+			if (DataPorts.count(port))
+			{
+				auto target = DataPorts[port];
+				target->LogUnsubscribe(*interface.second);
+				std::cout << "Unsubscribed from " << port << std::endl;
+			}
+			else
+			{
+				std::cout << "Unknown port " << port << std::endl;
+			}
+		}, "Unsubscribe from a port's log messages");
 		interface.second->AddResponder("OpenDataCon", *this);
 		interface.second->AddResponder("DataPorts", DataPorts);
 		interface.second->AddResponder("DataConnectors", DataConnectors);
@@ -82,10 +110,6 @@ DataConcentrator::DataConcentrator(std::string FileName):
 	}
 	for(auto& port : DataPorts)
 	{
-		for(auto& interface : Interfaces)
-		{
-			port.second->LogSubscribe(*interface.second);
-		}
 //		port.second->AddLogSubscriber(AdvConsoleLog.get());
 //		port.second->AddLogSubscriber(AdvFileLog.get());
 		port.second->SetLogLevel(LOG_LEVEL);
