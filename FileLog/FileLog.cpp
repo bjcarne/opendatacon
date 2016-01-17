@@ -28,66 +28,68 @@
 
 void FileLog::Log( const ODC::LogEntry& arEntry )
 {
-        std::string time_str = platformtime::time_string();
+	std::stringstream output;
 
-        std::lock_guard<std::mutex> get_lock(mMutex);
-        if(!mLogFile.is_open())
-        {
-                mLogFile.open(mLogName+std::to_string(mFileIndex)+".txt");
-                if(mLogFile.fail())
-                        throw std::runtime_error("Failed to open log file");
-        }
+	output << platformtime::time_string();
+	output<<" - "<< arEntry.GetFilters().toString() <<" - "<<arEntry.GetAlias();
+	if(mPrintLocation && !arEntry.GetLocation())
+		output << " - " << arEntry.GetLocation();
+	output << " - " << arEntry.GetMessage();
+	if(arEntry.GetErrorCode() != -1)
+		output << " - " << arEntry.GetErrorCode();
+	output <<std::endl;
 
-    mLogFile <<time_str<<" - "<< arEntry.GetFilters().toString() <<" - "<<arEntry.GetAlias();
-        if(mPrintLocation && !arEntry.GetLocation())
-                mLogFile << " - " << arEntry.GetLocation();
-        mLogFile << " - " << arEntry.GetMessage();
-        if(arEntry.GetErrorCode() != -1)
-                mLogFile << " - " << arEntry.GetErrorCode();
-        mLogFile <<std::endl;
+	std::lock_guard<std::mutex> get_lock(mMutex);
+	if(!mLogFile.is_open())
+	{
+		mLogFile.open(LogConf.mLogName+std::to_string(mFileIndex)+".txt");
+		if(mLogFile.fail())
+			throw std::runtime_error("Failed to open log file");
+	}
 
-        if (mLogFile.tellp() > (int)mFileSizekB*1024)
-        {
-                mLogFile.close();
-                mFileIndex++;
-                mFileIndex %= mNumFiles;
-        }
+	mLogFile << output.str();
+	if (mLogFile.tellp() > (int)LogConf.mFileSizekB*1024)
+	{
+		mLogFile.close();
+		mFileIndex++;
+		mFileIndex %= LogConf.mNumFiles;
+	}
 }
 
- /*
+/*
 void LogToFile::SetLogFileSizekB(size_t kB)
 {
-        mFileSizekB = kB;
+       mFileSizekB = kB;
 }
 
 void LogToFile::SetNumLogFiles(size_t num)
 {
-        mNumFiles = num;
+       mNumFiles = num;
 }
 
 void LogToFile::SetLogName(std::string name)
 {
-        mLogName = name;
-        mFileIndex = 0;
+       mLogName = name;
+       mFileIndex = 0;
 }
 
 size_t LogToFile::GetLogFileSizekB()
 {
-        return mFileSizekB;
+       return mFileSizekB;
 }
 
 size_t LogToFile::GetNumLogFiles()
 {
-        return mNumFiles;
+       return mNumFiles;
 }
 
 std::string LogToFile::GetLogName()
 {
-        return mLogName;
+       return mLogName;
 }
 
 void LogToFile::SetPrintLocation(bool print_loc)
 {
-        mPrintLocation = print_loc;
+       mPrintLocation = print_loc;
 }
 */
