@@ -34,31 +34,113 @@
 
 namespace ODC
 {
-enum ConnectState { PORT_UP, CONNECTED, DISCONNECTED, PORT_DOWN };
-typedef opendnp3::ChannelState ChannelState;
-typedef opendnp3::CommandStatus CommandStatus;
-typedef opendnp3::ControlCode ControlCode;
+    enum ConnectState : uint8_t
+    {
+        PORT_UP = 0,
+        CONNECTED = 1,
+        DISCONNECTED = 2,
+        PORT_DOWN = 3
+    };
+    
+    //typedef opendnp3::ChannelState ChannelState;
+    enum class ChannelState : uint8_t
+    {
+        /// offline and idle
+        CLOSED = 0,
+        /// trying to open
+        OPENING = 1,
+        /// waiting to open
+        WAITING = 2,
+        /// open
+        OPEN = 3,
+        /// stopped and will never do anything again
+        SHUTDOWN = 4
+    };
 
-typedef opendnp3::Binary Binary;
-typedef opendnp3::DoubleBitBinary DoubleBitBinary;
-typedef opendnp3::Analog Analog;
-typedef opendnp3::Counter Counter;
-typedef opendnp3::FrozenCounter FrozenCounter;
-typedef opendnp3::BinaryOutputStatus BinaryOutputStatus;
-typedef opendnp3::AnalogOutputStatus AnalogOutputStatus;
+#include <type_traits> //must include it
+    
+    template<typename A, typename B>
+    constexpr bool enum_check(A a ,B b)
+    {
+        return static_cast<typename std::underlying_type<A>::type>(a) == static_cast<typename std::underlying_type<B>::type>(b);
+    }
+    static_assert(enum_check(ODC::ChannelState::CLOSED, opendnp3::ChannelState::CLOSED),"ChannelState enum check failed");
+    static_assert(enum_check(ODC::ChannelState::OPENING, opendnp3::ChannelState::OPENING),"ChannelState enum check failed");
+    static_assert(enum_check(ODC::ChannelState::WAITING, opendnp3::ChannelState::WAITING),"ChannelState enum check failed");
+    static_assert(enum_check(ODC::ChannelState::OPEN, opendnp3::ChannelState::OPEN),"ChannelState enum check failed");
+    static_assert(enum_check(ODC::ChannelState::SHUTDOWN, opendnp3::ChannelState::SHUTDOWN),"ChannelState enum check failed");
+    
+    typedef opendnp3::CommandStatus CommandStatus;
+    typedef opendnp3::ControlCode ControlCode;
+    typedef opendnp3::DoubleBit DoubleBit;
+    typedef opendnp3::DNPTime timestamp;
+    
+    /// Measurement types
+    template <class T>
+    class Measurement
+    {
+    public:
+        Measurement(T v, uint8_t q=0, timestamp t=timestamp(0)) : value(v), quality(q), time(t) {};
+        T value;
+        uint8_t quality;
+        timestamp time;
+        typedef T value_type;
+    };
+    
+    class Binary : public Measurement<bool> { using Measurement::Measurement; };
+    class DoubleBitBinary : public Measurement<DoubleBit> { using Measurement::Measurement; };
+    class Analog : public Measurement<double> { using Measurement::Measurement; };
+    class Counter : public Measurement<uint32_t> { using Measurement::Measurement; };
+    class FrozenCounter : public Measurement<uint32_t> { using Measurement::Measurement; };
+    class BinaryOutputStatus : public Measurement<bool> { using Measurement::Measurement; };
+    class AnalogOutputStatus : public Measurement<bool> { using Measurement::Measurement; };
 
-typedef opendnp3::ControlRelayOutputBlock ControlRelayOutputBlock;
-typedef opendnp3::AnalogOutputInt16 AnalogOutputInt16;
-typedef opendnp3::AnalogOutputInt32 AnalogOutputInt32;
-typedef opendnp3::AnalogOutputFloat32 AnalogOutputFloat32;
-typedef opendnp3::AnalogOutputDouble64 AnalogOutputDouble64;
+    /// Control types
+    class ControlRelayOutputBlock
+    {
+    public:
+        // overloaded constructor that allows the user to set a raw control code for non-standard codes
+        ControlRelayOutputBlock(uint8_t rawCode_,
+                                uint8_t count_ = 1,
+                                uint32_t onTimeMS_ = 100,
+                                uint32_t offTimeMS_ = 100,
+                                CommandStatus status_ = CommandStatus::SUCCESS) :
+        rawCode(rawCode_),
+        count(count_),
+        onTimeMS(onTimeMS_),
+        offTimeMS(offTimeMS_),
+        status(status_)
+        {};
+        uint8_t rawCode;
+        uint8_t count;
+        uint32_t onTimeMS;
+        uint32_t offTimeMS;
+        CommandStatus status;
+    };
+    
+    /// Analog Ouput types
+    template <class T>
+    class AnalogOutput
+    {
+    public:
+        AnalogOutput(T v, CommandStatus s=CommandStatus::SUCCESS) : value(v), status(s) {};
+        T value;
+        CommandStatus status;
+        typedef T value_type;
+    };
+    
+    class AnalogOutputInt16 : public AnalogOutput<int16_t> { using AnalogOutput::AnalogOutput; };
+    class AnalogOutputInt32 : public AnalogOutput<int32_t> { using AnalogOutput::AnalogOutput; };
+    class AnalogOutputFloat32 : public AnalogOutput<float> { using AnalogOutput::AnalogOutput; };
+    class AnalogOutputDouble64 : public AnalogOutput<double> { using AnalogOutput::AnalogOutput; };
 
-typedef opendnp3::BinaryQuality BinaryQuality;
-typedef opendnp3::DoubleBitBinaryQuality DoubleBitBinaryQuality;
-typedef opendnp3::AnalogQuality AnalogQuality;
-typedef opendnp3::CounterQuality CounterQuality;
-typedef opendnp3::BinaryOutputStatusQuality BinaryOutputStatusQuality;
-
+    /// Quality types
+typedef opendnp3::BinaryQuality BinaryQuality; // uint8_t
+typedef opendnp3::DoubleBitBinaryQuality DoubleBitBinaryQuality; // uint8_t
+typedef opendnp3::AnalogQuality AnalogQuality; // uint8_t
+typedef opendnp3::CounterQuality CounterQuality; // uint8_t
+typedef opendnp3::BinaryOutputStatusQuality BinaryOutputStatusQuality; // uint8_t
+    
 enum class FrozenCounterQuality: uint8_t
 {
 	/// set when the data is "good", meaning that rest of the system can trust the value

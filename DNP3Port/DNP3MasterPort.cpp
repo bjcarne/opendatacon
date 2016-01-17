@@ -27,12 +27,15 @@
 #include <asiodnp3/DefaultMasterApplication.h>
 #include <opendnp3/app/ClassField.h>
 #include <opendnp3/app/MeasurementTypes.h>
+#include <opendnp3/LogLevels.h>
+#include <openpal/logging/LogLevels.h>
+#include <asiopal/UTCTimeSource.h>
+
+#include <array>
+
+#include "OpenDNP3Helpers.h"
 #include "DNP3MasterPort.h"
 #include "CommandCallbackPromise.h"
-#include <openpal/logging/LogLevels.h>
-#include <array>
-#include <asiopal/UTCTimeSource.h>
-#include <opendnp3/LogLevels.h>
 
 void DNP3MasterPort::Enable()
 {
@@ -85,7 +88,7 @@ void DNP3MasterPort::PortUp()
 				auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
 				this->Log(log_entry);
 			}
-			opendnp3::Binary commsUpEvent(!pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
+			ODC::Binary commsUpEvent(!pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
 			IOHandler_pair.second->Event(commsUpEvent, pConf->mCommsPoint.second, this->Name);
 		}
 	}
@@ -117,7 +120,7 @@ void DNP3MasterPort::PortDown()
 				auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
 				Log(log_entry);
 			}
-			opendnp3::Binary commsDownEvent(pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
+			ODC::Binary commsDownEvent(pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
 			IOHandler_pair.second->Event(commsDownEvent, pConf->mCommsPoint.second, this->Name);
 		}
 	}
@@ -161,9 +164,9 @@ void DNP3MasterPort::OnKeepAliveFailure()
 
 			// For all but persistent connections, and in-demand ONDEMAND connections, disable the stack
 			Post([&]()
-			           {
-			                 DisableStack();
-				     });
+			     {
+			           DisableStack();
+			     });
 		}
 	}
 }
@@ -260,17 +263,17 @@ inline void DNP3MasterPort::LoadT(const ICollection<Indexed<T> >& meas)
 	                 {
 	                       for(auto IOHandler_pair: Subscribers)
 	                       {
-	                             IOHandler_pair.second->Event(pair.value,pair.index,this->Name);
+                               IOHandler_pair.second->Event(ToODC(pair.value),pair.index,this->Name);
 				     }
 			     });
 }
 
 //Implement some IOHandler - parent DNP3Port implements the rest to return NOT_SUPPORTED
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const opendnp3::AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const opendnp3::AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
 
 std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::ConnectState state, const std::string& SenderName)
 {
@@ -299,19 +302,19 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::Connec
 		Log(log_entry);
 
 		Post([&]()
-		           {
-		                 EnableStack();
-			     });
+		     {
+		           EnableStack();
+		     });
 	}
 
 	// If an upstream port is disconnected, disconnect ourselves if it was the last active connection (if on demand)
 	if (stack_enabled && state == ODC::ConnectState::DISCONNECTED && pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
 	{
 		Post([&]()
-		           {
-		                 DisableStack();
-		                 PortDown();
-			     });
+		     {
+		           DisableStack();
+		           PortDown();
+		     });
 	}
 
 	return IOHandler::CommandFutureSuccess();

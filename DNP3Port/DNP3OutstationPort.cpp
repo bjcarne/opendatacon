@@ -37,7 +37,7 @@
 #include <opendnp3/LogLevels.h>
 
 
-DNP3OutstationPort::DNP3OutstationPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+DNP3OutstationPort::DNP3OutstationPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
 	DNP3Port(aName, aParent, aConfFilename, aConfOverrides),
 	pOutstation(nullptr)
 {}
@@ -279,7 +279,7 @@ inline opendnp3::CommandStatus DNP3OutstationPort::PerformT(T& arCommand, uint16
 
 	for(auto IOHandler_pair : Subscribers)
 	{
-		future_results.push_back((IOHandler_pair.second->Event(arCommand, aIndex, this->Name)));
+		future_results.push_back((IOHandler_pair.second->Event(ToODC(arCommand), aIndex, this->Name)));
 	}
 
 	auto pConf = static_cast<DNP3PortConf*>(this->pConf.get());
@@ -304,13 +304,13 @@ inline opendnp3::CommandStatus DNP3OutstationPort::PerformT(T& arCommand, uint16
 	return opendnp3::CommandStatus::SUCCESS;
 }
 
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::BinaryQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::Binary>(qual, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::DoubleBitBinary>(qual, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::AnalogQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::Analog>(qual, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::CounterQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::Counter>(qual, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::FrozenCounterQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::FrozenCounter>(qual, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::BinaryOutputStatus>(qual, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<ODC::AnalogOutputStatus>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::BinaryQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<opendnp3::Binary>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<opendnp3::DoubleBitBinary>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::AnalogQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<opendnp3::Analog>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::CounterQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<opendnp3::Counter>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::FrozenCounterQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<opendnp3::FrozenCounter>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<opendnp3::BinaryOutputStatus>(qual, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName){ return EventQ<opendnp3::AnalogOutputStatus>(qual, index, SenderName); }
 
 template<typename T, typename Q>
 inline std::future<ODC::CommandStatus> DNP3OutstationPort::EventQ(Q& qual, uint16_t index, const std::string& SenderName)
@@ -339,16 +339,16 @@ inline std::future<ODC::CommandStatus> DNP3OutstationPort::EventQ(Q& qual, uint1
 	return IOHandler::CommandFutureSuccess();
 }
 
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::Binary& meas, uint16_t index, const std::string& SenderName){ return EventT(meas, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::DoubleBitBinary& meas, uint16_t index, const std::string& SenderName){ return EventT(meas, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::Analog& meas, uint16_t index, const std::string& SenderName){ return EventT(meas, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::Counter& meas, uint16_t index, const std::string& SenderName){ return EventT(meas, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::FrozenCounter& meas, uint16_t index, const std::string& SenderName){ return EventT(meas, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::BinaryOutputStatus& meas, uint16_t index, const std::string& SenderName){ return EventT(meas, index, SenderName); }
-std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::AnalogOutputStatus& meas, uint16_t index, const std::string& SenderName){ return EventT(meas, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::Binary& meas, uint16_t index, const std::string& SenderName){ return EventT(ToOpenDNP3(meas), index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::DoubleBitBinary& meas, uint16_t index, const std::string& SenderName){ return EventT(ToOpenDNP3(meas), index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::Analog& meas, uint16_t index, const std::string& SenderName){ return EventT(ToOpenDNP3(meas), index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::Counter& meas, uint16_t index, const std::string& SenderName){ return EventT(ToOpenDNP3(meas), index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::FrozenCounter& meas, uint16_t index, const std::string& SenderName){ return EventT(ToOpenDNP3(meas), index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::BinaryOutputStatus& meas, uint16_t index, const std::string& SenderName){ return EventT(ToOpenDNP3(meas), index, SenderName); }
+std::future<ODC::CommandStatus> DNP3OutstationPort::Event(const ODC::AnalogOutputStatus& meas, uint16_t index, const std::string& SenderName){ return EventT(ToOpenDNP3(meas), index, SenderName); }
 
 template<typename T>
-inline std::future<ODC::CommandStatus> DNP3OutstationPort::EventT(T& meas, uint16_t index, const std::string& SenderName)
+inline std::future<ODC::CommandStatus> DNP3OutstationPort::EventT(const T& meas, uint16_t index, const std::string& SenderName)
 {
 	if(!enabled)
 	{
