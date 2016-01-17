@@ -29,12 +29,14 @@
 
 TEST_CASE(SUITE("ConstructEnableDisableDestroy"))
 {
-	fptr newMaster = GetPortCreator("DNP3Port", "DNP3Master");
+    asio::io_service IOS(std::thread::hardware_concurrency());
+    ODC::Context context("TEST", IOS);
+	auto newMaster = GetPortCreator("DNP3Port", "DNP3Master");
 	REQUIRE(newMaster);
-	ODC::DataPort* MPUT = newMaster("MasterUnderTest", "", "");
-	fptr newOutstation = GetPortCreator("DNP3Port", "DNP3Outstation");
+	ODC::DataPort* MPUT = newMaster("MasterUnderTest", context, "", "");
+	auto newOutstation = GetPortCreator("DNP3Port", "DNP3Outstation");
 	REQUIRE(newOutstation);
-	ODC::DataPort* OPUT = newOutstation("OutstationUnderTest", "", "");
+	ODC::DataPort* OPUT = newOutstation("OutstationUnderTest", context, "", "");
 
 	MPUT->Enable();
 	OPUT->Enable();

@@ -22,7 +22,7 @@
 
 #include "PortLoader.h"
 
-fptr GetPortCreator(std::string libname, std::string objname)
+ODC::NewPortFunctionT* GetPortCreator(std::string libname, std::string objname)
 {
 	//Looks for a specific library (for libs that implement more than one class)
 	std::string libfilename = GetLibFileName(libname);
@@ -39,7 +39,7 @@ fptr GetPortCreator(std::string libname, std::string objname)
 	//Our API says the library should export a creation function: DataPort* new_<Type>Port(Name, Filename, Overrides)
 	//it should return a pointer to a heap allocated instance of a descendant of DataPort
 	std::string new_funcname = "new_" + objname + "Port";
-	fptr new_plugin_func = (fptr)LoadSymbol(pluginlib, new_funcname.c_str());
+	auto new_plugin_func = reinterpret_cast<ODC::NewPortFunctionT*>(LoadSymbol(pluginlib, new_funcname.c_str()));
 
 	if (new_plugin_func == nullptr)
 	{

@@ -27,8 +27,6 @@
 #include <opendatacon/DataPort.h>
 #include <opendatacon/Platform.h>
 
-typedef ODC::DataPort* (*fptr)(std::string Name, std::string File, const Json::Value Overrides);
-
-fptr GetPortCreator(std::string libname, std::string objname);
+ODC::NewPortFunctionT* GetPortCreator(std::string libname, std::string objname);
 
 #endif

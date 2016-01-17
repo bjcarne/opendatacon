@@ -28,10 +28,12 @@
 
 TEST_CASE(SUITE("ConstructEnableDisableDestroy"))
 {
+    asio::io_service IOS(std::thread::hardware_concurrency());
+    ODC::Context context("TEST", IOS);
 	{
-		fptr newOutstation = GetPortCreator("DNP3Port", "DNP3Master");
+		auto newOutstation = GetPortCreator("DNP3Port", "DNP3Master");
 		REQUIRE(newOutstation);
-		ODC::DataPort* OPUT = newOutstation("OutstationUnderTest", "", "");
+		ODC::DataPort* OPUT = newOutstation("OutstationUnderTest", context, "", "");
 
 		OPUT->Enable();
 		OPUT->Disable();
@@ -40,9 +42,9 @@ TEST_CASE(SUITE("ConstructEnableDisableDestroy"))
 	}
 	/// Test the destruction of an enabled port
 	{
-		fptr newOutstation = GetPortCreator("DNP3Port", "DNP3Master");
+		auto newOutstation = GetPortCreator("DNP3Port", "DNP3Master");
 		REQUIRE(newOutstation);
-		ODC::DataPort* OPUT = newOutstation("OutstationUnderTest", "", "");
+		ODC::DataPort* OPUT = newOutstation("OutstationUnderTest", context, "", "");
 
 		OPUT->Enable();
 
