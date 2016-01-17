@@ -27,7 +27,7 @@
 
 //std::unordered_map<std::string, asiodnp3::IChannel*> ModbusPort::TCPChannels;
 
-ModbusPort::ModbusPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+ModbusPort::ModbusPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
 	DataPort(aName, aParent, aConfFilename, aConfOverrides),
 	stack_enabled(false)
 {

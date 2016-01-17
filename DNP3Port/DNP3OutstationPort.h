@@ -35,7 +35,7 @@
 class DNP3OutstationPort: public DNP3Port, public opendnp3::ICommandHandler
 {
 public:
-	DNP3OutstationPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides);
+	DNP3OutstationPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides);
 
 	void Enable();
 	void Disable();

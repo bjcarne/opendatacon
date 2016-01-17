@@ -35,7 +35,7 @@ class SimPort: public ODC::DataPort
 {
 public:
 	//Implement DataPort interface
-	SimPort(std::string& aName, Context& parent, std::string& File, const Json::Value& Overrides);
+	SimPort(const std::string& aName, Context& parent, const std::string& File, const Json::Value& Overrides);
 	void Enable() final;
 	void Disable() final;
 	void BuildOrRebuild() final;

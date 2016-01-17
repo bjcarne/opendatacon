@@ -27,7 +27,7 @@
 #include "SimPort.h"
 
 extern "C" ODC::NewPortFunctionT new_SimPort;
-extern "C" ODC::DataPort* new_SimPort(std::string& aName, ODC::Context& aParent, std::string& aFilename, const Json::Value& aOverrides)
+extern "C" ODC::DataPort* new_SimPort(const std::string& aName, ODC::Context& aParent, const std::string& aFilename, const Json::Value& aOverrides)
 {
 	return new SimPort(aName,aParent,aFilename,aOverrides);
 }

@@ -27,7 +27,7 @@
 #include "JSONClientPort.h"
 
 extern "C" ODC::NewPortFunctionT new_JSONClientPort;
-extern "C" ODC::DataPort* new_JSONClientPort(std::string& aName, Context& aParent, std::string& aFile, const Json::Value& aOverrides)
+extern "C" ODC::DataPort* new_JSONClientPort(const std::string& aName, Context& aParent, const std::string& aFile, const Json::Value& aOverrides)
 {
 	return new JSONClientPort(aName,aParent,aFile,aOverrides);
 }

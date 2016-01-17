@@ -36,7 +36,7 @@ using namespace ODC;
 class JSONPort: public DataPort
 {
 public:
-	JSONPort(std::string& aName, ODC::Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+	JSONPort(const std::string& aName, ODC::Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
 		DataPort(aName, aParent, aConfFilename, aConfOverrides)
 	{
 		//the creation of a new PortConf will get the point details

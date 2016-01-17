@@ -35,7 +35,7 @@ using namespace ODC;
 class ModbusPort: public DataPort
 {
 public:
-	ModbusPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides);
+	ModbusPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides);
 	using DataPort::IOHandler::Event;
 
 	virtual void Enable()=0;

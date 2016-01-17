@@ -41,7 +41,7 @@ typedef struct
 class JSONPortConf: public ODC::Context, public DataPortConf, public JSONPointConf
 {
 public:
-	JSONPortConf(std::string& aFileName, ODC::Context& aParent):
+	JSONPortConf(const std::string& aFileName, ODC::Context& aParent):
 		Context(aFileName, aParent),
 		JSONPointConf(aFileName),
 		retry_time_ms(20000)

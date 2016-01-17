@@ -28,13 +28,13 @@
 #include "ModbusMasterPort.h"
 
 extern "C" ODC::NewPortFunctionT new_ModbusMasterPort;
-extern "C" ODC::DataPort* new_ModbusMasterPort(std::string& aName, Context& aParent, std::string& aFilename, const Json::Value& aOverrides)
+extern "C" ODC::DataPort* new_ModbusMasterPort(const std::string& aName, Context& aParent, const std::string& aFilename, const Json::Value& aOverrides)
 {
 	return new ModbusMasterPort(aName,aParent,aFilename,aOverrides);
 }
 
 extern "C" ODC::NewPortFunctionT new_ModbusOutstationPort;
-extern "C" ODC::DataPort* new_ModbusOutstationPort(std::string& aName, Context& aParent, std::string& aFilename, const Json::Value& aOverrides)
+extern "C" ODC::DataPort* new_ModbusOutstationPort(const std::string& aName, Context& aParent, const std::string& aFilename, const Json::Value& aOverrides)
 {
 	return new ModbusOutstationPort(aName,aParent,aFilename,aOverrides);
 }

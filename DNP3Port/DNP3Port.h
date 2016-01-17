@@ -70,7 +70,7 @@ private:
 class DNP3Port: public ODC::DataPort
 {
 public:
-	DNP3Port(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides);
+	DNP3Port(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides);
 	using DataPort::IOHandler::Event;
 
 	virtual void Enable()=0;

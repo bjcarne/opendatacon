@@ -31,7 +31,7 @@
 
 using namespace ODC;
 
-JSONClientPort::JSONClientPort(std::string& aName, ODC::Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+JSONClientPort::JSONClientPort(const std::string& aName, ODC::Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
 	JSONPort(aName, aParent, aConfFilename, aConfOverrides)
 {}
 

@@ -35,7 +35,7 @@ std::unordered_map<std::string, asiodnp3::IChannel*> DNP3Port::TCPServers;
 std::unordered_map<std::string, asiodnp3::IChannel*> DNP3Port::TCPClients;
 asiodnp3::ChannelSet* DNP3Port::channels(new asiodnp3::ChannelSet());
 
-DNP3Port::DNP3Port(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+DNP3Port::DNP3Port(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
 	DataPort(aName, aParent, aConfFilename, aConfOverrides),
 	LogWrapper(aName, *this),
 	pChannel(nullptr),

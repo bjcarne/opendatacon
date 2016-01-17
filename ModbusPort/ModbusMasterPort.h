@@ -70,7 +70,7 @@ capture_impl<T,F> capture( T && x, F && f )
 class ModbusMasterPort: public ModbusPort
 {
 public:
-	ModbusMasterPort(std::string& aName, Context& aParent, std::string& aConfFilename, const Json::Value& aConfOverrides):
+	ModbusMasterPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
 		ModbusPort(aName, aParent, aConfFilename, aConfOverrides),
 		mb(nullptr),
 		modbus_read_buffer(nullptr),

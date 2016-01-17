@@ -34,7 +34,7 @@
 class SimPortConf: public ODC::Context, public DataPortConf
 {
 public:
-	SimPortConf(std::string& aFilename, ODC::Context& aParent):
+	SimPortConf(const std::string& aFilename, ODC::Context& aParent):
 		Context(aFilename, aParent),
 		default_std_dev_factor(0.1)
 	{}

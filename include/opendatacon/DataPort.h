@@ -75,7 +75,7 @@ protected:
 	std::unique_ptr<DataPortConf> pConf;
 };
 
-typedef ODC::DataPort*(NewPortFunctionT)(std::string&, Context&, std::string&, const Json::Value&);
+typedef ODC::DataPort*(NewPortFunctionT)(const std::string&, Context&, const std::string&, const Json::Value&);
 
 }
 

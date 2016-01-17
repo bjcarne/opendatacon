@@ -45,7 +45,7 @@ struct DNP3AddrConf
 class DNP3PortConf: public DataPortConf, public DNP3PointConf, public ODC::Context
 {
 public:
-	DNP3PortConf(const std::string& aFileName, Context& aParent) : DNP3PointConf(aFileName), Context(aFileName, aParent)
+	DNP3PortConf(const std::string& aFileName, Context& aParent): DNP3PointConf(aFileName), Context(aFileName, aParent)
 	{};
 
 	DNP3AddrConf mAddrConf;
