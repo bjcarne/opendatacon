@@ -75,33 +75,33 @@ DataConcentrator::DataConcentrator(std::string FileName):
 		                                   std::cout<<"Release " << ODC_VERSION_STRING <<std::endl;
 						     },"Print version information");
 		interface.second->AddCommand("log", [&](std::stringstream& ss){
-			std::string port;
-			ODC::extract_delimited_string("\"'`", ss, port);
-			if (DataPorts.count(port))
-			{
-				auto target = DataPorts[port];
-				target->LogSubscribe(*interface.second);
-				std::cout << "Subscribed to " << port << std::endl;
-			}
-			else
-			{
-				std::cout << "Unknown port " << port << std::endl;
-			}
-		}, "Subscribe to a port's log messages");
+		                                   std::string port;
+		                                   ODC::extract_delimited_string("\"'`", ss, port);
+		                                   if (DataPorts.count(port))
+		                                   {
+		                                         auto target = DataPorts[port];
+		                                         target->LogSubscribe(*interface.second);
+		                                         std::cout << "Subscribed to " << port << std::endl;
+							     }
+		                                   else
+		                                   {
+		                                         std::cout << "Unknown port " << port << std::endl;
+							     }
+						     }, "Subscribe to a port's log messages");
 		interface.second->AddCommand("unlog", [&](std::stringstream& ss){
-			std::string port;
-			ODC::extract_delimited_string("\"'`", ss, port);
-			if (DataPorts.count(port))
-			{
-				auto target = DataPorts[port];
-				target->LogUnsubscribe(*interface.second);
-				std::cout << "Unsubscribed from " << port << std::endl;
-			}
-			else
-			{
-				std::cout << "Unknown port " << port << std::endl;
-			}
-		}, "Unsubscribe from a port's log messages");
+		                                   std::string port;
+		                                   ODC::extract_delimited_string("\"'`", ss, port);
+		                                   if (DataPorts.count(port))
+		                                   {
+		                                         auto target = DataPorts[port];
+		                                         target->LogUnsubscribe(*interface.second);
+		                                         std::cout << "Unsubscribed from " << port << std::endl;
+							     }
+		                                   else
+		                                   {
+		                                         std::cout << "Unknown port " << port << std::endl;
+							     }
+						     }, "Unsubscribe from a port's log messages");
 		interface.second->AddResponder("OpenDataCon", *this);
 		interface.second->AddResponder("DataPorts", DataPorts);
 		interface.second->AddResponder("DataConnectors", DataConnectors);
@@ -110,14 +110,10 @@ DataConcentrator::DataConcentrator(std::string FileName):
 	}
 	for(auto& port : DataPorts)
 	{
-//		port.second->AddLogSubscriber(AdvConsoleLog.get());
-//		port.second->AddLogSubscriber(AdvFileLog.get());
 		port.second->SetLogLevel(LOG_LEVEL);
 	}
 	for(auto& conn : DataConnectors)
 	{
-//		conn.second->AddLogSubscriber(AdvConsoleLog.get());
-//		conn.second->AddLogSubscriber(AdvFileLog.get());
 		conn.second->SetLogLevel(LOG_LEVEL);
 	}
 }
@@ -125,16 +121,6 @@ DataConcentrator::DataConcentrator(std::string FileName):
 void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 {
 	if(!JSONRoot.isObject()) return;
-
-	/* Logging System Configuration */
-	//	if(!JSONRoot["LogFileSizekB"].isNull())
-	//		FileLog.SetLogFileSizekB(JSONRoot["LogFileSizekB"].asUInt());
-
-	//	if(!JSONRoot["NumLogFiles"].isNull())
-	//		FileLog.SetNumLogFiles(JSONRoot["NumLogFiles"].asUInt());
-
-	//	if(!JSONRoot["LogName"].isNull())
-	//		FileLog.SetLogName(JSONRoot["LogName"].asString());
 
 	if(!JSONRoot["LOG_LEVEL"].isNull())
 	{

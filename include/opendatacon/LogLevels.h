@@ -27,17 +27,18 @@
 #define LOGLEVELS_H
 
 const char* LogFlagToString(int32_t flag);
-namespace ODC {
+namespace ODC
+{
 namespace flags
 {
 
 // define most of these in terms of the base openpal filters
-    const int32_t EVENT	= 1 << 0;
-    const int32_t ERR	= 1 << 1;
-    const int32_t WARN	= 1 << 2;
-    const int32_t INFO	= 1 << 3;
-    const int32_t DBG	= 1 << 4;
-    
+const int32_t EVENT = 1 << 0;
+const int32_t ERR   = 1 << 1;
+const int32_t WARN  = 1 << 2;
+const int32_t INFO  = 1 << 3;
+const int32_t DBG   = 1 << 4;
+
 
 // up-shift the custom dnp3 filters
 
