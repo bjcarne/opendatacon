@@ -110,26 +110,6 @@ void ModbusOutstationPort::Disconnect()
 	if(mb != nullptr) modbus_close(mb);
 }
 
-void ModbusOutstationPort::StateListener(ChannelState state)
-{
-	if(!enabled)
-		return;
-
-	if(state == ChannelState::OPEN)
-	{
-		for(auto IOHandler_pair : Subscribers)
-		{
-			IOHandler_pair.second->Event(ConnectState::CONNECTED, 0, this->Name);
-		}
-	}
-	else
-	{
-		for(auto IOHandler_pair : Subscribers)
-		{
-			IOHandler_pair.second->Event(ConnectState::DISCONNECTED, 0, this->Name);
-		}
-	}
-}
 void ModbusOutstationPort::BuildOrRebuild()
 {
 	ModbusPortConf* pConf = static_cast<ModbusPortConf*>(this->pConf.get());

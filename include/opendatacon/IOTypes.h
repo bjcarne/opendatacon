@@ -41,36 +41,6 @@ namespace ODC
         DISCONNECTED = 2,
         PORT_DOWN = 3
     };
-    
-    //typedef opendnp3::ChannelState ChannelState;
-    enum class ChannelState : uint8_t
-    {
-        /// offline and idle
-        CLOSED = 0,
-        /// trying to open
-        OPENING = 1,
-        /// waiting to open
-        WAITING = 2,
-        /// open
-        OPEN = 3,
-        /// stopped and will never do anything again
-        SHUTDOWN = 4
-    };
-
-#include <type_traits> //must include it
-
-	/*
-    template<typename A, typename B>
-    constexpr bool enum_check(A a ,B b)
-    {
-        return static_cast<typename std::underlying_type<A>::type>(a) == static_cast<typename std::underlying_type<B>::type>(b);
-    }
-    static_assert(enum_check(ODC::ChannelState::CLOSED, opendnp3::ChannelState::CLOSED),"ChannelState enum check failed");
-    static_assert(enum_check(ODC::ChannelState::OPENING, opendnp3::ChannelState::OPENING),"ChannelState enum check failed");
-    static_assert(enum_check(ODC::ChannelState::WAITING, opendnp3::ChannelState::WAITING),"ChannelState enum check failed");
-    static_assert(enum_check(ODC::ChannelState::OPEN, opendnp3::ChannelState::OPEN),"ChannelState enum check failed");
-    static_assert(enum_check(ODC::ChannelState::SHUTDOWN, opendnp3::ChannelState::SHUTDOWN),"ChannelState enum check failed");
-    */
 
     typedef opendnp3::CommandStatus CommandStatus;
     //typedef opendnp3::ControlCode ControlCode;
