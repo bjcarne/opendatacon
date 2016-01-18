@@ -35,11 +35,32 @@
 #include <openpal/container/ArrayView.h>
 #include <opendatacon/IOTypes.h>
 
+/// Map underlying types
+inline ODC::DoubleBit DoubleBitToODC(const opendnp3::DoubleBit& a)
+{
+    return ODC::DoubleBitFromType(opendnp3::DoubleBitToType(a));
+};
+inline opendnp3::DoubleBit DoubleBitToOpenDNP3(const ODC::DoubleBit& a)
+{
+    return opendnp3::DoubleBitFromType(ODC::DoubleBitToType(a));
+};
+
 /// Map measurement types
 template <class A, class B>
 inline B Converter(const A& a)
 {
     return B(a.value, a.quality, a.time);
+};
+
+template <>
+inline ODC::DoubleBitBinary Converter(const opendnp3::DoubleBitBinary& a)
+{
+    return ODC::DoubleBitBinary(DoubleBitToODC(a.value), a.quality, a.time);
+};
+template <>
+inline opendnp3::DoubleBitBinary Converter(const ODC::DoubleBitBinary& a)
+{
+    return opendnp3::DoubleBitBinary(DoubleBitToOpenDNP3(a.value), a.quality, a.time);
 };
 
 inline ODC::Binary ToODC(const opendnp3::Binary& a) {

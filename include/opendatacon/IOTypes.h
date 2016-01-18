@@ -33,7 +33,37 @@
 namespace ODC
 {
     /// remaining opendnp3 types
-    typedef opendnp3::DoubleBit DoubleBit;
+    //typedef opendnp3::DoubleBit DoubleBit;
+    enum class DoubleBit : uint8_t
+    {
+        /// Transitioning between end conditions
+        INTERMEDIATE = 0x0,
+        /// End condition, determined to be OFF
+        DETERMINED_OFF = 0x1,
+        /// End condition, determined to be ON
+        DETERMINED_ON = 0x2,
+        /// Abnormal or custom condition
+        INDETERMINATE = 0x3
+    };
+    inline uint8_t DoubleBitToType(DoubleBit arg)
+    {
+        return static_cast<uint8_t>(arg);
+    }
+    inline DoubleBit DoubleBitFromType(uint8_t arg)
+    {
+        switch(arg)
+        {
+            case(0x0):
+                return DoubleBit::INTERMEDIATE;
+            case(0x1):
+                return DoubleBit::DETERMINED_OFF;
+            case(0x2):
+                return DoubleBit::DETERMINED_ON;
+            default:
+                return DoubleBit::INDETERMINATE;
+        }
+    }
+    
     typedef opendnp3::DNPTime timestamp;
     
     ///
