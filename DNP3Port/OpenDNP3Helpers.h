@@ -29,6 +29,9 @@
 #include <string>
 
 #include <opendnp3/app/MeasurementTypes.h>
+#include <opendnp3/app/ControlRelayOutputBlock.h>
+#include <opendnp3/app/AnalogOutput.h>
+
 #include <openpal/container/ArrayView.h>
 #include <opendatacon/IOTypes.h>
 
@@ -70,57 +73,54 @@ inline opendnp3::AnalogOutputStatus ToOpenDNP3(const ODC::AnalogOutputStatus& a)
     return Converter<ODC::AnalogOutputStatus, opendnp3::AnalogOutputStatus>(a); };
 
 /// Map control types
+inline ODC::CommandStatus ToODC(const opendnp3::CommandStatus& a) {
+    return ODC::CommandStatusFromType(opendnp3::CommandStatusToType(a));
+}
+inline opendnp3::CommandStatus ToOpenDNP3(const ODC::CommandStatus& a) {
+    return opendnp3::CommandStatusFromType(ODC::CommandStatusToType(a));
+}
+
 inline ODC::ControlRelayOutputBlock ToODC(const opendnp3::ControlRelayOutputBlock& a) {
-    return ODC::ControlRelayOutputBlock(a.rawCode,a.count,a.onTimeMS,a.offTimeMS,a.status); };
+    return ODC::ControlRelayOutputBlock(a.rawCode,a.count,a.onTimeMS,a.offTimeMS,ToODC(a.status)); };
 inline opendnp3::ControlRelayOutputBlock ToOpenDNP3(const ODC::ControlRelayOutputBlock& a) {
-    return opendnp3::ControlRelayOutputBlock(a.functionCode,a.count,a.onTimeMS,a.offTimeMS,a.status); };
+    return opendnp3::ControlRelayOutputBlock(a.functionCode,a.count,a.onTimeMS,a.offTimeMS,ToOpenDNP3(a.status)); };
 
 /// Map output types
 template <class A, class B>
-inline B AnalogOutputConverter(const A& a)
+inline B AnalogOutputToODC(const A& a)
 {
-    return B(a.value, a.status);
+    return B(a.value, ToODC(a.status));
+};
+template <class A, class B>
+inline B AnalogOutputToOpenDNP3(const A& a)
+{
+    return B(a.value, ToOpenDNP3(a.status));
 };
 
 inline ODC::AnalogOutputInt16 ToODC(const opendnp3::AnalogOutputInt16& a) {
-    return AnalogOutputConverter<opendnp3::AnalogOutputInt16, ODC::AnalogOutputInt16>(a); };
+    return AnalogOutputToODC<opendnp3::AnalogOutputInt16, ODC::AnalogOutputInt16>(a); };
 inline ODC::AnalogOutputInt32 ToODC(const opendnp3::AnalogOutputInt32& a) {
-    return AnalogOutputConverter<opendnp3::AnalogOutputInt32, ODC::AnalogOutputInt32>(a); };
+    return AnalogOutputToODC<opendnp3::AnalogOutputInt32, ODC::AnalogOutputInt32>(a); };
 inline ODC::AnalogOutputFloat32 ToODC(const opendnp3::AnalogOutputFloat32& a) {
-    return AnalogOutputConverter<opendnp3::AnalogOutputFloat32, ODC::AnalogOutputFloat32>(a); };
+    return AnalogOutputToODC<opendnp3::AnalogOutputFloat32, ODC::AnalogOutputFloat32>(a); };
 inline ODC::AnalogOutputDouble64 ToODC(const opendnp3::AnalogOutputDouble64& a) {
-    return AnalogOutputConverter<opendnp3::AnalogOutputDouble64, ODC::AnalogOutputDouble64>(a); };
+    return AnalogOutputToODC<opendnp3::AnalogOutputDouble64, ODC::AnalogOutputDouble64>(a); };
 
 inline opendnp3::AnalogOutputInt16 ToOpenDNP3(const ODC::AnalogOutputInt16& a) {
-    return AnalogOutputConverter<ODC::AnalogOutputInt16, opendnp3::AnalogOutputInt16>(a); };
+    return AnalogOutputToOpenDNP3<ODC::AnalogOutputInt16, opendnp3::AnalogOutputInt16>(a); };
 inline opendnp3::AnalogOutputInt32 ToOpenDNP3(const ODC::AnalogOutputInt32& a) {
-    return AnalogOutputConverter<ODC::AnalogOutputInt32, opendnp3::AnalogOutputInt32>(a); };
+    return AnalogOutputToOpenDNP3<ODC::AnalogOutputInt32, opendnp3::AnalogOutputInt32>(a); };
 inline opendnp3::AnalogOutputFloat32 ToOpenDNP3(const ODC::AnalogOutputFloat32& a) {
-    return AnalogOutputConverter<ODC::AnalogOutputFloat32, opendnp3::AnalogOutputFloat32>(a); };
+    return AnalogOutputToOpenDNP3<ODC::AnalogOutputFloat32, opendnp3::AnalogOutputFloat32>(a); };
 inline opendnp3::AnalogOutputDouble64 ToOpenDNP3(const ODC::AnalogOutputDouble64& a) {
-    return AnalogOutputConverter<ODC::AnalogOutputDouble64, opendnp3::AnalogOutputDouble64>(a); };
-
+    return AnalogOutputToOpenDNP3<ODC::AnalogOutputDouble64, opendnp3::AnalogOutputDouble64>(a); };
 
 /*
-ODC::ControlRelayOutputBlock ToODC(const opendnp3::ControlRelayOutputBlock a) { return Converter<opendnp3::ControlRelayOutputBlock, ODC::ControlRelayOutputBlock>(a); };
-ODC::AnalogOutputInt16 ToODC(const opendnp3::AnalogOutputInt16 a) { return Converter<opendnp3::AnalogOutputInt16, ODC::AnalogOutputInt16>(a); };
-ODC::AnalogOutputInt32 ToODC(const opendnp3::AnalogOutputInt32 a) { return Converter<opendnp3::AnalogOutputInt32, ODC::AnalogOutputInt32>(a); };
-ODC::AnalogOutputFloat32 ToODC(const opendnp3::AnalogOutputFloat32 a) { return Converter<opendnp3::AnalogOutputFloat32, ODC::AnalogOutputFloat32>(a); };
-ODC::AnalogOutputDouble64 ToODC(const opendnp3::AnalogOutputDouble64 a) { return Converter<opendnp3::AnalogOutputDouble64, ODC::AnalogOutputDouble64>(a); };
- 
 ODC::BinaryQuality ToODC(const opendnp3::BinaryQuality a) { return Converter<opendnp3::BinaryQuality, ODC::BinaryQuality>(a); };
 ODC::DoubleBitBinaryQuality ToODC(const opendnp3::DoubleBitBinaryQuality a) { return Converter<opendnp3::DoubleBitBinaryQuality, ODC::DoubleBitBinaryQuality>(a); };
 ODC::AnalogQuality ToODC(const opendnp3::AnalogQuality a) { return Converter<opendnp3::AnalogQuality, ODC::AnalogQuality>(a); };
 ODC::CounterQuality ToODC(const opendnp3::CounterQuality a) { return Converter<opendnp3::CounterQuality, ODC::CounterQuality>(a); };
 ODC::BinaryOutputStatusQuality ToODC(const opendnp3::BinaryOutputStatusQuality a) { return Converter<opendnp3::BinaryOutputStatusQuality, ODC::BinaryOutputStatusQuality>(a); };
-*/
-
-/*
-opendnp3::ControlRelayOutputBlock ToOpenDNP3(const ODC::ControlRelayOutputBlock& a) { return Converter<ODC::ControlRelayOutputBlock, opendnp3::ControlRelayOutputBlock>(a); };
-opendnp3::AnalogOutputInt16 ToOpenDNP3(const ODC::AnalogOutputInt16& a) { return Converter<ODC::AnalogOutputInt16, opendnp3::AnalogOutputInt16>(a); };
-opendnp3::AnalogOutputInt32 ToOpenDNP3(const ODC::AnalogOutputInt32& a) { return Converter<ODC::AnalogOutputInt32, opendnp3::AnalogOutputInt32>(a); };
-opendnp3::AnalogOutputFloat32 ToOpenDNP3(const ODC::AnalogOutputFloat32& a) { return Converter<ODC::AnalogOutputFloat32, opendnp3::AnalogOutputFloat32>(a); };
-opendnp3::AnalogOutputDouble64 ToOpenDNP3(const ODC::AnalogOutputDouble64& a) { return Converter<ODC::AnalogOutputDouble64, opendnp3::AnalogOutputDouble64>(a); };
 
 opendnp3::BinaryQuality ToOpenDNP3(const ODC::BinaryQuality& a) { return Converter<ODC::BinaryQuality, opendnp3::BinaryQuality>(a); };
 opendnp3::DoubleBitBinaryQuality ToOpenDNP3(const ODC::DoubleBitBinaryQuality& a) { return Converter<ODC::DoubleBitBinaryQuality, opendnp3::DoubleBitBinaryQuality>(a); };

@@ -67,7 +67,7 @@ public:
 	//Create an overloaded Event function for every type of event
 
 	// measurement events
-	virtual std::future<CommandStatus> Event(const Binary& meas, uint16_t index, const std::string& SenderName) = 0;
+    virtual std::future<CommandStatus> Event(const Binary& meas, uint16_t index, const std::string& SenderName) = 0;
 	virtual std::future<CommandStatus> Event(const DoubleBitBinary& meas, uint16_t index, const std::string& SenderName) = 0;
 	virtual std::future<CommandStatus> Event(const Analog& meas, uint16_t index, const std::string& SenderName) = 0;
 	virtual std::future<CommandStatus> Event(const Counter& meas, uint16_t index, const std::string& SenderName) = 0;

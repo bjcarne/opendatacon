@@ -275,7 +275,7 @@ inline opendnp3::CommandStatus DNP3OutstationPort::PerformT(T& arCommand, uint16
 		return opendnp3::CommandStatus::UNDEFINED;
 
 	//container to store our async futures
-	std::vector<std::future<opendnp3::CommandStatus> > future_results;
+	std::vector<std::future<ODC::CommandStatus> > future_results;
 
 	for(auto IOHandler_pair : Subscribers)
 	{
@@ -297,7 +297,7 @@ inline opendnp3::CommandStatus DNP3OutstationPort::PerformT(T& arCommand, uint16
 			this->GetIOService()->poll_one();
 		}
 		//first one that isn't a success, we can return
-		if(future_result.get() != opendnp3::CommandStatus::SUCCESS)
+		if(future_result.get() != ODC::CommandStatus::SUCCESS)
 			return opendnp3::CommandStatus::UNDEFINED;
 	}
 

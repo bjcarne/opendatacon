@@ -270,13 +270,13 @@ inline void DNP3MasterPort::LoadT(const ICollection<Indexed<T> >& meas)
 }
 
 //Implement some IOHandler - parent DNP3Port implements the rest to return NOT_SUPPORTED
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
-std::future<opendnp3::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3MasterPort::Event(const ODC::ControlRelayOutputBlock& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputInt16& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputInt32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputFloat32& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
+std::future<ODC::CommandStatus> DNP3MasterPort::Event(const ODC::AnalogOutputDouble64& arCommand, uint16_t index, const std::string& SenderName){ return EventT(arCommand, index, SenderName); }
 
-std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::ConnectState state, const std::string& SenderName)
+std::future<ODC::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::ConnectState state, const std::string& SenderName)
 {
 	if(!enabled)
 	{
@@ -322,7 +322,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::Connec
 }
 
 template<typename T>
-inline std::future<opendnp3::CommandStatus> DNP3MasterPort::EventT(T& arCommand, uint16_t index, const std::string& SenderName)
+inline std::future<ODC::CommandStatus> DNP3MasterPort::EventT(T& arCommand, uint16_t index, const std::string& SenderName)
 {
 	// If the port is disabled, fail the command
 	if(!enabled)
@@ -341,7 +341,7 @@ inline std::future<opendnp3::CommandStatus> DNP3MasterPort::EventT(T& arCommand,
 	{
 		if(i == index)
 		{
-			auto cmd_promise = std::promise<opendnp3::CommandStatus>();
+			auto cmd_promise = std::promise<ODC::CommandStatus>();
 			auto cmd_future = cmd_promise.get_future();
 
 			//make a copy of the command, so we can change it if needed
