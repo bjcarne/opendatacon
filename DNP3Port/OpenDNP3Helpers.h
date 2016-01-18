@@ -45,22 +45,31 @@ inline opendnp3::DoubleBit DoubleBitToOpenDNP3(const ODC::DoubleBit& a)
     return opendnp3::DoubleBitFromType(ODC::DoubleBitToType(a));
 };
 
+inline ODC::timestamp Convert(const opendnp3::DNPTime& a)
+{
+    return ODC::timestamp((uint64_t)a);
+};
+inline opendnp3::DNPTime Convert(const ODC::timestamp& a)
+{
+    return opendnp3::DNPTime((uint64_t)a);
+};
+
 /// Map measurement types
 template <class A, class B>
 inline B Converter(const A& a)
 {
-    return B(a.value, a.quality, a.time);
+    return B(a.value, a.quality, Convert(a.time));
 };
 
 template <>
 inline ODC::DoubleBitBinary Converter(const opendnp3::DoubleBitBinary& a)
 {
-    return ODC::DoubleBitBinary(DoubleBitToODC(a.value), a.quality, a.time);
+    return ODC::DoubleBitBinary(DoubleBitToODC(a.value), a.quality, Convert(a.time));
 };
 template <>
 inline opendnp3::DoubleBitBinary Converter(const ODC::DoubleBitBinary& a)
 {
-    return opendnp3::DoubleBitBinary(DoubleBitToOpenDNP3(a.value), a.quality, a.time);
+    return opendnp3::DoubleBitBinary(DoubleBitToOpenDNP3(a.value), a.quality, Convert(a.time));
 };
 
 inline ODC::Binary ToODC(const opendnp3::Binary& a) {

@@ -76,7 +76,7 @@ void DNP3MasterPort::Disable()
 
 void DNP3MasterPort::PortUp()
 {
-	auto eventTime = asiopal::UTCTimeSource::Instance().Now().msSinceEpoch;
+    auto eventTime = ODC::timestamp(asiopal::UTCTimeSource::Instance().Now().msSinceEpoch);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 
 	// Update the comms state point if configured
@@ -89,7 +89,7 @@ void DNP3MasterPort::PortUp()
 				auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::DBG, "", msg.c_str(), -1);
 				this->Log(log_entry);
 			}
-			ODC::Binary commsUpEvent(!pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
+			ODC::Binary commsUpEvent(!pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), eventTime);
 			IOHandler_pair.second->Event(commsUpEvent, pConf->mCommsPoint.second, this->Name);
 		}
 	}
@@ -97,7 +97,7 @@ void DNP3MasterPort::PortUp()
 
 void DNP3MasterPort::PortDown()
 {
-	auto eventTime = asiopal::UTCTimeSource::Instance().Now().msSinceEpoch;
+    auto eventTime = ODC::timestamp(asiopal::UTCTimeSource::Instance().Now().msSinceEpoch);
 	DNP3PortConf* pConf = static_cast<DNP3PortConf*>(this->pConf.get());
 
 	for (auto IOHandler_pair : Subscribers)
@@ -121,7 +121,7 @@ void DNP3MasterPort::PortDown()
 				auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::DBG, "", msg.c_str(), -1);
 				Log(log_entry);
 			}
-			ODC::Binary commsDownEvent(pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
+			ODC::Binary commsDownEvent(pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), eventTime);
 			IOHandler_pair.second->Event(commsDownEvent, pConf->mCommsPoint.second, this->Name);
 		}
 	}

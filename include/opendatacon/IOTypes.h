@@ -27,13 +27,12 @@
 #ifndef IOTYPES_H_
 #define IOTYPES_H_
 
-#include <opendnp3/app/MeasurementTypes.h>
+#include <opendnp3/Types.h>
 #include <opendnp3/app/QualityMasks.h>
 
 namespace ODC
 {
-    /// remaining opendnp3 types
-    //typedef opendnp3::DoubleBit DoubleBit;
+    /// Underlying types
     enum class DoubleBit : uint8_t
     {
         /// Transitioning between end conditions
@@ -64,7 +63,8 @@ namespace ODC
         }
     }
     
-    typedef opendnp3::DNPTime timestamp;
+    
+    class timestamp : public opendnp3::DNPTime { using opendnp3::DNPTime::DNPTime; };
     
     ///
     enum ConnectState : uint8_t

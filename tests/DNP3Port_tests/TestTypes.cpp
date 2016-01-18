@@ -20,14 +20,16 @@
 #include <catch.hpp>
 
 #include <opendatacon/IOTypes.h>
+#include <opendnp3/app/MeasurementTypes.h>
 #include <chrono>
+#include "../../DNP3Port/OpenDNP3Helpers.h"
 
 #define SUITE(name) "DNP3PortTypeTestSuite - " name
 
 TEST_CASE(SUITE("Binary"))
 {
     opendnp3::Binary b(true, 7, opendnp3::DNPTime(9));
-	ODC::Binary c(b.value, b.quality, b.time); // maintains reference to original (a wrapper)
+	ODC::Binary c(b.value, b.quality, Convert(b.time)); // maintains reference to original (a wrapper)
 
     REQUIRE(c.value == b.value);
     REQUIRE(c.quality == b.quality);
