@@ -459,30 +459,31 @@ ModbusReadGroup<ODC::Binary>* ModbusMasterPort::GetRange(uint16_t index)
 template<>
 CommandStatus ModbusMasterPort::WriteObject(const ControlRelayOutputBlock& command, uint16_t index)
 {
-	if (
-	      (command.functionCode == ODC::ControlCode::NUL) ||
-		  (command.functionCode == ODC::ControlCode::UNDEFINED)
-	      )
-	{
-		return CommandStatus::FORMAT_ERROR;
-	}
-
 	// Modbus function code 0x01 (read coil status)
 	ModbusReadGroup<Binary>* TargetRange = GetRange(index);
 	if (TargetRange == nullptr) return CommandStatus::UNDEFINED;
 
 	int rc;
 	if (
-	      (command.functionCode == ControlCode::LATCH_OFF) ||
-	      (command.functionCode == ControlCode::TRIP_PULSE_ON)
+        (command.functionCode == ControlCodeToType(ODC::ControlCode::PULSE_ON)) ||
+        (command.functionCode == ControlCodeToType(ODC::ControlCode::LATCH_ON)) ||
+        (command.functionCode == ControlCodeToType(ODC::ControlCode::CLOSE_PULSE_ON))
+        )
+    {
+        //ControlCode::PULSE_CLOSE || ControlCode::PULSE || ControlCode::LATCH_ON
+        rc = modbus_write_bit(mb, index, true);
+    }
+    else if (
+             (command.functionCode == ControlCodeToType(ODC::ControlCode::PULSE_OFF)) ||
+             (command.functionCode == ControlCodeToType(ODC::ControlCode::LATCH_OFF)) ||
+             (command.functionCode == ControlCodeToType(ODC::ControlCode::TRIP_PULSE_ON))
 	      )
 	{
 		rc = modbus_write_bit(mb, index, false);
 	}
 	else
 	{
-		//ControlCode::PULSE_CLOSE || ControlCode::PULSE || ControlCode::LATCH_ON
-		rc = modbus_write_bit(mb, index, true);
+        return CommandStatus::FORMAT_ERROR;
 	}
 
 	// If the index is part of a non-zero pollgroup, queue a poll task for the group
