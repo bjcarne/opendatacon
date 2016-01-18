@@ -28,7 +28,6 @@
 #include <future>
 #include <regex>
 #include <chrono>
-#include <asiopal/UTCTimeSource.h>
 #include "ModbusOutstationPort.h"
 
 #include <opendatacon/LogLevels.h>

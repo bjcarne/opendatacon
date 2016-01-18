@@ -27,8 +27,8 @@
 #ifndef IOTYPES_H_
 #define IOTYPES_H_
 
-#include <opendnp3/Types.h>
-#include <opendnp3/app/QualityMasks.h>
+#include "opendnp3/UInt48Type.h"
+#include "opendnp3/QualityMasks.h"
 
 namespace ODC
 {
@@ -64,7 +64,7 @@ namespace ODC
     }
     
     
-    class timestamp : public opendnp3::DNPTime { using opendnp3::DNPTime::DNPTime; };
+    class timestamp : public openpal::UInt48Type { using openpal::UInt48Type::UInt48Type; };
     
     ///
     enum ConnectState : uint8_t

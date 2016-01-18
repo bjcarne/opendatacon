@@ -24,7 +24,6 @@ file(GLOB ${PROJECT_NAME}_SRC *.cpp *.h *.def)
 include_directories(
 	../include
 	../JSON
-	${DNP3_HOME}/include
 	${ASIO_HOME}/include
 	${MODBUS_HOME}/include
 )
@@ -46,7 +45,7 @@ endif()
 
 
 add_library(${PROJECT_NAME} MODULE ${${PROJECT_NAME}_SRC})
-target_link_libraries(${PROJECT_NAME} ODC modbus_target ${openpal_libs} ${opendnp3_libs})
+target_link_libraries(${PROJECT_NAME} ODC modbus_target)
 
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${INSTALLDIR_MODULES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER ports)

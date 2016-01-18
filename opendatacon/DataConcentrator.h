@@ -29,7 +29,6 @@
 
 #include "DataConnector.h"
 #include "DataConnectorCollection.h"
-#include "LogToFile.h"
 #include "LogCollection.h"
 
 

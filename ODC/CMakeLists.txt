@@ -24,12 +24,11 @@ file(GLOB_RECURSE ${PROJECT_NAME}_SRC *.cpp *.h *.def ../include/opendatacon/*.h
 include_directories(
 	"../JSON"
 	"../include"
-	"${DNP3_HOME}/include"
 	"${ASIO_HOME}/include"
 )
 
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SRC})
-target_link_libraries(${PROJECT_NAME} JSON ${openpal_libs} ${asiopal_libs})
+target_link_libraries(${PROJECT_NAME} JSON)
 
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${INSTALLDIR_LIBS} ARCHIVE DESTINATION ${INSTALLDIR_LIBS} RUNTIME DESTINATION ${INSTALLDIR_BINS})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER libs)
