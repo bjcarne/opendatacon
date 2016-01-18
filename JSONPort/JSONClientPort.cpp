@@ -26,6 +26,7 @@
 
 #include <thread>
 #include <chrono>
+#include <opendatacon/IOTypes.h>
 #include <opendatacon/LogLevels.h>
 #include "JSONClientPort.h"
 
@@ -251,7 +252,7 @@ inline void JSONClientPort::LoadT(T meas, uint16_t index, Json::Value timestamp_
 
 	if(!timestamp_val.isNull() && timestamp_val.isUInt64())
 	{
-		meas = T(meas.value, meas.quality, ODC::DNPTime(timestamp_val.asUInt64()));
+		meas = T(meas.value, meas.quality, ODC::timestamp(timestamp_val.asUInt64()));
 	}
 
 	for(auto IOHandler_pair : Subscribers)

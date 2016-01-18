@@ -100,11 +100,6 @@ inline opendnp3::AnalogOutputFloat32 ToOpenDNP3(const ODC::AnalogOutputFloat32& 
 inline opendnp3::AnalogOutputDouble64 ToOpenDNP3(const ODC::AnalogOutputDouble64& a) {
     return AnalogOutputConverter<ODC::AnalogOutputDouble64, opendnp3::AnalogOutputDouble64>(a); };
 
-inline ODC::ControlRelayOutputBlock ToODC(const opendnp3::ControlRelayOutputBlock a) {
-    return a; /*Converter<opendnp3::ControlRelayOutputBlock, ODC::ControlRelayOutputBlock>(a); */ };
-inline opendnp3::ControlRelayOutputBlock ToOpenDNP3(const ODC::ControlRelayOutputBlock& a) {
-    return a; /*Converter<ODC::ControlRelayOutputBlock, opendnp3::ControlRelayOutputBlock>(a); */ };
-
 
 /*
 ODC::ControlRelayOutputBlock ToODC(const opendnp3::ControlRelayOutputBlock a) { return Converter<opendnp3::ControlRelayOutputBlock, ODC::ControlRelayOutputBlock>(a); };
