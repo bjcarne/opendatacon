@@ -28,10 +28,11 @@
 #include <opendnp3/app/ClassField.h>
 #include <opendnp3/app/MeasurementTypes.h>
 #include <opendnp3/LogLevels.h>
-#include <openpal/logging/LogLevels.h>
 #include <asiopal/UTCTimeSource.h>
 
 #include <array>
+
+#include <opendatacon/LogLevels.h>
 
 #include "OpenDNP3Helpers.h"
 #include "DNP3MasterPort.h"
@@ -44,7 +45,7 @@ void DNP3MasterPort::Enable()
 	if(nullptr == pMaster)
 	{
 		std::string msg = Name + ": Port not configured.";
-		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::ERR, "", msg.c_str(), -1);
 		Log(log_entry);
 		return;
 	}
@@ -85,7 +86,7 @@ void DNP3MasterPort::PortUp()
 		{
 			{
 				std::string msg = Name + ": Updating comms state point to good";
-				auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
+				auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::DBG, "", msg.c_str(), -1);
 				this->Log(log_entry);
 			}
 			ODC::Binary commsUpEvent(!pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
@@ -103,7 +104,7 @@ void DNP3MasterPort::PortDown()
 	{
 		{
 			std::string msg = Name + ": Setting point quality to COMM_LOST";
-			auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::DBG, "", msg.c_str(), -1);
 			Log(log_entry);
 		}
 
@@ -117,7 +118,7 @@ void DNP3MasterPort::PortDown()
 		{
 			{
 				std::string msg = Name + ": Updating comms state point to bad";
-				auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::DBG, "", msg.c_str(), -1);
+				auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::DBG, "", msg.c_str(), -1);
 				Log(log_entry);
 			}
 			ODC::Binary commsDownEvent(pConf->mCommsPoint.first.value, static_cast<uint8_t>(opendnp3::BinaryQuality::ONLINE), opendnp3::DNPTime(eventTime));
@@ -159,7 +160,7 @@ void DNP3MasterPort::OnKeepAliveFailure()
 		if (stack_enabled && pConf->mAddrConf.ServerType != server_type_t::PERSISTENT && !InDemand())
 		{
 			std::string msg = Name + ": disabling stack following disconnect on non-persistent port.";
-			auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::INFO, "", msg.c_str(), -1);
 			Log(log_entry);
 
 			// For all but persistent connections, and in-demand ONDEMAND connections, disable the stack
@@ -190,7 +191,7 @@ void DNP3MasterPort::BuildOrRebuild()
 	if (pChannel == nullptr)
 	{
 		std::string msg = Name + ": TCP channel not found for masterstation.";
-		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::ERR, "", msg.c_str(), -1);
 		Log(log_entry);
 
 		return;
@@ -222,7 +223,7 @@ void DNP3MasterPort::BuildOrRebuild()
 	if (pMaster == nullptr)
 	{
 		std::string msg = Name + ": Error creating masterstation.";
-		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::ERR, "", msg.c_str(), -1);
 		Log(log_entry);
 
 		return;
@@ -286,7 +287,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::Connec
 	if (stack_enabled && state == ODC::ConnectState::PORT_UP)
 	{
 		std::string msg = Name + ": upstream port enabled, performing integrity scan.";
-		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::INFO, "", msg.c_str(), -1);
 		Log(log_entry);
 
 		IntegrityScan.Demand();
@@ -298,7 +299,7 @@ std::future<opendnp3::CommandStatus> DNP3MasterPort::ConnectionEvent(ODC::Connec
 	if (!stack_enabled && state == ODC::ConnectState::CONNECTED && pConf->mAddrConf.ServerType == server_type_t::ONDEMAND)
 	{
 		std::string msg = Name + ": upstream port connected, performing on-demand connection.";
-		auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::INFO, "", msg.c_str(), -1);
 		Log(log_entry);
 
 		Post([&]()
@@ -349,7 +350,7 @@ inline std::future<opendnp3::CommandStatus> DNP3MasterPort::EventT(T& arCommand,
 			DoOverrideControlCode(lCommand);
 
 			std::string msg = "Executing direct operate to index: " + std::to_string(index);
-			auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::INFO, "", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::INFO, "", msg.c_str(), -1);
 			Log(log_entry);
 
 			this->pMaster->DirectOperate(lCommand,index,*CommandCorrespondant::GetCallback(std::move(cmd_promise)));
@@ -358,7 +359,7 @@ inline std::future<opendnp3::CommandStatus> DNP3MasterPort::EventT(T& arCommand,
 		}
 	}
 	std::string msg = "Control sent to invalid DNP3 index: " + std::to_string(index);
-	auto log_entry = ODC::LogEntry("DNP3MasterPort", openpal::logflags::WARN, "", msg.c_str(), -1);
+	auto log_entry = ODC::LogEntry("DNP3MasterPort", ODC::logflags::WARN, "", msg.c_str(), -1);
 	Log(log_entry);
 	return IOHandler::CommandFutureUndefined();
 }

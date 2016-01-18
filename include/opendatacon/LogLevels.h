@@ -26,10 +26,12 @@
 #ifndef LOGLEVELS_H
 #define LOGLEVELS_H
 
+#include <cstdint>
+
 const char* LogFlagToString(int32_t flag);
 namespace ODC
 {
-namespace flags
+namespace logflags
 {
 
 // define most of these in terms of the base openpal filters
@@ -62,16 +64,6 @@ const int32_t APP_HEX_TX = DBG << 12;
 
 }
 
-namespace levels
-{
-
-const int32_t NOTHING = 0;
-const int32_t ALL = ~NOTHING;
-const uint32_t NORMAL = flags::EVENT | flags::ERR | flags::WARN | flags::INFO;
-const uint32_t ALL_APP_COMMS = flags::APP_HEADER_RX | flags::APP_HEADER_TX | flags::APP_OBJECT_RX | flags::APP_OBJECT_TX | flags::APP_HEX_RX | flags::APP_HEX_TX;
-const uint32_t ALL_COMMS = flags::LINK_RX | flags::LINK_TX | flags::TRANSPORT_RX | flags::TRANSPORT_TX | ALL_APP_COMMS;
-
-}
 }
 
 #endif

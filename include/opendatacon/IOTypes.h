@@ -58,7 +58,8 @@ namespace ODC
     };
 
 #include <type_traits> //must include it
-    
+
+	/*
     template<typename A, typename B>
     constexpr bool enum_check(A a ,B b)
     {
@@ -69,7 +70,8 @@ namespace ODC
     static_assert(enum_check(ODC::ChannelState::WAITING, opendnp3::ChannelState::WAITING),"ChannelState enum check failed");
     static_assert(enum_check(ODC::ChannelState::OPEN, opendnp3::ChannelState::OPEN),"ChannelState enum check failed");
     static_assert(enum_check(ODC::ChannelState::SHUTDOWN, opendnp3::ChannelState::SHUTDOWN),"ChannelState enum check failed");
-    
+    */
+
     typedef opendnp3::CommandStatus CommandStatus;
     typedef opendnp3::ControlCode ControlCode;
     typedef opendnp3::DoubleBit DoubleBit;
@@ -80,7 +82,10 @@ namespace ODC
     class Measurement
     {
     public:
-        Measurement(T v, uint8_t q=0, timestamp t=timestamp(0)) : value(v), quality(q), time(t) {};
+		Measurement() : value(T()), quality(0), time(0) {};
+		Measurement(T v) : value(v), quality(0), time(0) {};
+		Measurement(T v, uint8_t q ) : value(v), quality(q), time(0) {};
+		Measurement(T v, uint8_t q, timestamp t) : value(v), quality(q), time(t) {};
         T value;
         uint8_t quality;
         timestamp time;
@@ -100,18 +105,18 @@ namespace ODC
     {
     public:
         // overloaded constructor that allows the user to set a raw control code for non-standard codes
-        ControlRelayOutputBlock(uint8_t rawCode_,
+		ControlRelayOutputBlock(uint8_t functionCode_,
                                 uint8_t count_ = 1,
                                 uint32_t onTimeMS_ = 100,
                                 uint32_t offTimeMS_ = 100,
                                 CommandStatus status_ = CommandStatus::SUCCESS) :
-        rawCode(rawCode_),
+		functionCode(functionCode_),
         count(count_),
         onTimeMS(onTimeMS_),
         offTimeMS(offTimeMS_),
         status(status_)
         {};
-        uint8_t rawCode;
+		uint8_t functionCode;
         uint8_t count;
         uint32_t onTimeMS;
         uint32_t offTimeMS;
@@ -123,8 +128,10 @@ namespace ODC
     class AnalogOutput
     {
     public:
-        AnalogOutput(T v, CommandStatus s=CommandStatus::SUCCESS) : value(v), status(s) {};
-        T value;
+		AnalogOutput() : value(T()), status(CommandStatus::SUCCESS) {};
+		AnalogOutput(T v) : value(v), status(CommandStatus::SUCCESS) {};
+		AnalogOutput(T v, CommandStatus s = CommandStatus::SUCCESS) : value(v), status(s) {};
+		T value;
         CommandStatus status;
         typedef T value_type;
     };

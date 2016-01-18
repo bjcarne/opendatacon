@@ -39,7 +39,7 @@ std::unordered_map<std::string, IOHandler*>& GetIOHandlers()
 }
 
 IOHandler::IOHandler(std::string aName): // Name(aName),
-	LOG_LEVEL(ODC::flags::WARN),
+	LOG_LEVEL(ODC::logflags::WARN),
 	enabled(false)
 {
 	IOHandlers[aName] = this;

@@ -34,8 +34,8 @@
 #include "DNP3OutstationPort.h"
 #include "DNP3PortConf.h"
 #include "OpenDNP3Helpers.h"
-#include <opendnp3/LogLevels.h>
 
+#include <opendatacon/LogLevels.h>
 
 DNP3OutstationPort::DNP3OutstationPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
 	DNP3Port(aName, aParent, aConfFilename, aConfOverrides),
@@ -49,7 +49,7 @@ void DNP3OutstationPort::Enable()
 	if(nullptr == pOutstation)
 	{
 		std::string msg = Name + ": Port not configured.";
-		auto log_entry = ODC::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("DNP3OutstationPort", ODC::logflags::ERR, "", msg.c_str(), -1);
 		Log(log_entry);
 
 		return;
@@ -155,7 +155,7 @@ void DNP3OutstationPort::BuildOrRebuild()
 	if (pChannel == nullptr)
 	{
 		std::string msg = Name + ": TCP channel not found for outstation.";
-		auto log_entry = ODC::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("DNP3OutstationPort", ODC::logflags::ERR, "", msg.c_str(), -1);
 		Log(log_entry);
 		return;
 	}
@@ -165,7 +165,7 @@ void DNP3OutstationPort::BuildOrRebuild()
 	if (pOutstation == nullptr)
 	{
 		std::string msg = Name + ": Error creating outstation.";
-		auto log_entry = ODC::LogEntry("DNP3OutstationPort", openpal::logflags::ERR, "", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("DNP3OutstationPort", ODC::logflags::ERR, "", msg.c_str(), -1);
 		Log(log_entry);
 		return;
 	}

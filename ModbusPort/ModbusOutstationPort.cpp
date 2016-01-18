@@ -31,7 +31,7 @@
 #include <asiopal/UTCTimeSource.h>
 #include "ModbusOutstationPort.h"
 
-#include <opendnp3/LogLevels.h>
+#include <opendatacon/LogLevels.h>
 
 ModbusOutstationPort::ModbusOutstationPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
 	ModbusPort(aName, aParent, aConfFilename, aConfOverrides)
@@ -71,7 +71,7 @@ void ModbusOutstationPort::Connect()
 	if (mb == NULL)
 	{
 		std::string msg = Name+": Connect error: 'Modbus stack failed'";
-		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 		Log(log_entry);
 		return;
 	}
@@ -80,7 +80,7 @@ void ModbusOutstationPort::Connect()
 	if (s == -1)
 	{
 		std::string msg = Name+": Connect error: '" + modbus_strerror(errno) + "'";
-		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::WARN,"", msg.c_str(), -1);
 		Log(log_entry);
 		return;
 	}
@@ -89,7 +89,7 @@ void ModbusOutstationPort::Connect()
 	if (r == -1)
 	{
 		std::string msg = Name+": Connect error: '" + modbus_strerror(errno) + "'";
-		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::WARN,"", msg.c_str(), -1);
 		Log(log_entry);
 		return;
 	}
@@ -145,7 +145,7 @@ void ModbusOutstationPort::BuildOrRebuild()
 		if (mb == NULL)
 		{
 			std::string msg = Name + ": Stack error: 'Modbus stack creation failed'";
-			auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 			Log(log_entry);
 			//TODO: should this throw an exception instead of return?
 			return;
@@ -158,7 +158,7 @@ void ModbusOutstationPort::BuildOrRebuild()
 		if (mb == NULL)
 		{
 			std::string msg = Name + ": Stack error: 'Modbus stack creation failed'";
-			auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 			Log(log_entry);
 			//TODO: should this throw an exception instead of return?
 			return;
@@ -166,7 +166,7 @@ void ModbusOutstationPort::BuildOrRebuild()
 		if(modbus_rtu_set_serial_mode(mb,MODBUS_RTU_RS232))
 		{
 			std::string msg = Name + ": Stack error: 'Failed to set Modbus serial mode to RS232'";
-			auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 			Log(log_entry);
 			//TODO: should this throw an exception instead of return?
 			return;
@@ -175,7 +175,7 @@ void ModbusOutstationPort::BuildOrRebuild()
 	else
 	{
 		std::string msg = Name + ": No IP interface or serial device defined";
-		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 		Log(log_entry);
 		//TODO: should this throw an exception instead of return?
 		return;
@@ -190,7 +190,7 @@ void ModbusOutstationPort::BuildOrRebuild()
 	if (mb_mapping == NULL)
 	{
 		std::string msg = Name + ": Failed to allocate the modbus register mapping: " + std::string(modbus_strerror(errno));
-		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 		Log(log_entry);
 		//TODO: should this throw an exception instead of return?
 		return;

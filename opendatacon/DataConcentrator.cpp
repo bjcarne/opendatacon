@@ -29,9 +29,7 @@
 
 #include <opendatacon/Version.h>
 #include <opendatacon/util.h>
-
-#include <asiodnp3/ConsoleLogger.h>
-#include <opendnp3/LogLevels.h>
+#include <opendatacon/LogLevels.h>
 
 #include "DataConcentrator.h"
 #include "logging_cmds.h"
@@ -41,8 +39,8 @@ DataConcentrator::DataConcentrator(std::string FileName):
 	ConfigParser(FileName),
 	Context("DataConcentrator",IOS),
 	IOS(std::thread::hardware_concurrency()),
-	ios_working(new asio::io_service::work(IOS)),
-	LOG_LEVEL(opendnp3::levels::NORMAL) //,
+	ios_working(new asio::io_service::work(IOS))
+//	LOG_LEVEL(ODC::loglevels::NORMAL) //,
 	//AdvConsoleLog(new AdvancedLogger(asiodnp3::ConsoleLogger::Instance(),LOG_LEVEL)),
 	//FileLog("datacon_log"),
 	//AdvFileLog(new AdvancedLogger(FileLog,LOG_LEVEL))
@@ -110,11 +108,11 @@ DataConcentrator::DataConcentrator(std::string FileName):
 	}
 	for(auto& port : DataPorts)
 	{
-		port.second->SetLogLevel(LOG_LEVEL);
+//		port.second->SetLogLevel(LOG_LEVEL);
 	}
 	for(auto& conn : DataConnectors)
 	{
-		conn.second->SetLogLevel(LOG_LEVEL);
+//		conn.second->SetLogLevel(LOG_LEVEL);
 	}
 }
 
@@ -122,22 +120,21 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 {
 	if(!JSONRoot.isObject()) return;
 
+	/*
 	if(!JSONRoot["LOG_LEVEL"].isNull())
 	{
 		std::string value = JSONRoot["LOG_LEVEL"].asString();
 		if(value == "ALL")
 			LOG_LEVEL = opendnp3::levels::ALL;
 		else if(value == "ALL_COMMS")
-			LOG_LEVEL = opendnp3::levels::ALL_COMMS;
+			LOG_LEVEL = ODC::loglevels::ALL_COMMS;
 		else if(value == "NORMAL")
-			LOG_LEVEL = opendnp3::levels::NORMAL;
+			LOG_LEVEL = ODC::loglevels::NORMAL;
 		else if(value == "NOTHING")
-			LOG_LEVEL = opendnp3::levels::NOTHING;
+			LOG_LEVEL = ODC::loglevels::NOTHING;
 		else
 			std::cout << "Warning: invalid LOG_LEVEL setting: '" << value << "' : ignoring and using 'NORMAL' log level." << std::endl;
-		//		AdvFileLog->SetLogLevel(LOG_LEVEL);
-		//		AdvConsoleLog->SetLogLevel(LOG_LEVEL);
-	}
+	}*/
 
 	/* Plugin System Configuration */
 	if(!JSONRoot["Plugins"].isNull())
@@ -149,7 +146,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			if(Plugins[n]["Type"].isNull() || Plugins[n]["Name"].isNull() || Plugins[n]["ConfFilename"].isNull())
 			{
 				std::string msg = "Invalid plugin config: need at least Type, Name, ConfFilename: \n'" + Plugins[n].toStyledString() + "\n' : ignoring";
-				auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
+				auto log_entry = ODC::LogEntry("DataConcentrator", ODC::logflags::ERR,"", msg.c_str(), -1);
 				Log(log_entry);
 
 				continue;
@@ -162,7 +159,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			if(Interfaces.count(PluginName) > 0)
 			{
 				std::string msg = "Ignoring duplicate plugin name: " + PluginName;
-				auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
+				auto log_entry = ODC::LogEntry("DataConcentrator", ODC::logflags::ERR,"", msg.c_str(), -1);
 				Log(log_entry);
 
 				continue;
@@ -186,7 +183,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			if(pluginlib == nullptr)
 			{
 				std::string msg = "Plugin " + PluginName + " load failed. Dynamic library '" + libname + "' load failed.";
-				auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
+				auto log_entry = ODC::LogEntry("DataConcentrator", ODC::logflags::ERR,"", msg.c_str(), -1);
 				Log(log_entry);
 
 				continue;
@@ -199,7 +196,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 			if(new_plugin_func == nullptr)
 			{
 				std::string msg = "Plugin " + PluginName + " load failed. Failed to load symbol '" + new_funcname + "' in library '" + libname + "' + " + LastSystemError();
-				auto log_entry = ODC::LogEntry("DataConcentrator", openpal::logflags::ERR,"", msg.c_str(), -1);
+				auto log_entry = ODC::LogEntry("DataConcentrator", ODC::logflags::ERR,"", msg.c_str(), -1);
 				Log(log_entry);
 
 				continue;

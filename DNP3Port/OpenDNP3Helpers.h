@@ -37,8 +37,7 @@ template <class A, class B>
 inline B Converter(const A& a)
 {
     return B(a.value, a.quality, a.time);
-}
-
+};
 
 inline ODC::Binary ToODC(const opendnp3::Binary& a) {
     return Converter<opendnp3::Binary, ODC::Binary>(a); };
@@ -74,14 +73,14 @@ inline opendnp3::AnalogOutputStatus ToOpenDNP3(const ODC::AnalogOutputStatus& a)
 inline ODC::ControlRelayOutputBlock ToODC(const opendnp3::ControlRelayOutputBlock& a) {
     return ODC::ControlRelayOutputBlock(a.rawCode,a.count,a.onTimeMS,a.offTimeMS,a.status); };
 inline opendnp3::ControlRelayOutputBlock ToOpenDNP3(const ODC::ControlRelayOutputBlock& a) {
-    return opendnp3::ControlRelayOutputBlock(a.rawCode,a.count,a.onTimeMS,a.offTimeMS,a.status); };
+    return opendnp3::ControlRelayOutputBlock(a.functionCode,a.count,a.onTimeMS,a.offTimeMS,a.status); };
 
 /// Map output types
 template <class A, class B>
 inline B AnalogOutputConverter(const A& a)
 {
     return B(a.value, a.status);
-}
+};
 
 inline ODC::AnalogOutputInt16 ToODC(const opendnp3::AnalogOutputInt16& a) {
     return AnalogOutputConverter<opendnp3::AnalogOutputInt16, ODC::AnalogOutputInt16>(a); };

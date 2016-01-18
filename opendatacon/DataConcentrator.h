@@ -55,7 +55,7 @@ public:
 	ODC::InterfaceCollection Interfaces;
 	asio::io_service IOS;
 	std::unique_ptr<asio::io_service::work> ios_working;
-	ODC::LogFilters LOG_LEVEL;
+//	ODC::LogFilters LOG_LEVEL;
 //ODC::LogCollection AdvancedLoggers;
 //	std::shared_ptr<AdvancedLogger> AdvConsoleLog; //just prints messages to the console plus filtering (Adv)
 //	LogToFile FileLog;                             //Prints all messages to a rolling set of log files.

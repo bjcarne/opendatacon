@@ -24,7 +24,7 @@
  *      Author: Alan Murray
  */
 
-#include <opendnp3/LogLevels.h>
+#include <opendatacon/LogLevels.h>
 #include <thread>
 #include <chrono>
 
@@ -67,7 +67,7 @@ void ModbusMasterPort::Connect()
 	if (mb == NULL)
 	{
 		std::string msg = Name+": Connect error: 'Modbus stack failed'";
-		auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusMasterPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 		Log(log_entry);
 		return;
 	}
@@ -75,7 +75,7 @@ void ModbusMasterPort::Connect()
 	if (modbus_connect(mb) == -1)
 	{
 		std::string msg = Name+": Connect error: '" + modbus_strerror(errno) + "'";
-		auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusMasterPort", ODC::logflags::WARN, "", msg.c_str(), -1);
 		Log(log_entry);
 
 		//try again later - except for manual connections
@@ -97,7 +97,7 @@ void ModbusMasterPort::Connect()
 
 	{
 		std::string msg = Name + ": Connect success!";
-		auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusMasterPort", ODC::logflags::INFO, "", msg.c_str(), -1);
 		Log(log_entry);
 	}
 
@@ -109,7 +109,7 @@ void ModbusMasterPort::Connect()
 //    if (rc > 1)
 //    {
 //	    std::string msg = Name + "Run Status Indicator: %s" + (tab_bytes[1] ? "ON" : "OFF");
-//	    auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+//	    auto log_entry = ODC::LogEntry("ModbusMasterPort", ODC::logflags::INFO,"", msg.c_str(), -1);
 //	    Log(log_entry);
 //    }
 
@@ -172,7 +172,7 @@ void ModbusMasterPort::Disconnect()
 void ModbusMasterPort::HandleError(int errnum, const std::string& source)
 {
 	std::string msg = Name + ": " + source + " error: '" + modbus_strerror(errno) + "'";
-	auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+	auto log_entry = ODC::LogEntry("ModbusMasterPort", ODC::logflags::WARN,"", msg.c_str(), -1);
 	Log(log_entry);
 
 	// If not a modbus error, tear down the connection?
@@ -240,7 +240,7 @@ void ModbusMasterPort::BuildOrRebuild()
 		if (mb == NULL)
 		{
 			std::string msg = Name + ": Stack error: 'Modbus stack creation failed'";
-			auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("ModbusMasterPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 			Log(log_entry);
 			throw std::runtime_error(msg);
 		}
@@ -252,7 +252,7 @@ void ModbusMasterPort::BuildOrRebuild()
 		if (mb == NULL)
 		{
 			std::string msg = Name + ": Stack error: 'Modbus stack creation failed'";
-			auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("ModbusMasterPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 			Log(log_entry);
 			throw std::runtime_error(msg);
 		}
@@ -261,7 +261,7 @@ void ModbusMasterPort::BuildOrRebuild()
 //		if(modbus_rtu_set_serial_mode(mb,MODBUS_RTU_RS232) == -1)
 //		{
 //			std::string msg = Name + ": Stack error: 'Failed to set Modbus serial mode to RS232'";
-//			auto log_entry = ODC::LogEntry("ModbusMasterPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+//			auto log_entry = ODC::LogEntry("ModbusMasterPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 //			Log(log_entry);
 //			throw std::runtime_error(msg);
 //		}
@@ -269,7 +269,7 @@ void ModbusMasterPort::BuildOrRebuild()
 	else
 	{
 		std::string msg = Name + ": No IP address or serial device defined";
-		auto log_entry = ODC::LogEntry("ModbusOutstationPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("ModbusOutstationPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 		Log(log_entry);
 		throw std::runtime_error(msg);
 	}
@@ -445,7 +445,7 @@ std::future<CommandStatus> ModbusMasterPort::ConnectionEvent(ConnectState state,
 	return cmd_future;
 }
 
-ModbusReadGroup<Binary>* ModbusMasterPort::GetRange(uint16_t index)
+ModbusReadGroup<ODC::Binary>* ModbusMasterPort::GetRange(uint16_t index)
 {
 	ModbusPortConf* pConf = static_cast<ModbusPortConf*>(this->pConf.get());
 	for(auto& range : pConf->BitIndicies)
@@ -460,8 +460,8 @@ template<>
 CommandStatus ModbusMasterPort::WriteObject(const ControlRelayOutputBlock& command, uint16_t index)
 {
 	if (
-	      (command.functionCode == ControlCode::NUL) ||
-	      (command.functionCode == ControlCode::UNDEFINED)
+	      (command.functionCode == ODC::ControlCode::NUL) ||
+		  (command.functionCode == ODC::ControlCode::UNDEFINED)
 	      )
 	{
 		return CommandStatus::FORMAT_ERROR;

@@ -26,8 +26,8 @@
 #include "DNP3Port.h"
 #include <iostream>
 #include "DNP3PortConf.h"
-
 #include <opendnp3/LogLevels.h>
+
 #include <asiopal/PhysicalLayerTCPServer.h>
 #include <asiopal/PhysicalLayerTCPClient.h>
 

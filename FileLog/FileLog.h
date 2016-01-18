@@ -22,7 +22,6 @@
 #include <opendatacon/ILoggable.h>
 #include <opendatacon/IUI.h>
 
-#include <asio.hpp>
 #include <chrono>
 #include <mutex>
 #include <fstream>
@@ -32,7 +31,6 @@
 #include <functional>
 
 #include "FileLogConf.h"
-
 
 class FileLog: public ODC::IUI
 {

@@ -27,18 +27,10 @@
 TEST_CASE(SUITE("Binary"))
 {
     opendnp3::Binary b(true, 7, opendnp3::DNPTime(9));
-    ODC::Binary c(b); // maintains reference to original (a wrapper)
+	ODC::Binary c(b.value, b.quality, b.time); // maintains reference to original (a wrapper)
 
-    REQUIRE(c.Value() == b.value);
-    REQUIRE(c.Quality() == b.quality);
-    REQUIRE(c.Time() == b.time);
-    
-    c.Value() = !b.value;
-    c.Quality() = 2;
-    c.Time() = opendnp3::DNPTime(1);
-    
-    REQUIRE(c.Value() == b.value);
-    REQUIRE(c.Quality() == b.quality);
-    REQUIRE(c.Time() == b.time);
-    
+    REQUIRE(c.value == b.value);
+    REQUIRE(c.quality == b.quality);
+    REQUIRE(c.time == b.time);
+
 }

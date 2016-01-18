@@ -63,31 +63,31 @@ std::string LogFilters::toString() const
 {
 	switch (filters)
 	{
-		case (ODC::flags::EVENT):
+		case (ODC::logflags::EVENT):
 			return "EVENT";
-		case (ODC::flags::ERR):
+		case (ODC::logflags::ERR):
 			return "ERROR";
-		case (ODC::flags::WARN):
+		case (ODC::logflags::WARN):
 			return "WARN";
-		case (ODC::flags::INFO):
+		case (ODC::logflags::INFO):
 			return "INFO";
-		case (ODC::flags::DBG):
+		case (ODC::logflags::DBG):
 			return "DEBUG";
-		case (ODC::flags::LINK_RX):
-		case (ODC::flags::LINK_RX_HEX):
+		case (ODC::logflags::LINK_RX):
+		case (ODC::logflags::LINK_RX_HEX):
 			return "<--LINK-";
-		case (ODC::flags::LINK_TX):
-		case (ODC::flags::LINK_TX_HEX):
+		case (ODC::logflags::LINK_TX):
+		case (ODC::logflags::LINK_TX_HEX):
 			return "-LINK-->";
-		case (ODC::flags::TRANSPORT_RX):
+		case (ODC::logflags::TRANSPORT_RX):
 			return "<--TRANS-";
-		case (ODC::flags::TRANSPORT_TX):
+		case (ODC::logflags::TRANSPORT_TX):
 			return "-TRANS-->";
-		case (ODC::flags::APP_HEADER_RX):
-		case (ODC::flags::APP_OBJECT_RX):
+		case (ODC::logflags::APP_HEADER_RX):
+		case (ODC::logflags::APP_OBJECT_RX):
 			return "<--APP-";
-		case (ODC::flags::APP_HEADER_TX):
-		case (ODC::flags::APP_OBJECT_TX):
+		case (ODC::logflags::APP_HEADER_TX):
+		case (ODC::logflags::APP_OBJECT_TX):
 			return "-APP-->";
 		default:
 			return "UNKNOWN";

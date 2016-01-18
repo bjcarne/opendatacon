@@ -26,7 +26,7 @@
 
 #include <thread>
 #include <chrono>
-#include <opendnp3/LogLevels.h>
+#include <opendatacon/LogLevels.h>
 #include "JSONClientPort.h"
 
 using namespace ODC;
@@ -53,7 +53,7 @@ void JSONClientPort::Enable()
 	catch(std::exception& e)
 	{
 		std::string msg = "Problem opening connection: "+Name+": "+e.what();
-		auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("JSONClientPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 		Log(log_entry);
 		return;
 	}
@@ -63,7 +63,7 @@ void JSONClientPort::ConnectCompletionHandler(asio::error_code err_code)
 	if(err_code)
 	{
 		std::string msg = Name+": Connect error: '"+err_code.message()+"'";
-		auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("JSONClientPort", ODC::logflags::INFO,"", msg.c_str(), -1);
 		Log(log_entry);
 		//try again later
 		JSONPortConf* pConf = static_cast<JSONPortConf*>(this->pConf.get());
@@ -77,7 +77,7 @@ void JSONClientPort::ConnectCompletionHandler(asio::error_code err_code)
 		return;
 	}
 	std::string msg = Name+": Connect success!";
-	auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::INFO,"", msg.c_str(), -1);
+	auto log_entry = ODC::LogEntry("JSONClientPort", ODC::logflags::INFO,"", msg.c_str(), -1);
 	Log(log_entry);
 
 	enabled = true;
@@ -94,14 +94,14 @@ void JSONClientPort::ReadCompletionHandler(asio::error_code err_code)
 		if(err_code != asio::error::eof)
 		{
 			std::string msg = Name+": Read error: '"+err_code.message()+"'";
-			auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::ERR,"", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("JSONClientPort", ODC::logflags::ERR,"", msg.c_str(), -1);
 			Log(log_entry);
 			return;
 		}
 		else
 		{
 			std::string msg = Name+": '"+err_code.message()+"' : Retrying...";
-			auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+			auto log_entry = ODC::LogEntry("JSONClientPort", ODC::logflags::WARN,"", msg.c_str(), -1);
 			Log(log_entry);
 		}
 	}
@@ -185,7 +185,7 @@ void JSONClientPort::ProcessBraced(std::string braced)
 			if(!val.isNull())
 			{
 				if(val.isNumeric())
-					LoadT(opendnp3::Analog(val.asDouble(),static_cast<uint8_t>(opendnp3::AnalogQuality::ONLINE)),point_pair.first, timestamp_val);
+					LoadT(ODC::Analog(val.asDouble(), static_cast<uint8_t>(ODC::AnalogQuality::ONLINE)), point_pair.first, timestamp_val);
 				else if(val.isString())
 				{
 					double value;
@@ -195,10 +195,10 @@ void JSONClientPort::ProcessBraced(std::string braced)
 					}
 					catch(std::exception&)
 					{
-						LoadT(opendnp3::Analog(0,static_cast<uint8_t>(opendnp3::AnalogQuality::COMM_LOST)),point_pair.first, timestamp_val);
+						LoadT(ODC::Analog(0, static_cast<uint8_t>(ODC::AnalogQuality::COMM_LOST)), point_pair.first, timestamp_val);
 						continue;
 					}
-					LoadT(opendnp3::Analog(value,static_cast<uint8_t>(opendnp3::AnalogQuality::ONLINE)),point_pair.first, timestamp_val);
+					LoadT(ODC::Analog(value, static_cast<uint8_t>(ODC::AnalogQuality::ONLINE)), point_pair.first, timestamp_val);
 				}
 			}
 		}
@@ -209,13 +209,13 @@ void JSONClientPort::ProcessBraced(std::string braced)
 			//if the path existed, load up the point
 			if(!val.isNull())
 			{
-				bool true_val = false; opendnp3::BinaryQuality qual = opendnp3::BinaryQuality::ONLINE;
+				bool true_val = false; ODC::BinaryQuality qual = ODC::BinaryQuality::ONLINE;
 				if(!point_pair.second["TrueVal"].isNull())
 				{
 					true_val = (val == point_pair.second["TrueVal"]);
 					if(!point_pair.second["FalseVal"].isNull())
 						if (!true_val && (val != point_pair.second["FalseVal"]))
-							qual = opendnp3::BinaryQuality::COMM_LOST;
+							qual = ODC::BinaryQuality::COMM_LOST;
 				}
 				else if(!point_pair.second["FalseVal"].isNull())
 					true_val = !(val == point_pair.second["FalseVal"]);
@@ -225,12 +225,12 @@ void JSONClientPort::ProcessBraced(std::string braced)
 				{
 					true_val = (val.asString() == "true");
 					if(!true_val && (val.asString() != "false"))
-						qual = opendnp3::BinaryQuality::COMM_LOST;
+						qual = ODC::BinaryQuality::COMM_LOST;
 				}
 				else
-					qual = opendnp3::BinaryQuality::COMM_LOST;
+					qual = ODC::BinaryQuality::COMM_LOST;
 
-				LoadT(opendnp3::Binary(true_val,static_cast<uint8_t>(qual)),point_pair.first,timestamp_val);
+				LoadT(ODC::Binary(true_val,static_cast<uint8_t>(qual)),point_pair.first,timestamp_val);
 			}
 		}
 		//TODO: implement controls
@@ -238,7 +238,7 @@ void JSONClientPort::ProcessBraced(std::string braced)
 	else
 	{
 		std::string msg = "Error parsing JSON string: '"+braced+"'";
-		auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::WARN,"", msg.c_str(), -1);
+		auto log_entry = ODC::LogEntry("JSONClientPort", ODC::logflags::WARN,"", msg.c_str(), -1);
 		Log(log_entry);
 	}
 }
@@ -246,12 +246,12 @@ template<typename T>
 inline void JSONClientPort::LoadT(T meas, uint16_t index, Json::Value timestamp_val)
 {
 	std::string msg = "Measurement Event '"+std::string(typeid(meas).name())+"'";
-	auto log_entry = ODC::LogEntry("JSONClientPort", openpal::logflags::DBG,"", msg.c_str(), -1);
+	auto log_entry = ODC::LogEntry("JSONClientPort", ODC::logflags::DBG,"", msg.c_str(), -1);
 	Log(log_entry);
 
 	if(!timestamp_val.isNull() && timestamp_val.isUInt64())
 	{
-		meas = T(meas.value, meas.quality, opendnp3::DNPTime(timestamp_val.asUInt64()));
+		meas = T(meas.value, meas.quality, ODC::DNPTime(timestamp_val.asUInt64()));
 	}
 
 	for(auto IOHandler_pair : Subscribers)
