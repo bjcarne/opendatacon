@@ -26,13 +26,42 @@
 
 #define SUITE(name) "DNP3PortTypeTestSuite - " name
 
+template <class A, class B>
+bool MeasurementEqual(const A& a, const B& b)
+{
+    return (
+            (a.value == b.value) &&
+            (a.quality == b.quality) &&
+            ((uint64_t)a.time == (uint64_t)b.time)
+             );
+};
+
 TEST_CASE(SUITE("Binary"))
 {
-    opendnp3::Binary b(true, 7, opendnp3::DNPTime(9));
-	ODC::Binary c(b.value, b.quality, Convert(b.time)); // maintains reference to original (a wrapper)
+    opendnp3::DNPTime t(9);
+    
+    opendnp3::Binary b_d(true, 7, t);
+    opendnp3::DoubleBitBinary db_d(opendnp3::DoubleBit::INDETERMINATE, 7, t);
+    opendnp3::Analog a_d(3.3, 7, t);
+    opendnp3::Counter c_d(123, 7, t);
+    opendnp3::FrozenCounter fc_d(123, 7, t);
+    opendnp3::BinaryOutputStatus bos_d(true, 7, t);
+    opendnp3::AnalogOutputStatus aos_d(3.3, 7, t);
+    
+    auto b_o = ToODC(b_d);
+    auto db_o = ToODC(db_d);
+    auto a_o = ToODC(a_d);
+    auto c_o = ToODC(c_d);
+    auto fc_o = ToODC(fc_d);
+    auto bos_o = ToODC(bos_d);
+    auto aos_o = ToODC(aos_d);
 
-    REQUIRE(c.value == b.value);
-    REQUIRE(c.quality == b.quality);
-    REQUIRE(c.time == b.time);
+    assert(MeasurementEqual(b_d, b_o));
+    //assert(MeasurementEqual(db_d, db_o));
+    assert(MeasurementEqual(a_d, a_o));
+    assert(MeasurementEqual(c_d, c_o));
+    assert(MeasurementEqual(fc_d, fc_o));
+    assert(MeasurementEqual(bos_d, bos_o));
+    assert(MeasurementEqual(aos_d, aos_o));
 
 }
