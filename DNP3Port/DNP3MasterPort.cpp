@@ -345,7 +345,7 @@ inline std::future<ODC::CommandStatus> DNP3MasterPort::EventT(T& arCommand, uint
 			auto cmd_future = cmd_promise.get_future();
 
 			//make a copy of the command, so we can change it if needed
-			auto lCommand = arCommand;
+			auto lCommand = ToOpenDNP3(arCommand);
 			//this will change the control code if the command is binary, and there's a defined override
 			DoOverrideControlCode(lCommand);
 
