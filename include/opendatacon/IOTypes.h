@@ -237,7 +237,7 @@ namespace ODC
     class Counter : public Measurement<uint32_t> { using Measurement::Measurement; };
     class FrozenCounter : public Measurement<uint32_t> { using Measurement::Measurement; };
     class BinaryOutputStatus : public Measurement<bool> { using Measurement::Measurement; };
-    class AnalogOutputStatus : public Measurement<bool> { using Measurement::Measurement; };
+    class AnalogOutputStatus : public Measurement<double> { using Measurement::Measurement; };
 
     /// Control types
     class ControlRelayOutputBlock
