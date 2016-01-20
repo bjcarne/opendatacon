@@ -74,7 +74,7 @@ void SimPort::PortUp()
 		if(pConf->AnalogUpdateIntervalms.count(index))
 		{
 			auto interval = pConf->AnalogUpdateIntervalms[index];
-			auto pMean = pConf->AnalogStartVals.count(index) ? std::make_shared<ODC::Analog>(pConf->AnalogStartVals[index]) : std::make_shared<ODC::Analog>();
+			auto pMean = pConf->AnalogStartVals.count(index) ? std::make_shared<ODC::Analog>(pConf->AnalogStartVals.at(index)) : std::make_shared<ODC::Analog>(0);		
 			auto std_dev = pConf->AnalogStdDevs.count(index) ? pConf->AnalogStdDevs[index] : (pMean->value ? (pConf->default_std_dev_factor*pMean->value) : 20);
 
 			pTimer_t pTimer(new Timer_t(*this->GetIOService()));
@@ -192,9 +192,9 @@ void SimPort::ProcessElements(const Json::Value& JSONRoot)
 							}
 					}
 					else if(start_val == "X")
-						pConf->AnalogStartVals[index] = ODC::Analog(0,static_cast<uint8_t>(ODC::AnalogQuality::COMM_LOST));
+						pConf->AnalogStartVals.emplace(index,ODC::Analog(0,static_cast<uint8_t>(ODC::AnalogQuality::COMM_LOST)));
 					else
-						pConf->AnalogStartVals[index] = ODC::Analog(std::stod(start_val),static_cast<uint8_t>(ODC::AnalogQuality::ONLINE));
+						pConf->AnalogStartVals.emplace(index,ODC::Analog(std::stod(start_val),static_cast<uint8_t>(ODC::AnalogQuality::ONLINE)));
 				}
 				else if(pConf->AnalogStartVals.count(index))
 					pConf->AnalogStartVals.erase(index);
@@ -253,9 +253,9 @@ void SimPort::ProcessElements(const Json::Value& JSONRoot)
 							}
 					}
 					else if(start_val == "X")
-						pConf->BinaryStartVals[index] = ODC::Binary(false,static_cast<uint8_t>(ODC::BinaryQuality::COMM_LOST));
+						pConf->BinaryStartVals.emplace(index,ODC::Binary(false,static_cast<uint8_t>(ODC::BinaryQuality::COMM_LOST)));
 					else
-						pConf->BinaryStartVals[index] = ODC::Binary(Binaries[n]["StartVal"].asBool(),static_cast<uint8_t>(ODC::BinaryQuality::ONLINE));
+						pConf->BinaryStartVals.emplace(index,ODC::Binary(Binaries[n]["StartVal"].asBool(),static_cast<uint8_t>(ODC::BinaryQuality::ONLINE)));
 				}
 				else if(pConf->BinaryStartVals.count(index))
 					pConf->BinaryStartVals.erase(index);

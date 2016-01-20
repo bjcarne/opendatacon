@@ -307,7 +307,8 @@ void ModbusMasterPort::DoPoll(uint32_t pollgroup)
 			{
 				for(auto IOHandler_pair : Subscribers)
 				{
-					IOHandler_pair.second->Event(BinaryOutputStatus(((uint8_t*)modbus_read_buffer)[i] != false),index,this->Name);
+					auto value = (((uint8_t*)modbus_read_buffer)[i] != 0);
+					IOHandler_pair.second->Event(BinaryOutputStatus(value),index,this->Name);
 				}
 				++index;
 			}
@@ -339,7 +340,9 @@ void ModbusMasterPort::DoPoll(uint32_t pollgroup)
 			{
 				for(auto IOHandler_pair : Subscribers)
 				{
-					IOHandler_pair.second->Event(Binary(((uint8_t*)modbus_read_buffer)[i] != false),index,this->Name);
+					//auto value = Binary(((uint8_t*)modbus_read_buffer)[i] != 0);
+					auto meas = ODC::Binary(false);
+					IOHandler_pair.second->Event(meas,index,this->Name);
 				}
 				++index;
 			}
@@ -371,7 +374,8 @@ void ModbusMasterPort::DoPoll(uint32_t pollgroup)
 			{
 				for(auto IOHandler_pair : Subscribers)
 				{
-					IOHandler_pair.second->Event(AnalogOutputInt16(((uint16_t*)modbus_read_buffer)[i]),index,this->Name);
+					auto value = ((uint16_t*)modbus_read_buffer)[i];
+					IOHandler_pair.second->Event(AnalogOutputInt16(value),index,this->Name);
 				}
 				++index;
 			}
@@ -403,7 +407,8 @@ void ModbusMasterPort::DoPoll(uint32_t pollgroup)
 			{
 				for(auto IOHandler_pair : Subscribers)
 				{
-					IOHandler_pair.second->Event(Analog(((uint16_t*)modbus_read_buffer)[i]),index,this->Name);
+					auto value = ((uint16_t*)modbus_read_buffer)[i];
+					IOHandler_pair.second->Event(Analog(value),index,this->Name);
 				}
 				++index;
 			}

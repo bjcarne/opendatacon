@@ -64,7 +64,10 @@ namespace ODC
     }
     
     
-    class timestamp : public openpal::UInt48Type { using openpal::UInt48Type::UInt48Type; };
+    class timestamp : public openpal::UInt48Type { 
+	public:
+		explicit timestamp(uint64_t value) : openpal::UInt48Type(value) {};
+	};
     
     ///
     enum ConnectState : uint8_t
@@ -221,9 +224,6 @@ namespace ODC
     class Measurement
     {
     public:
-		Measurement() : value(T()), quality(0), time(0) {};
-		Measurement(T v) : value(v), quality(0), time(0) {};
-		Measurement(T v, uint8_t q ) : value(v), quality(q), time(0) {};
 		Measurement(T v, uint8_t q, timestamp t) : value(v), quality(q), time(t) {};
         T value;
         uint8_t quality;
@@ -231,20 +231,20 @@ namespace ODC
         typedef T value_type;
     };
     
-    class Binary : public Measurement<bool> { using Measurement::Measurement; };
-    class DoubleBitBinary : public Measurement<DoubleBit> { using Measurement::Measurement; };
-    class Analog : public Measurement<double> { using Measurement::Measurement; };
-    class Counter : public Measurement<uint32_t> { using Measurement::Measurement; };
-    class FrozenCounter : public Measurement<uint32_t> { using Measurement::Measurement; };
-    class BinaryOutputStatus : public Measurement<bool> { using Measurement::Measurement; };
-    class AnalogOutputStatus : public Measurement<double> { using Measurement::Measurement; };
+	class Binary : public Measurement<bool> { public: explicit Binary(bool v, uint8_t q = 0, timestamp t = timestamp(0)) : Measurement(v, q, t) {}; };
+	class DoubleBitBinary : public Measurement<DoubleBit> { public: explicit DoubleBitBinary(DoubleBit v, uint8_t q = 0, timestamp t = timestamp(0)) : Measurement(v, q, t) {}; };
+	class Analog : public Measurement<double> { public: explicit Analog(double v, uint8_t q = 0, timestamp t = timestamp(0)) : Measurement(v, q, t) {}; };
+	class Counter : public Measurement<uint32_t> { public: explicit Counter(uint32_t v, uint8_t q = 0, timestamp t = timestamp(0)) : Measurement(v, q, t) {}; };
+	class FrozenCounter : public Measurement<uint32_t> { public: explicit FrozenCounter(uint32_t v, uint8_t q = 0, timestamp t = timestamp(0)) : Measurement(v, q, t) {}; };
+	class BinaryOutputStatus : public Measurement<bool> { public: explicit BinaryOutputStatus(bool v, uint8_t q = 0, timestamp t = timestamp(0)) : Measurement(v, q, t) {}; };
+	class AnalogOutputStatus : public Measurement<double> { public: explicit AnalogOutputStatus(double v, uint8_t q = 0, timestamp t = timestamp(0)) : Measurement(v, q, t) {}; };
 
     /// Control types
     class ControlRelayOutputBlock
     {
     public:
         // overloaded constructor that allows the user to set a raw control code for non-standard codes
-		ControlRelayOutputBlock(uint8_t functionCode_,
+		explicit ControlRelayOutputBlock(uint8_t functionCode_,
                                 uint8_t count_ = 1,
                                 uint32_t onTimeMS_ = 100,
                                 uint32_t offTimeMS_ = 100,
@@ -275,10 +275,10 @@ namespace ODC
         typedef T value_type;
     };
     
-    class AnalogOutputInt16 : public AnalogOutput<int16_t> { using AnalogOutput::AnalogOutput; };
-    class AnalogOutputInt32 : public AnalogOutput<int32_t> { using AnalogOutput::AnalogOutput; };
-    class AnalogOutputFloat32 : public AnalogOutput<float> { using AnalogOutput::AnalogOutput; };
-    class AnalogOutputDouble64 : public AnalogOutput<double> { using AnalogOutput::AnalogOutput; };
+	class AnalogOutputInt16 : public AnalogOutput<int16_t> { public: explicit AnalogOutputInt16(int16_t v, CommandStatus s = CommandStatus::SUCCESS) : AnalogOutput(v, s) {}; };
+	class AnalogOutputInt32 : public AnalogOutput<int32_t> { public: explicit AnalogOutputInt32(int32_t v, CommandStatus s = CommandStatus::SUCCESS) : AnalogOutput(v, s) {}; };
+	class AnalogOutputFloat32 : public AnalogOutput<float> { public: explicit AnalogOutputFloat32(float v, CommandStatus s = CommandStatus::SUCCESS) : AnalogOutput(v, s) {}; };
+	class AnalogOutputDouble64 : public AnalogOutput<double> { public: explicit AnalogOutputDouble64(double v, CommandStatus s = CommandStatus::SUCCESS) : AnalogOutput(v, s) {}; };
 
     /// Quality types
 typedef opendnp3::BinaryQuality BinaryQuality; // uint8_t

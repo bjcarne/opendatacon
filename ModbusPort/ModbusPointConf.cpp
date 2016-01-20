@@ -33,6 +33,7 @@
 using namespace ODC;
 
 ModbusPointConf::ModbusPointConf(std::string FileName):
+	mCommsPoint(Binary(false),0),
 	ConfigParser(FileName)
 {
 	ProcessFile();
@@ -44,8 +45,10 @@ T GetStartVal(const Json::Value& value);
 template<>
 Analog GetStartVal<Analog>(const Json::Value& value)
 {
-	Analog startval;
-
+	if (value.isNull())
+	{
+		return Analog(0, static_cast<uint8_t>(AnalogQuality::COMM_LOST));
+	}
 	std::string start_val = value.asString();
 	if(start_val == "X")
 		return Analog(0,static_cast<uint8_t>(AnalogQuality::COMM_LOST));
@@ -56,8 +59,10 @@ Analog GetStartVal<Analog>(const Json::Value& value)
 template<>
 Binary GetStartVal<Binary>(const Json::Value& value)
 {
-	Binary startval;
-
+	if (value.isNull())
+	{
+		return Binary(false, static_cast<uint8_t>(BinaryQuality::COMM_LOST));
+	}
 	if(value.asString() == "X")
 		return Binary(false,static_cast<uint8_t>(BinaryQuality::COMM_LOST));
 	else
@@ -75,11 +80,7 @@ void ModbusPointConf::ProcessReadGroup(const Json::Value& Ranges, ModbusReadGrou
 			pollgroup = Ranges[n]["PollGroup"].asUInt();
 		}
 
-		T startval;
-		if(!Ranges[n]["StartVal"].isNull())
-		{
-			startval = GetStartVal<T>(Ranges[n]["StartVal"]);
-		}
+		T startval = GetStartVal<T>(Ranges[n]["StartVal"]);
 
 		size_t start, stop, offset = 0;
 		if(!Ranges[n]["IndexOffset"].isNull())
