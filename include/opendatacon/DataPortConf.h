@@ -30,6 +30,9 @@
 #include "ILoggable.h"
 
 class DataPortConf: public virtual ODC::ILoggable
-{}; //base class
+{
+public:
+	virtual ~DataPortConf() {};
+}; //base class
 
 #endif /* DATAPORTCONF_H_ */
