@@ -26,6 +26,10 @@
 #include <map>
 #include <opendatacon/util.h>
 
+#ifdef GetMessage
+#undef GetMessage
+#endif
+
 void FileLog::Log( const ODC::LogEntry& arEntry )
 {
 	std::stringstream output;
