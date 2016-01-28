@@ -29,8 +29,9 @@ include_directories(
 )
 
 #import the microhttpd lib
-find_library(HTTPD_LIB NAMES microhttpd libmicrohttpd
-	PATHS ${MICROHTTPD_HOME}/lib)
+find_library(HTTPD_LIB
+	NAMES microhttpd libmicrohttpd
+	PATHS ${MICROHTTPD_HOME}/lib ${MICROHTTPD_HOME}/bin)
 add_library(httpd_target UNKNOWN IMPORTED)
 set_property(TARGET httpd_target PROPERTY IMPORTED_LOCATION "${HTTPD_LIB}")
 #include in install/packaging
