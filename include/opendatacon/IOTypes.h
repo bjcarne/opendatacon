@@ -63,8 +63,7 @@ namespace ODC
         }
     }
     
-    
-    class timestamp : public openpal::UInt48Type { 
+    class timestamp : public openpal::UInt48Type {
 	public:
 		explicit timestamp(uint64_t value) : openpal::UInt48Type(value) {};
 	};
@@ -279,56 +278,6 @@ namespace ODC
 	class AnalogOutputInt32 : public AnalogOutput<int32_t> { public: explicit AnalogOutputInt32(int32_t v, CommandStatus s = CommandStatus::SUCCESS) : AnalogOutput(v, s) {}; };
 	class AnalogOutputFloat32 : public AnalogOutput<float> { public: explicit AnalogOutputFloat32(float v, CommandStatus s = CommandStatus::SUCCESS) : AnalogOutput(v, s) {}; };
 	class AnalogOutputDouble64 : public AnalogOutput<double> { public: explicit AnalogOutputDouble64(double v, CommandStatus s = CommandStatus::SUCCESS) : AnalogOutput(v, s) {}; };
-
-    /// Quality types
-typedef opendnp3::BinaryQuality BinaryQuality; // uint8_t
-typedef opendnp3::DoubleBitBinaryQuality DoubleBitBinaryQuality; // uint8_t
-typedef opendnp3::AnalogQuality AnalogQuality; // uint8_t
-typedef opendnp3::CounterQuality CounterQuality; // uint8_t
-typedef opendnp3::BinaryOutputStatusQuality BinaryOutputStatusQuality; // uint8_t
-    
-enum class FrozenCounterQuality: uint8_t
-{
-	/// set when the data is "good", meaning that rest of the system can trust the value
-	ONLINE = 0x1,
-	/// the quality all points get before we have established communication (or populated) the point
-	RESTART = 0x2,
-	/// set if communication has been lost with the source of the data (after establishing contact)
-	COMM_LOST = 0x4,
-	/// set if the value is being forced to a "fake" value somewhere in the system
-	REMOTE_FORCED = 0x8,
-	/// set if the value is being forced to a "fake" value on the original device
-	LOCAL_FORCED = 0x10,
-	/// Deprecated flag that indicates value has rolled over
-	ROLLOVER = 0x20,
-	/// indicates an unusual change in value
-	DISCONTINUITY = 0x40,
-	/// reserved bit
-	RESERVED = 0x80
-};
-
-/**
-Quality field bitmask for AnalogOutputStatus values
-*/
-enum class AnalogOutputStatusQuality: uint8_t
-{
-	/// set when the data is "good", meaning that rest of the system can trust the value
-	ONLINE = 0x1,
-	/// the quality all points get before we have established communication (or populated) the point
-	RESTART = 0x2,
-	/// set if communication has been lost with the source of the data (after establishing contact)
-	COMM_LOST = 0x4,
-	/// set if the value is being forced to a "fake" value somewhere in the system
-	REMOTE_FORCED = 0x8,
-	/// set if the value is being forced to a "fake" value on the original device
-	LOCAL_FORCED = 0x10,
-	/// set if a hardware input etc. is out of range and we are using a place holder value
-	OVERRANGE = 0x20,
-	/// set if calibration or reference voltage has been lost meaning readings are questionable
-	REFERENCE_ERR = 0x40,
-	/// reserved bit
-	RESERVED = 0x80
-};
 
 }
 
