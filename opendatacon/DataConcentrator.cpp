@@ -182,7 +182,7 @@ void DataConcentrator::ProcessElements(const Json::Value& JSONRoot)
 
 			if(pluginlib == nullptr)
 			{
-				std::string msg = "Plugin " + PluginName + " load failed. Dynamic library '" + libname + "' load failed.";
+				std::string msg = "Plugin " + PluginName + " load failed. Dynamic library '" + libname + "' load failed: " + LastSystemError();
 				auto log_entry = ODC::LogEntry("DataConcentrator", ODC::logflags::ERR,"", msg.c_str(), -1);
 				Log(log_entry);
 
