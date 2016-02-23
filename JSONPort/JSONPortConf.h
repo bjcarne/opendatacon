@@ -45,7 +45,7 @@ public:
 		Context(aFileName, aParent),
 		JSONPointConf(aFileName),
 		retry_time_ms(20000)
-	{};
+	{}
 
 	JSONAddrConf mAddrConf;
 	unsigned int retry_time_ms;

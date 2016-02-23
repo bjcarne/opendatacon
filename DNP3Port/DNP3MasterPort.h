@@ -28,7 +28,6 @@
 #define DNP3CLIENTPORT_H_
 
 #include <unordered_map>
-#include <opendnp3/master/ISOEHandler.h>
 #include <opendnp3/app/parsing/ICollection.h>
 #include "DNP3Port.h"
 #include "DNP3PortConf.h"
@@ -37,7 +36,7 @@ using opendnp3::HeaderInfo;
 using opendnp3::ICollection;
 using opendnp3::Indexed;
 
-class DNP3MasterPort: public DNP3Port, public opendnp3::ISOEHandler //, public opendnp3::IPollListener
+class DNP3MasterPort: public DNP3Port, public opendnp3::ISOEHandler, public opendnp3::IMasterApplication
 {
 public:
 	DNP3MasterPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides):
@@ -45,7 +44,15 @@ public:
 		pMaster(nullptr),
 		stack_enabled(false),
 		assign_class_sent(false)
-	{};
+	{}
+	
+	~DNP3MasterPort()
+	{
+		if (pMaster)
+		{
+			pMaster->Shutdown();
+		}
+	}
 
 	void Enable();
 	void Disable();
@@ -53,14 +60,26 @@ public:
 
 	//Override DataPort functions for UI
 	const Json::Value GetStatistics() const override;
+    
+    //Impl. IMasterApplication
+    virtual void OnReceiveIIN(const opendnp3::IINField& iin) override final {}
+    virtual void OnTaskStart(opendnp3::MasterTaskType type, opendnp3::TaskId id) override final {}
+    virtual void OnTaskComplete(const opendnp3::TaskInfo& info) override final {}
+    virtual bool AssignClassDuringStartup() override final { return false; }
+    virtual void ConfigureAssignClassRequest(const opendnp3::WriteHeaderFunT& fun) override final {}
+    virtual openpal::UTCTimestamp Now() override final
+    {
+        auto time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        return openpal::UTCTimestamp(time);
+    }
 
-	//Impl. ILinkListener
+    //Impl. ILinkListener
 	// Called when a the reset/unreset status of the link layer changes (and on link up)
-	void OnStateChange(opendnp3::LinkStatus status);
+    void OnStateChange(opendnp3::LinkStatus status);
 	// Called when a keep alive message (request link status) receives no response
-	void OnKeepAliveFailure();
+    void OnKeepAliveFailure();
 	// Called when a keep alive message receives a valid response
-	void OnKeepAliveSuccess();
+    void OnKeepAliveSuccess();
 
 	//implement ISOEHandler
 protected:
@@ -127,7 +146,7 @@ private:
 			arCommand.rawCode = opendnp3::ControlCodeToType(arCommand.functionCode);
 		}
 
-	};
+	}
 };
 
 #endif /* DNP3CLIENTPORT_H_ */

@@ -39,14 +39,14 @@ struct DNP3AddrConf
 	uint16_t OutstationAddr;
 	uint16_t MasterAddr;
 	server_type_t ServerType;
-	DNP3AddrConf(): IP("0.0.0.0"), Port(20000), OutstationAddr(1), MasterAddr(0), ServerType(server_type_t::ONDEMAND){};
+	DNP3AddrConf(): IP("127.0.0.1"), Port(20000), OutstationAddr(1), MasterAddr(0), ServerType(server_type_t::ONDEMAND){}
 };
 
 class DNP3PortConf: public DataPortConf, public DNP3PointConf, public ODC::Context
 {
 public:
 	DNP3PortConf(const std::string& aFileName, Context& aParent): DNP3PointConf(aFileName), Context(aFileName, aParent)
-	{};
+	{}
 
 	DNP3AddrConf mAddrConf;
 };

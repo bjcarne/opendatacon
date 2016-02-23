@@ -77,21 +77,21 @@ public:
 			auto msSinceEpoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 			rateStats->nextUpdatems = msSinceEpoch + rateStats->updatePeriodms;
 		}
-	};
+	}
 
-	bool Event(ODC::Binary& meas, uint16_t& index) { return CheckPass(meas); };
-	bool Event(ODC::Analog& meas, uint16_t& index) {return CheckPass(meas);};
-	bool Event(ODC::DoubleBitBinary& meas, uint16_t& index) { return CheckPass(meas); };
-	bool Event(ODC::Counter& meas, uint16_t& index) { return CheckPass(meas); };
-	bool Event(ODC::FrozenCounter& meas, uint16_t& index) { return CheckPass(meas); };
-	bool Event(ODC::BinaryOutputStatus& meas, uint16_t& index) { return CheckPass(meas); };
-	bool Event(ODC::AnalogOutputStatus& meas, uint16_t& index) { return CheckPass(meas); };
+	bool Event(ODC::Binary& meas, uint16_t& index) { return CheckPass(meas); }
+	bool Event(ODC::Analog& meas, uint16_t& index) {return CheckPass(meas);}
+	bool Event(ODC::DoubleBitBinary& meas, uint16_t& index) { return CheckPass(meas); }
+	bool Event(ODC::Counter& meas, uint16_t& index) { return CheckPass(meas); }
+	bool Event(ODC::FrozenCounter& meas, uint16_t& index) { return CheckPass(meas); }
+	bool Event(ODC::BinaryOutputStatus& meas, uint16_t& index) { return CheckPass(meas); }
+	bool Event(ODC::AnalogOutputStatus& meas, uint16_t& index) { return CheckPass(meas); }
 
-	bool Event(ODC::ControlRelayOutputBlock& arCommand, uint16_t index){return true;};
-	bool Event(ODC::AnalogOutputInt16& arCommand, uint16_t index){return true;};
-	bool Event(ODC::AnalogOutputInt32& arCommand, uint16_t index){return true;};
-	bool Event(ODC::AnalogOutputFloat32& arCommand, uint16_t index){return true;};
-	bool Event(ODC::AnalogOutputDouble64& arCommand, uint16_t index){return true;};
+	bool Event(ODC::ControlRelayOutputBlock& arCommand, uint16_t index){return true;}
+	bool Event(ODC::AnalogOutputInt16& arCommand, uint16_t index){return true;}
+	bool Event(ODC::AnalogOutputInt32& arCommand, uint16_t index){return true;}
+	bool Event(ODC::AnalogOutputFloat32& arCommand, uint16_t index){return true;}
+	bool Event(ODC::AnalogOutputDouble64& arCommand, uint16_t index){return true;}
 
 private:
 	template<class T>

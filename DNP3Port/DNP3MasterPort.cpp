@@ -24,7 +24,6 @@
  *      Author: Neil Stephens <dearknarl@gmail.com>
  */
 
-#include <asiodnp3/DefaultMasterApplication.h>
 #include <opendnp3/app/ClassField.h>
 #include <opendnp3/app/MeasurementTypes.h>
 #include <opendnp3/LogLevels.h>
@@ -219,7 +218,7 @@ void DNP3MasterPort::BuildOrRebuild()
 	StackConfig.master.integrityOnEventOverflowIIN = pConf->IntegrityOnEventOverflowIIN;
 	StackConfig.master.taskRetryPeriod = openpal::TimeDuration::Milliseconds(pConf->TaskRetryPeriodms);
 
-	pMaster = pChannel->AddMaster(Name.c_str(), *this, asiodnp3::DefaultMasterApplication::Instance(), StackConfig);
+	pMaster = pChannel->AddMaster(Name.c_str(), *this, *this, StackConfig);
 	if (pMaster == nullptr)
 	{
 		std::string msg = Name + ": Error creating masterstation.";

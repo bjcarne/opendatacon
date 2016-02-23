@@ -38,7 +38,7 @@ class ConfigParser: public virtual ILoggable
 {
 public:
 	ConfigParser(const std::string& aConfFilename, const Json::Value& aConfOverrides = Json::Value());
-	virtual ~ConfigParser(){};
+	virtual ~ConfigParser(){}
 	void ProcessFile();
 
 	virtual void ProcessElements(const Json::Value& JSONRoot) = 0;

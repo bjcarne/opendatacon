@@ -112,10 +112,11 @@ int main(int argc, char* argv[])
 		std::cout << "done" << std::endl << "Starting up opendatacon..." << std::endl;
 
 		// Configure signal handlers
-		auto shutdown_func = [](int signum)
-					   {
-						   TheDataConcentrator->Shutdown();
-					   };
+
+		auto shutdown_func = [] (int signum)
+		{
+			TheDataConcentrator->Shutdown();
+		};
 
 		for (auto SIG : SIG_SHUTDOWN)
 		{

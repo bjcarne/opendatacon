@@ -40,7 +40,7 @@ class InterfaceCollection: public ResponderMap<IUI>
 public:
 	InterfaceCollection()
 	{
-		this->AddCommand("Enable", [this](const ParamCollection &params) -> const Json::Value {
+		this->AddCommand("Enable", [this](const ParamCollection &params)->const Json::Value {
 		                       if (auto target = GetTarget(params))
 		                       {
 		                             target->Enable();
@@ -48,7 +48,7 @@ public:
 					     }
 		                       return IUIResponder::GenerateResult("Bad parameter");
 				     });
-		this->AddCommand("Disable", [this](const ParamCollection &params) -> const Json::Value {
+		this->AddCommand("Disable", [this](const ParamCollection &params)->const Json::Value {
 		                       if (auto target = GetTarget(params))
 		                       {
 		                             target->Disable();
@@ -57,7 +57,7 @@ public:
 		                       return IUIResponder::GenerateResult("Bad parameter");
 				     });
 	}
-	virtual ~InterfaceCollection(){};
+	virtual ~InterfaceCollection(){}
 };
 
 }

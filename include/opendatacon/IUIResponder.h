@@ -42,7 +42,7 @@ typedef std::function<Json::Value(const ParamCollection& params)> UIFunction;
 class UICommand
 {
 public:
-	UICommand(const UIFunction& func, const std::string& desc, const bool hide): function(func), description(desc), hidden(hide) {};
+	UICommand(const UIFunction& func, const std::string& desc, const bool hide): function(func), description(desc), hidden(hide) {}
 	UIFunction function;
 	std::string description;
 	bool hidden; // if true, command is not listed during a call to GetCommandList
@@ -51,7 +51,7 @@ public:
 class IUIResponder
 {
 public:
-	virtual ~IUIResponder(){};
+	virtual ~IUIResponder(){}
 	static const Json::Value GenerateResult(const std::string& message);
 
 	const virtual Json::Value GetCommandList() const;

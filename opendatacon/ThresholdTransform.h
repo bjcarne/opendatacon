@@ -51,19 +51,19 @@ public:
 			if(!params["threshold"].isNull() && params["threshold"].isNumeric())
 				threshold = params["threshold"].asDouble();
 		}
-	};
+	}
 
-	bool Event(ODC::Binary& meas, uint16_t& index){return true;};
-	bool Event(ODC::DoubleBitBinary& meas, uint16_t& index){return true;};
-	bool Event(ODC::Counter& meas, uint16_t& index){return true;};
-	bool Event(ODC::FrozenCounter& meas, uint16_t& index){return true;};
-	bool Event(ODC::BinaryOutputStatus& meas, uint16_t& index){return true;};
-	bool Event(ODC::AnalogOutputStatus& meas, uint16_t& index){return true;};
-	bool Event(ODC::ControlRelayOutputBlock& arCommand, uint16_t index){return true;};
-	bool Event(ODC::AnalogOutputInt16& arCommand, uint16_t index){return true;};
-	bool Event(ODC::AnalogOutputInt32& arCommand, uint16_t index){return true;};
-	bool Event(ODC::AnalogOutputFloat32& arCommand, uint16_t index){return true;};
-	bool Event(ODC::AnalogOutputDouble64& arCommand, uint16_t index){return true;};
+	bool Event(ODC::Binary& meas, uint16_t& index){return true;}
+	bool Event(ODC::DoubleBitBinary& meas, uint16_t& index){return true;}
+	bool Event(ODC::Counter& meas, uint16_t& index){return true;}
+	bool Event(ODC::FrozenCounter& meas, uint16_t& index){return true;}
+	bool Event(ODC::BinaryOutputStatus& meas, uint16_t& index){return true;}
+	bool Event(ODC::AnalogOutputStatus& meas, uint16_t& index){return true;}
+	bool Event(ODC::ControlRelayOutputBlock& arCommand, uint16_t index){return true;}
+	bool Event(ODC::AnalogOutputInt16& arCommand, uint16_t index){return true;}
+	bool Event(ODC::AnalogOutputInt32& arCommand, uint16_t index){return true;}
+	bool Event(ODC::AnalogOutputFloat32& arCommand, uint16_t index){return true;}
+	bool Event(ODC::AnalogOutputDouble64& arCommand, uint16_t index){return true;}
 
 	bool Event(ODC::Analog& meas, uint16_t& index)
 	{
@@ -86,7 +86,7 @@ public:
 		}
 
 		return true;
-	};
+	}
 
 	bool pass_on;
 	bool already_under;

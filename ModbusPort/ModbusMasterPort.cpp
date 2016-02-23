@@ -91,7 +91,6 @@ void ModbusMasterPort::Connect()
 		}
 		return;
 	}
-	;
 
 	stack_enabled = true;
 

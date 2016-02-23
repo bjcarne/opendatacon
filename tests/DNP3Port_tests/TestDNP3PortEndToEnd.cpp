@@ -29,21 +29,53 @@
 
 TEST_CASE(SUITE("ConstructEnableDisableDestroy"))
 {
-    asio::io_service IOS(std::thread::hardware_concurrency());
-    ODC::Context context("TEST", IOS);
-	auto newMaster = GetPortCreator("DNP3Port", "DNP3Master");
-	REQUIRE(newMaster);
-	ODC::DataPort* MPUT = newMaster("MasterUnderTest", context, "", "");
-	auto newOutstation = GetPortCreator("DNP3Port", "DNP3Outstation");
-	REQUIRE(newOutstation);
-	ODC::DataPort* OPUT = newOutstation("OutstationUnderTest", context, "", "");
-
-	MPUT->Enable();
-	OPUT->Enable();
-
-	auto mstatus = MPUT->GetStatus();
-	auto ostatus = OPUT->GetStatus();
-
-	delete MPUT;
-	delete OPUT;
+	asio::io_service IOS(std::thread::hardware_concurrency());
+	ODC::Context context("TEST", IOS);
+	
+	{
+		//make an outstation port
+		ODC::NewPortFunctionT* newOutstation = GetPortCreator("DNP3Port", "DNP3Outstation");
+		REQUIRE(newOutstation);
+		
+		Json::Value Oconf;
+		Oconf["IP"] = "0.0.0.0";
+		Oconf["Port"] = 20001;
+		ODC::DataPort* OPUT = newOutstation("OutstationUnderTest", context, "", Oconf);
+		
+		//make a master port
+		ODC::NewPortFunctionT* newMaster = GetPortCreator("DNP3Port", "DNP3Master");
+		REQUIRE(newMaster);
+		
+		Json::Value Mconf;
+		Mconf["ServerType"] = "PERSISTENT";
+		Mconf["Port"] = 20001;
+		ODC::DataPort* MPUT = newMaster("MasterUnderTest", context, "", Mconf);
+		
+		auto pDNP3Man = new asiodnp3::DNP3Manager(std::thread::hardware_concurrency());
+		auto pLOG_LEVEL = new openpal::LogFilters();
+		
+		//get them to build themselves using their configs
+		OPUT->BuildOrRebuild();
+		MPUT->BuildOrRebuild();
+		
+		//turn them on
+		OPUT->Enable();
+		MPUT->Enable();
+		
+		//TODO: write a better way to wait for GetStatus and timeout (when decouple gets merged)
+		uint count = 0;
+		while(OPUT->GetStatus()["Result"].asString() == "Port enabled - link down" && count < 10000)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			count++;
+		}
+		
+		REQUIRE(MPUT->GetStatus()["Result"].asString() == "Port enabled - link up (unreset)");
+		REQUIRE(OPUT->GetStatus()["Result"].asString() == "Port enabled - link up (unreset)");
+		
+		delete MPUT;
+		delete OPUT;
+		delete pLOG_LEVEL;
+		delete pDNP3Man;
+	};
 }

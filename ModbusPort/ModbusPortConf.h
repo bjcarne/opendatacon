@@ -69,7 +69,7 @@ struct ModbusAddrConf
 		Port(502),
 		OutstationAddr(1),
 		ServerType(ONDEMAND)
-	{};
+	{}
 };
 
 class ModbusPortConf: public Context, public DataPortConf, public ModbusPointConf
@@ -79,7 +79,8 @@ public:
 		Context(FileName,Parent),
 		ModbusPointConf(FileName),
 		mAddrConf()
-	{};
+	{
+	}
 
 	ModbusAddrConf mAddrConf;
 };

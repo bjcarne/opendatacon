@@ -43,20 +43,20 @@ public:
 			offset = params["offset"].asInt();
 		else
 			offset = 0;
-	};
+	}
 
-	bool Event(ODC::Binary& meas, uint16_t& index){return EventT(meas,index);};
-	bool Event(ODC::DoubleBitBinary& meas, uint16_t& index){return EventT(meas,index);};
-	bool Event(ODC::Analog& meas, uint16_t& index){return EventT(meas,index);};
-	bool Event(ODC::Counter& meas, uint16_t& index){return EventT(meas,index);};
-	bool Event(ODC::FrozenCounter& meas, uint16_t& index){return EventT(meas,index);};
-	bool Event(ODC::BinaryOutputStatus& meas, uint16_t& index){return EventT(meas,index);};
-	bool Event(ODC::AnalogOutputStatus& meas, uint16_t& index){return EventT(meas,index);};
-	bool Event(ODC::ControlRelayOutputBlock& arCommand, uint16_t index){return EventT(arCommand,index);};
-	bool Event(ODC::AnalogOutputInt16& arCommand, uint16_t index){return EventT(arCommand,index);};
-	bool Event(ODC::AnalogOutputInt32& arCommand, uint16_t index){return EventT(arCommand,index);};
-	bool Event(ODC::AnalogOutputFloat32& arCommand, uint16_t index){return EventT(arCommand,index);};
-	bool Event(ODC::AnalogOutputDouble64& arCommand, uint16_t index){return EventT(arCommand,index);};
+	bool Event(ODC::Binary& meas, uint16_t& index){return EventT(meas,index);}
+	bool Event(ODC::DoubleBitBinary& meas, uint16_t& index){return EventT(meas,index);}
+	bool Event(ODC::Analog& meas, uint16_t& index){return EventT(meas,index);}
+	bool Event(ODC::Counter& meas, uint16_t& index){return EventT(meas,index);}
+	bool Event(ODC::FrozenCounter& meas, uint16_t& index){return EventT(meas,index);}
+	bool Event(ODC::BinaryOutputStatus& meas, uint16_t& index){return EventT(meas,index);}
+	bool Event(ODC::AnalogOutputStatus& meas, uint16_t& index){return EventT(meas,index);}
+	bool Event(ODC::ControlRelayOutputBlock& arCommand, uint16_t index){return EventT(arCommand,index);}
+	bool Event(ODC::AnalogOutputInt16& arCommand, uint16_t index){return EventT(arCommand,index);}
+	bool Event(ODC::AnalogOutputInt32& arCommand, uint16_t index){return EventT(arCommand,index);}
+	bool Event(ODC::AnalogOutputFloat32& arCommand, uint16_t index){return EventT(arCommand,index);}
+	bool Event(ODC::AnalogOutputDouble64& arCommand, uint16_t index){return EventT(arCommand,index);}
 
 	template<typename T> bool EventT(T& meas, uint16_t& index)
 	{

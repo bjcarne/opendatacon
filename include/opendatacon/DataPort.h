@@ -43,8 +43,8 @@ public:
 		Plugin(aName, parent, aConfFilename, aConfOverrides),
 		IOHandler(aName),
 		pConf(nullptr)
-	{};
-	virtual ~DataPort(){};
+	{}
+	virtual ~DataPort(){}
 
 	std::future<CommandStatus> Event(ConnectState state, uint16_t index, const std::string& SenderName) final
 	{
@@ -52,24 +52,24 @@ public:
 			return ConnectionEvent(state, SenderName);
 		else
 			return IOHandler::CommandFutureUndefined();
-	};
+	}
 
 	virtual std::future<CommandStatus> ConnectionEvent(ConnectState state, const std::string& SenderName) = 0;
 
 	virtual const Json::Value GetStatistics() const
 	{
 		return Json::Value();
-	};
+	}
 
 	virtual const Json::Value GetCurrentState() const
 	{
 		return Json::Value();
-	};
+	}
 
 	virtual const Json::Value GetStatus() const
 	{
 		return Json::Value();
-	};
+	}
 
 protected:
 	std::unique_ptr<DataPortConf> pConf;

@@ -32,19 +32,21 @@
 
 #include "DNP3Port.h"
 
-class DNP3OutstationPort: public DNP3Port, public opendnp3::ICommandHandler
+class DNP3OutstationPort: public DNP3Port, public opendnp3::ICommandHandler, public opendnp3::IOutstationApplication
 {
 public:
 	DNP3OutstationPort(const std::string& aName, Context& aParent, const std::string& aConfFilename, const Json::Value& aConfOverrides);
-
+	
 	void Enable();
 	void Disable();
 	void BuildOrRebuild();
-
+	
 	//Override DataPort functions for UI
 	const Json::Value GetCurrentState() const override;
 	const Json::Value GetStatistics() const override;
-
+	
+	//Impl. IOutstationApplication
+	
 	//Impl. ILinkListener
 	// Called when a the reset/unreset status of the link layer changes (and on link up)
 	void OnStateChange(opendnp3::LinkStatus status);
@@ -52,41 +54,41 @@ public:
 	void OnKeepAliveFailure();
 	// Called when a keep alive message receives a valid response
 	void OnKeepAliveSuccess();
-
+	
 	//Implement opendnp3::ICommandHandler, whicher version of the API
-	opendnp3::CommandStatus Select(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Operate(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); };
-	opendnp3::CommandStatus Select(const opendnp3::AnalogOutputInt16& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Operate(const opendnp3::AnalogOutputInt16& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); };
-	opendnp3::CommandStatus Select(const opendnp3::AnalogOutputInt32& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Operate(const opendnp3::AnalogOutputInt32& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); };
-	opendnp3::CommandStatus Select(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Operate(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); };
-	opendnp3::CommandStatus Select(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Operate(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); };
-
-	opendnp3::CommandStatus Supports(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Perform(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); };
-	opendnp3::CommandStatus Supports(const opendnp3::AnalogOutputInt16& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Perform(const opendnp3::AnalogOutputInt16& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); };
-	opendnp3::CommandStatus Supports(const opendnp3::AnalogOutputInt32& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Perform(const opendnp3::AnalogOutputInt32& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); };
-	opendnp3::CommandStatus Supports(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Perform(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); };
-	opendnp3::CommandStatus Supports(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); };
-	opendnp3::CommandStatus Perform(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); };
-
+	opendnp3::CommandStatus Select(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Operate(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); }
+	opendnp3::CommandStatus Select(const opendnp3::AnalogOutputInt16& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Operate(const opendnp3::AnalogOutputInt16& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); }
+	opendnp3::CommandStatus Select(const opendnp3::AnalogOutputInt32& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Operate(const opendnp3::AnalogOutputInt32& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); }
+	opendnp3::CommandStatus Select(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Operate(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); }
+	opendnp3::CommandStatus Select(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Operate(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t aIndex, opendnp3::OperateType op_type){ return PerformT(arCommand, aIndex); }
+	
+	opendnp3::CommandStatus Supports(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Perform(const opendnp3::ControlRelayOutputBlock& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); }
+	opendnp3::CommandStatus Supports(const opendnp3::AnalogOutputInt16& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Perform(const opendnp3::AnalogOutputInt16& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); }
+	opendnp3::CommandStatus Supports(const opendnp3::AnalogOutputInt32& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Perform(const opendnp3::AnalogOutputInt32& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); }
+	opendnp3::CommandStatus Supports(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Perform(const opendnp3::AnalogOutputFloat32& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); }
+	opendnp3::CommandStatus Supports(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t aIndex){ return SupportsT(arCommand, aIndex); }
+	opendnp3::CommandStatus Perform(const opendnp3::AnalogOutputDouble64& arCommand, uint16_t aIndex){ return PerformT(arCommand, aIndex); }
+	
 	//Impl. ITransactable
 	void Start(){}
 	void End(){}
-
+	
 	template<typename T> opendnp3::CommandStatus SupportsT(T& arCommand, uint16_t aIndex);
 	template<typename T> opendnp3::CommandStatus PerformT(T& arCommand, uint16_t aIndex);
-
+	
 	//Implement some ODC::IOHandler - parent DNP3Port implements the rest to return NOT_SUPPORTED
 	template<typename T> std::future<ODC::CommandStatus> EventT(const T& meas, uint16_t index, const std::string& SenderName);
 	template<typename T, typename Q> std::future<ODC::CommandStatus> EventQ(Q& meas, uint16_t index, const std::string& SenderName);
-
+	
 	std::future<ODC::CommandStatus> Event(const ODC::Binary& meas, uint16_t index, const std::string& SenderName);
 	std::future<ODC::CommandStatus> Event(const ODC::DoubleBitBinary& meas, uint16_t index, const std::string& SenderName);
 	std::future<ODC::CommandStatus> Event(const ODC::Analog& meas, uint16_t index, const std::string& SenderName);
@@ -94,7 +96,7 @@ public:
 	std::future<ODC::CommandStatus> Event(const ODC::FrozenCounter& meas, uint16_t index, const std::string& SenderName);
 	std::future<ODC::CommandStatus> Event(const ODC::BinaryOutputStatus& meas, uint16_t index, const std::string& SenderName);
 	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputStatus& meas, uint16_t index, const std::string& SenderName);
-
+	
 	std::future<ODC::CommandStatus> Event(const ODC::BinaryQuality qual, uint16_t index, const std::string& SenderName);
 	std::future<ODC::CommandStatus> Event(const ODC::DoubleBitBinaryQuality qual, uint16_t index, const std::string& SenderName);
 	std::future<ODC::CommandStatus> Event(const ODC::AnalogQuality qual, uint16_t index, const std::string& SenderName);
@@ -102,12 +104,13 @@ public:
 	std::future<ODC::CommandStatus> Event(const ODC::FrozenCounterQuality qual, uint16_t index, const std::string& SenderName);
 	std::future<ODC::CommandStatus> Event(const ODC::BinaryOutputStatusQuality qual, uint16_t index, const std::string& SenderName);
 	std::future<ODC::CommandStatus> Event(const ODC::AnalogOutputStatusQuality qual, uint16_t index, const std::string& SenderName);
-
+	
 	std::future<ODC::CommandStatus> ConnectionEvent(ODC::ConnectState state, const std::string& SenderName);
-
+	
 private:
 	asiodnp3::IOutstation* pOutstation;
 	void LinkStatusListener(opendnp3::LinkStatus status);
+
 };
 
 #endif /* DNP3SERVERPORT_H_ */

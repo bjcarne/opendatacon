@@ -16,9 +16,14 @@
  *	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
- *
- *  Created by Alan Murray on 29/08/2014.
  */
+//
+//  IUI.h
+//  opendatacon
+//
+//  Created by Alan Murray on 29/08/2014.
+//
+//
 
 #ifndef opendatacon_IUI_h
 #define opendatacon_IUI_h
@@ -29,19 +34,19 @@
 
 namespace ODC
 {
-
-class IUI: public Plugin
-{
-public:
-	IUI(const std::string& aName, Context& parent, const std::string& aConfFilename, const Json::Value aConfOverrides):
+	
+	class IUI: public Plugin
+	{
+	public:
+		IUI(const std::string& aName, Context& parent, const std::string& aConfFilename, const Json::Value aConfOverrides):
 		Plugin(aName, parent, aConfFilename, aConfOverrides)
-	{};
-	virtual ~IUI(){};
-	virtual void AddCommand(const std::string name, std::function<void (std::stringstream&)> callback, const std::string desc = "No description available\n") = 0;
-	virtual void AddResponder(const std::string name, const IUIResponder& pResponder) = 0;
-};
-
-typedef IUI* (NewPluginFunctionT)(const std::string&, Context&, const std::string&, const Json::Value&);
+		{}
+		virtual ~IUI(){}
+		virtual void AddCommand(const std::string name, std::function<void (std::stringstream&)> callback, const std::string desc = "No description available\n") = 0;
+		virtual void AddResponder(const std::string name, const IUIResponder& pResponder) = 0;
+	};
+	
+	typedef IUI* (NewPluginFunctionT)(const std::string&, Context&, const std::string&, const Json::Value&);
 }
 
 #endif

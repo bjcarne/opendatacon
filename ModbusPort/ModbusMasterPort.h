@@ -75,7 +75,7 @@ public:
 		mb(nullptr),
 		modbus_read_buffer(nullptr),
 		modbus_read_buffer_size(0)
-	{};
+	{}
 
 	~ModbusMasterPort();
 

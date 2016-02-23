@@ -32,7 +32,7 @@
 class DataPortConf: public virtual ODC::ILoggable
 {
 public:
-	virtual ~DataPortConf() {};
+	virtual ~DataPortConf() {}
 }; //base class
 
 #endif /* DATAPORTCONF_H_ */

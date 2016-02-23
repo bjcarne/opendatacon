@@ -40,7 +40,7 @@ public:
 		Decimate(0),
 		IgnoreDuration(openpal::TimeDuration::Milliseconds(0)),
 		PrintTime(0)
-	{};
+	{}
 	MessageCount(std::string aRegex_str, int aCount, int decimate):
 		MessageRegex(aRegex_str.c_str()),
 		MessageRegex_string(aRegex_str),
@@ -48,7 +48,7 @@ public:
 		Decimate(decimate),
 		IgnoreDuration(openpal::TimeDuration::Milliseconds(0)),
 		PrintTime(0)
-	{};
+	{}
 	MessageCount(std::string aRegex_str, int aCount, openpal::TimeDuration ignore_duration):
 		MessageRegex(aRegex_str.c_str()),
 		MessageRegex_string(aRegex_str),
@@ -56,7 +56,7 @@ public:
 		Decimate(0),
 		IgnoreDuration(ignore_duration),
 		PrintTime(asiopal::UTCTimeSource::Instance().Now())
-	{};
+	{}
 	std::regex MessageRegex;
 	std::string MessageRegex_string;
 	int Count;

@@ -20,6 +20,8 @@
 /**
  */
 #include <catch.hpp>
+#include <thread>
+#include <functional>
 
 #include "DNP3MasterPort.h"
 #include "PortLoader.h"
@@ -28,26 +30,46 @@
 
 TEST_CASE(SUITE("ConstructEnableDisableDestroy"))
 {
-    asio::io_service IOS(std::thread::hardware_concurrency());
-    ODC::Context context("TEST", IOS);
-	{
-		auto newMaster = GetPortCreator("DNP3Port", "DNP3Master");
-		REQUIRE(newMaster);
-		ODC::DataPort* MPUT = newMaster("MasterUnderTest", context, "", "");
-
-		MPUT->Enable();
-		MPUT->Disable();
-
-		delete MPUT;
+	asio::io_service IOS(std::thread::hardware_concurrency());
+	asio::io_service::work* work(new asio::io_service::work(IOS));
+	
+	std::vector<std::thread*> threadPool;
+	for(size_t t = 0; t < std::thread::hardware_concurrency(); t++){
+		threadPool.push_back(new std::thread([&](){ IOS.run(); }));
 	}
-	/// Test the destruction of an enabled port
+	
+	IOS.post([&](){
+		ODC::Context context("TEST", IOS);
+		{
+			auto newMaster = GetPortCreator("DNP3Port", "DNP3Master");
+			REQUIRE(newMaster);
+			ODC::DataPort* MPUT = newMaster("MasterUnderTest", context, "", "");
+			
+			MPUT->BuildOrRebuild();
+			
+			MPUT->Enable();
+			MPUT->Disable();
+			
+			delete MPUT;
+		}
+		/// Test the destruction of an enabled port
+		{
+			 auto newMaster = GetPortCreator("DNP3Port", "DNP3Master");
+			 REQUIRE(newMaster);
+			 ODC::DataPort* MPUT = newMaster("MasterUnderTest", context, "", "");
+			 
+			 MPUT->BuildOrRebuild();
+			 
+			 MPUT->Enable();
+			 
+			 delete MPUT;
+		}
+		delete work;
+	});
+	IOS.run();
+	for (auto pThread : threadPool)
 	{
-		auto newMaster = GetPortCreator("DNP3Port", "DNP3Master");
-		REQUIRE(newMaster);
-		ODC::DataPort* MPUT = newMaster("MasterUnderTest", context, "", "");
-
-		MPUT->Enable();
-
-		delete MPUT;
+		pThread->join();
+		delete pThread;
 	}
 }

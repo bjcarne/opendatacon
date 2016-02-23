@@ -106,11 +106,11 @@ DataConcentrator::DataConcentrator(std::string FileName):
 //        interface.second->AddResponder("Loggers", AdvancedLoggers);
 		interface.second->AddResponder("Plugins", Interfaces);
 	}
-	for(auto& port : DataPorts)
+//	for(auto& port : DataPorts)
 	{
 //		port.second->SetLogLevel(LOG_LEVEL);
 	}
-	for(auto& conn : DataConnectors)
+//	for(auto& conn : DataConnectors)
 	{
 //		conn.second->SetLogLevel(LOG_LEVEL);
 	}

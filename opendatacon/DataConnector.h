@@ -67,12 +67,12 @@ public:
 	virtual const Json::Value GetStatistics() const
 	{
 		return Json::Value();
-	};
+	}
 
 	virtual const Json::Value GetCurrentState() const
 	{
 		return Json::Value();
-	};
+	}
 
 	void Enable();
 	void Disable();

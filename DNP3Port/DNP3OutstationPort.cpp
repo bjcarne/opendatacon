@@ -160,7 +160,7 @@ void DNP3OutstationPort::BuildOrRebuild()
 		return;
 	}
 
-	pOutstation = pChannel->AddOutstation(Name.c_str(), *this, opendnp3::DefaultOutstationApplication::Instance(), StackConfig);
+	pOutstation = pChannel->AddOutstation(Name.c_str(), *this, *this, StackConfig);
 
 	if (pOutstation == nullptr)
 	{

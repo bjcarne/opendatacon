@@ -33,8 +33,8 @@
 using namespace ODC;
 
 ModbusPointConf::ModbusPointConf(std::string FileName):
-	mCommsPoint(Binary(false),0),
-	ConfigParser(FileName)
+	ConfigParser(FileName),
+	mCommsPoint(Binary(false),0)
 {
 	ProcessFile();
 }

@@ -41,28 +41,28 @@ class IOHandler
 {
 public:
 	IOHandler(std::string aName);
-	virtual ~IOHandler(){};
+	virtual ~IOHandler(){}
 
 	static std::future<CommandStatus> CommandFutureSuccess()
 	{
 		auto Promise = std::promise<CommandStatus>();
 		Promise.set_value(CommandStatus::SUCCESS);
 		return Promise.get_future();
-	};
+	}
 
 	static std::future<CommandStatus> CommandFutureUndefined()
 	{
 		auto Promise = std::promise<CommandStatus>();
 		Promise.set_value(CommandStatus::UNDEFINED);
 		return Promise.get_future();
-	};
+	}
 
 	static std::future<CommandStatus> CommandFutureNotSupported()
 	{
 		auto Promise = std::promise<CommandStatus>();
 		Promise.set_value(CommandStatus::NOT_SUPPORTED);
 		return Promise.get_future();
-	};
+	}
 
 	//Create an overloaded Event function for every type of event
 

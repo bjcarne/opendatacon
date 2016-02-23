@@ -56,7 +56,7 @@ public:
 		                       return result;
 				     }, "", true);
 	}
-	virtual ~ResponderMap(){};
+	virtual ~ResponderMap(){}
 
 	std::vector<T*> GetTargets(const ParamCollection& params)
 	{
